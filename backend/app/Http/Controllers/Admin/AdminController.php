@@ -21,7 +21,7 @@ class AdminController extends Controller
         $monthOrders = Order::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
         $yearOrders = Order::whereBetween('created_at', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])->get();
 
-        return view('admin.index')->with([
+        return view('admin.dashboard')->with([
             'todayOrders' => $todayOrders,
             'yesterdayOrders' => $yesterdayOrders,
             'monthOrders' => $monthOrders,
@@ -33,12 +33,12 @@ class AdminController extends Controller
     public function loginForm()
     {
         // Check if admin is not logged in using auth guard
-        // If not logged in, redirect to login form view
+        // If not logged in, present loginForm view so user can login
         if (!auth()->guard('admin')->check()) {
-            return view('login');
+            return view('loginForm');
         }
         // If logged in, redirect to admin dashboard
-        return redirect()->route('admin.index');
+        return redirect()->route('admin.dashboard');
     }
 
     // POST request to login admin using AuthAdminRequest for validation
@@ -59,12 +59,12 @@ class AdminController extends Controller
                 $request->session()->regenerate();
 
                 // Redirect to admin dashboard with success message
-                return redirect()->route('admin.index')->with([
+                return redirect()->route('admin.dashboard')->with([
                     'success' => 'You are now logged in'
                 ]);
             } else {
-                // If login failed, redirect to login page with error message
-                return redirect()->route('admin.login')->with([
+                // If login failed, redirect to route admin.loginForm  with error message
+                return redirect()->route('admin.loginForm')->with([
                     'error' => 'These credentials do not match any of our records.'
                 ]);
             }
@@ -83,8 +83,8 @@ class AdminController extends Controller
         // Regenerate CSRF token (security measure)
         request()->session()->regenerateToken();
         
-        // Redirect to login page
-        return redirect()->route('admin.login')->with([
+        // Redirect to route admin.loginForm with success message
+        return redirect()->route('admin.loginForm')->with([
             'success' => 'You are now logged out'
         ]);
     }
