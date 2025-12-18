@@ -11,7 +11,7 @@ class AuthAdminRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class AuthAdminRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'email' => 'required|email|exists:admins,email|max:255', // validate email exists in admins table
+            'password' => 'required|min:6|max:255',
         ];
     }
 }
