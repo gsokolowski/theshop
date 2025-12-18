@@ -15,6 +15,11 @@
                             {{ session('error') }}
                         </div>
                     @endif
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                     <div class="card shadow-sm p-5">
                         <div class="card-header bg-white text-center">
                             <h3 class="mt-2">
