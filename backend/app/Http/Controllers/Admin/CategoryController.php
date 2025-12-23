@@ -39,7 +39,6 @@ class CategoryController extends Controller
         // Validate the CategoryStoreRequest
         if($request->validated()) {
             // Create a new category
-
             $data = $request->validated();
             $data['slug'] = Str::slug($data['name']);
             Category::create($data);
