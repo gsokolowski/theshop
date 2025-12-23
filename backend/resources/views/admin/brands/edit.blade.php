@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Categories')
+@section('title', 'Brands')
 @section('content-dashboard')
     <div class="row">
         @include('admin.layouts.sidebar')
@@ -8,14 +8,14 @@
             <div class="col-12">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h3 class="mt-2">
-                        Categories
+                        Brands
                     </h3>
-                    <a href="{{route('admin.categories.create')}}" class="btn btn-sm btn-primary">
+                    <a href="{{route('admin.brands.create')}}" class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i>
                     </a>
                 </div>
                 <hr>
-                <!-- Display validation errors at top of form -->
+                                <!-- Display validation errors at top of form -->
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -25,8 +25,8 @@
                         </ul>
                     </div>
                 @endif
-                <!--  form for edit category -->
-                <form action="{{route('admin.categories.update', $category->slug)}}" method="post">
+                <!--  form for create category -->
+                <form action="{{route('admin.brands.update', $brand->slug)}}" method="post">
                     @csrf
                     @method('PUT')
                     <div class="form-group">
@@ -36,8 +36,9 @@
                         class="form-control @error('name') is-invalid @enderror"
                         name ="name"
                         id="name"
-                        value="{{$category->name}}"
-                        placeholder="Enter category name"
+                        class="form-control" 
+                        value="{{$brand->name}}"
+                        placeholder="Enter brand name"
                         autofocus>
                         @error('name')
                             <div class="invalid-feedback">

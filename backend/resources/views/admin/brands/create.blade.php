@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Categories')
+@section('title', 'Brands')
 @section('content-dashboard')
     <div class="row">
         @include('admin.layouts.sidebar')
@@ -8,9 +8,9 @@
             <div class="col-12">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h3 class="mt-2">
-                        Categories
+                        Brands
                     </h3>
-                    <a href="{{route('admin.categories.create')}}" class="btn btn-sm btn-primary">
+                    <a href="{{route('admin.brands.create')}}" class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i>
                     </a>
                 </div>
@@ -25,20 +25,19 @@
                         </ul>
                     </div>
                 @endif
-                <!--  form for edit category -->
-                <form action="{{route('admin.categories.update', $category->slug)}}" method="post">
+                <!--  form for create brand -->
+                <form action="{{route('admin.brands.store')}}" method="post">
                     @csrf
-                    @method('PUT')
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input 
-                        type="text" 
-                        class="form-control @error('name') is-invalid @enderror"
-                        name ="name"
-                        id="name"
-                        value="{{$category->name}}"
-                        placeholder="Enter category name"
-                        autofocus>
+                            type="text" 
+                            class="form-control @error('name') is-invalid @enderror"
+                            name="name" 
+                            id="name"
+                            value="{{old('name')}}"
+                            placeholder="Enter brand name"
+                            autofocus>
                         @error('name')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -46,8 +45,8 @@
                         @enderror
                     </div>
                     <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-edit"></i>
-                        Update
+                        <i class="fas fa-plus"></i>
+                        Create
                     </button>
                 </form>
             </div>
