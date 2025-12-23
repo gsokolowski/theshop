@@ -23,7 +23,7 @@
                         <label for="name">Name</label>
                         <input 
                         type="text" 
-                        class="form-control" @error('name') is-invalid @enderror
+                        class="form-control @error('name') is-invalid @enderror"
                         name ="name"
                         id="name"
                         class="form-control" 
