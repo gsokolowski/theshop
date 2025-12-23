@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\SizeController;
 use Illuminate\Support\Facades\Route;
 
 // General route to acction login 
@@ -42,5 +43,12 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::put('/colors/{color}', [ColorController::class, 'update'])->name('admin.colors.update');
     Route::delete('/colors/{color}', [ColorController::class, 'destroy'])->name('admin.colors.destroy');
 
-
+    // Size individual routes
+    Route::get('/sizes', [SizeController::class, 'index'])->name('admin.sizes.index');
+    Route::get('/sizes/create', [SizeController::class, 'create'])->name('admin.sizes.create');
+    Route::post('/sizes', [SizeController::class, 'store'])->name('admin.sizes.store');
+    Route::get('/sizes/{size}', [SizeController::class, 'show'])->name('admin.sizes.show');
+    Route::get('/sizes/{size}/edit', [SizeController::class, 'edit'])->name('admin.sizes.edit');
+    Route::put('/sizes/{size}', [SizeController::class, 'update'])->name('admin.sizes.update');
+    Route::delete('/sizes/{size}', [SizeController::class, 'destroy'])->name('admin.sizes.destroy');
 });
