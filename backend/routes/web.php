@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ColorController;
 use Illuminate\Support\Facades\Route;
 
 // General route to acction login 
@@ -31,5 +32,15 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/brands/{brand}/edit', [BrandController::class, 'edit'])->name('admin.brands.edit');
     Route::put('/brands/{brand}', [BrandController::class, 'update'])->name('admin.brands.update');
     Route::delete('/brands/{brand}', [BrandController::class, 'destroy'])->name('admin.brands.destroy');
-    
+
+    // Color individual routes
+    Route::get('/colors', [ColorController::class, 'index'])->name('admin.colors.index');
+    Route::get('/colors/create', [ColorController::class, 'create'])->name('admin.colors.create');
+    Route::post('/colors', [ColorController::class, 'store'])->name('admin.colors.store');
+    Route::get('/colors/{color}', [ColorController::class, 'show'])->name('admin.colors.show');
+    Route::get('/colors/{color}/edit', [ColorController::class, 'edit'])->name('admin.colors.edit');
+    Route::put('/colors/{color}', [ColorController::class, 'update'])->name('admin.colors.update');
+    Route::delete('/colors/{color}', [ColorController::class, 'destroy'])->name('admin.colors.destroy');
+
+
 });
