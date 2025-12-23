@@ -8,8 +8,14 @@
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center gap-2 @if(request()->routeIs('admin.dashboard')) text-dark @endif" aria-current="page" href="{{route('admin.dashboard')}}">
-                        <i class="fas fa-dashboard"></i>
+                        <i class="fa-solid fa-dashboard"></i>
                         Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2 @if(request()->routeIs('admin.categories.index')) text-dark @endif" aria-current="page" href="{{route('admin.categories.index')}}">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Categories
                     </a>
                 </li>
             </ul>
