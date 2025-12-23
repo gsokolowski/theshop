@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CategoryStoreRequest extends FormRequest
+class BrandStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,11 @@ class CategoryStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:categories,name'
+            'name' => 'required|string|max:255|unique:brands,name',
         ];
     }
-    /**
+    
+        /**
      * Get custom validation messages.
      *
      * @return array<string, string>
@@ -33,10 +34,10 @@ class CategoryStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Category name is required',
-            'name.string' => 'Category name must be a valid text',
-            'name.max' => 'Category name must not exceed 255 characters',
-            'name.unique' => 'This category name already exists',
+            'name.required' => 'Brand name is required',
+            'name.string' => 'Brand name must be a valid text',
+            'name.max' => 'Brand name must not exceed 255 characters',
+            'name.unique' => 'This brand name already exists',
         ];
     }
 }

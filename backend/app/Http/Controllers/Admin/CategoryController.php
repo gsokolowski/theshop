@@ -36,18 +36,17 @@ class CategoryController extends Controller
      */
     public function store(CategoryStoreRequest $request)
     {
-        // Validate the CategoryStoreRequest
-        if($request->validated()) {
-            // Create a new category
-            $data = $request->validated();
-            $data['slug'] = Str::slug($data['name']);
-            Category::create($data);
-            // Redirect to the index page with a success message
-            return redirect()->route('admin.categories.index')->with('success', 'Category created successfully');
-        } else {
-            // Redirect to the create page with a error message
-            return redirect()->route('admin.categories.create')->with('error', 'Category creation failed');
-        }
+        // Validation already happened automatically via FormRequest
+        // If we reach here, validation passed
+        // Create a new category
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
+        Category::create($data);
+        // Redirect to the index page with a success message
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully');
+
+        // Redirect to the create page with a error message
+        return redirect()->route('admin.categories.create')->with('error', 'Category creation failed');
     }
 
     /**
@@ -76,20 +75,19 @@ class CategoryController extends Controller
      */
     public function update(CategoryUpdateRequest $request, Category $category)
     {
-        // Validate the CategoryUpdateRequest use slug
-        if($request->validated()) {
-            // Update the category
-            $data = $request->validated();
-            $data['slug'] = Str::slug($data['name']);
-            $category->update($data);
-            // Redirect to the index page with a success message
-            return redirect()->route('admin.categories.index')
-                ->with('success', 'Category updated successfully');                
-        } else {
-            // Redirect to the edit page with a error message
-            return redirect()->route('admin.categories.edit', $category->id)
-                ->with('error', 'Category update failed');
-        }
+        // Validation already happened automatically via FormRequest
+        // If we reach here, validation passed
+        // Update the category
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
+        $category->update($data);
+        // Redirect to the index page with a success message
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Category updated successfully');                
+        
+        // Redirect to the edit page with a error message
+        return redirect()->route('admin.categories.edit', $category->slug)
+            ->with('error', 'Category update failed');
     }
 
     /**

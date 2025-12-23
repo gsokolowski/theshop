@@ -15,25 +15,33 @@
                     </a>
                 </div>
                 <hr>
+                 <!-- Display validation errors at top of form -->
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <!--  form for create category -->
                 <form action="{{route('admin.categories.store')}}" method="post">
                     @csrf
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input 
-                        type="text" 
-                        class="form-control @error('name') is-invalid @enderror"
-                        name ="name" 
-                        id="name"
-                        class="form-control" 
-                        required 
-                        value="{{old('name')}}"
-                        placeholder="Enter category name"
-                        autofocus>
+                            type="text" 
+                            class="form-control @error('name') is-invalid @enderror"
+                            name="name" 
+                            id="name"
+                            value="{{old('name')}}"
+                            placeholder="Enter category name"
+                            autofocus>
                         @error('name')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
                         @enderror
                     </div>
                     <button type="submit" class="btn btn-sm btn-primary">
