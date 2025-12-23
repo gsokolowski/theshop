@@ -84,7 +84,7 @@ class BrandController extends Controller
         return redirect()->route('admin.brands.index')->with('success', 'Brand updated successfully');
 
         // Redirect to the edit page with a error message
-        return redirect()->route('admin.brands.edit', $brand->id)
+        return redirect()->route('admin.brands.edit', $brand->slug)
             ->with('error', 'Brand update failed');
     }
 
