@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,4 +52,13 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/sizes/{size}/edit', [SizeController::class, 'edit'])->name('admin.sizes.edit');
     Route::put('/sizes/{size}', [SizeController::class, 'update'])->name('admin.sizes.update');
     Route::delete('/sizes/{size}', [SizeController::class, 'destroy'])->name('admin.sizes.destroy');
+
+    // Product individual routes
+    Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
+    Route::get('/products/create', [ProductController::class, 'create'])->name('admin.products.create');
+    Route::post('/products', [ProductController::class, 'store'])->name('admin.products.store');
+    Route::get('/products/{product}', [ProductController::class, 'show'])->name('admin.products.show');
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
+    Route::put('/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
 });
