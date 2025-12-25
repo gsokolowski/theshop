@@ -23,7 +23,7 @@ class Product extends Model
         'status',
         'category_id',
         'brand_id',
-        'color_id',
+        'color_id'
     ];
 
     // use slug for product url
