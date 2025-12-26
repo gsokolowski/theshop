@@ -89,5 +89,55 @@
             });
         }
     </script>
+    <script>
+        /**
+         * Preview image when file input changes
+         * @param {string} inputId - ID of the file input element
+         * @param {string} previewId - ID of the preview image element
+         */
+        function previewImage(inputId, previewId) {
+            const input = document.getElementById(inputId); // thumbnail, first_image, second_image, third_image
+            if (!input) return; // if the input is not found, return
+            
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0]; // the file that is selected
+                
+                if (file) {
+                    const reader = new FileReader(); // to read the file
+                    
+                    reader.onload = function(e) {
+                        const preview = document.getElementById(previewId); // thumbnail_preview, first_image_preview, second_image_preview, third_image_preview
+                        if (preview) {
+                            preview.src = e.target.result; // the result of the file that is read
+                            preview.style.display = 'block'; // to display the preview image
+                        }
+                    };
+                    
+                    reader.onerror = function(e) {
+                        console.error('Error reading file:', e); // if the file is not read, return an error
+                    };
+                    
+                    reader.readAsDataURL(file); // to read the file as a data URL, show the image in the preview element
+                }
+            });
+        }
+        
+        // Initialize preview for thumbnail (if element exists)
+        if (document.getElementById('thumbnail')) {
+            previewImage('thumbnail', 'thumbnail_preview');
+        }
+        // Initialize preview for first image (if element exists)
+        if (document.getElementById('first_image')) {
+            previewImage('first_image', 'first_image_preview');
+        }
+        // Initialize preview for second image (if element exists)
+        if (document.getElementById('second_image')) {
+            previewImage('second_image', 'second_image_preview');
+        }
+        // Initialize preview for third image (if element exists)
+        if (document.getElementById('third_image')) {
+            previewImage('third_image', 'third_image_preview');
+        }
+    </script>
   </body>
 </html>

@@ -98,6 +98,11 @@
                             </div>
                         @enderror
                     </div>
+                    <!-- code for preview the thumbnail image once is loaded into from-->
+                    <div class="form-group">
+                        <label for="thumbnail_preview">Thumbnail Preview</label>
+                        <img id="thumbnail_preview" src="" alt="Thumbnail Preview" width="100" class="img-fluid rounded-3xl" style="display: none;">
+                    </div>
                     <div class="form-group">
                         <label for="first_image">First Image</label>
                         <input type="file" class="form-control @error('first_image') is-invalid @enderror" name="first_image" id="first_image">
@@ -106,6 +111,11 @@
                                 {{ $message }}
                             </div>
                         @enderror
+                    </div>
+                    <!-- code for preview the first image once is loaded into from-->
+                    <div class="form-group">
+                        <label for="first_image_preview">First Image Preview</label>
+                        <img id="first_image_preview" src="" alt="First Image Preview" width="100" class="img-fluid rounded-3xl" style="display: none;">
                     </div>
                     <div class="form-group">
                         <label for="second_image">Second Image</label>
@@ -116,6 +126,11 @@
                             </div>
                         @enderror
                     </div>
+                    <!-- code for preview the second image once is loaded into from-->
+                    <div class="form-group">
+                        <label for="second_image_preview">Second Image Preview</label>
+                        <img id="second_image_preview" src="" alt="Second Image Preview" width="100" class="img-fluid rounded-3xl" style="display: none;">
+                    </div>
                     <div class="form-group">
                         <label for="third_image">Third Image</label>
                         <input type="file" class="form-control @error('third_image') is-invalid @enderror" name="third_image" id="third_image">
@@ -124,6 +139,11 @@
                                 {{ $message }}
                             </div>
                         @enderror
+                    </div>
+                    <!-- code for preview the third image once is loaded into from-->
+                    <div class="form-group">
+                        <label for="third_image_preview">Third Image Preview</label>
+                        <img id="third_image_preview" src="" alt="Third Image Preview" width="100" class="img-fluid rounded-3xl" style="display: none;">
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
