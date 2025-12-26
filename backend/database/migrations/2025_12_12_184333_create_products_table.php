@@ -25,7 +25,6 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('brand_id')->constrained('brands')->onDelete('cascade');
-            $table->foreignId('color_id')->constrained('colors')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -23,7 +23,7 @@ class ProductController extends Controller
     {
         //Display a listing of products
         return view('admin.products.index', [
-            'products' => Product::with('category', 'brand', 'color', 'size')->latest()->get()
+            'products' => Product::with('category', 'brand', 'colors', 'sizes')->latest()->get()
         ]);
     }
 
@@ -48,49 +48,51 @@ class ProductController extends Controller
     {
         // Validation already happened automatically via FormRequest
         // If we reach here, validation passed
-        // if validated
-        if ($request->validated()) {
-            // get the validated data
-            $data = $request->validated();
-            // if thumbnail is uploaded, upload and save the thumbnail image
-            if ($request->hasFile('thumbnail')) {
-                $data['thumbnail'] = $this->uploadImage($request, 'thumbnail');
-            }
-            // if first image is uploaded, upload and save the first image
-            if ($request->hasFile('first_image')) {
-                $data['first_image'] = $this->uploadImage($request, 'first_image');
-            }
-            // if second image is uploaded, upload and save the second image
-            if ($request->hasFile('second_image')) {
-                $data['second_image'] = $this->uploadImage($request, 'second_image');
-            }
-            // if third image is uploaded, upload and save the third image
-            if ($request->hasFile('third_image')) {
-                $data['third_image'] = $this->uploadImage($request, 'third_image');
-            }
-            // product slug
-            $data['slug'] = Str::slug($data['name']);
-            
-            // Create the product with the data
-            $product = Product::create($data);
-            
-            // pivot table for colors sync the colors to the product if color is selected
-            if ($request->has('color_id')) {
-                $product->colors()->sync($data['color_id']);
-            }
-            // pivot table for sizes sync the sizes to the product if size is selected
-            if ($request->has('size_id')) {
-                $product->sizes()->sync($data['size_id']);
-            }
-
-            // Redirect to the index page with a success message
-            return redirect()->route('admin.products.index')
-                ->with('success', 'Product created successfully');
-
+                
+        // get the validated data
+        $data = $request->validated();
+    
+        // if thumbnail is uploaded, upload and save the thumbnail image
+        if ($request->hasFile('thumbnail')) {
+            $data['thumbnail'] = $this->uploadImage($request, 'thumbnail');
         }
-        // Redirect to the create page with a error message
-        return redirect()->route('admin.products.create')
-            ->with('error', 'Product creation failed');
+        // if first image is uploaded, upload and save the first image
+        if ($request->hasFile('first_image')) {
+            $data['first_image'] = $this->uploadImage($request, 'first_image');
+        }
+        // if second image is uploaded, upload and save the second image
+        if ($request->hasFile('second_image')) {
+            $data['second_image'] = $this->uploadImage($request, 'second_image');
+        }
+        // if third image is uploaded, upload and save the third image
+        if ($request->hasFile('third_image')) {
+            $data['third_image'] = $this->uploadImage($request, 'third_image');
+        }
+
+        $data['slug'] = Str::slug($data['name']);
+        $data['status'] = $request->status;
+        
+        $colorIds = $data['color_id'] ?? [];
+        $sizeIds = $data['size_id'] ?? [];
+        // Remove color_id and size_id from data because they're handled via pivot tables
+        unset($data['color_id'], $data['size_id']);
+        
+        // Create the product with the data
+        $product = Product::create($data);
+        
+        // Attach colors to the product if color is selected
+        if (!empty($colorIds)) {
+            $product->colors()->attach($colorIds);
+        }
+        // Attach sizes to the product if size is selected
+        if (!empty($sizeIds)) {
+            $product->sizes()->attach($sizeIds);
+        }
+
+        // Redirect to the index page with a success message
+        return redirect()->route('admin.products.index')
+            ->with('success', 'Product created successfully');
+
     }
 
     /**
@@ -123,60 +125,66 @@ class ProductController extends Controller
     public function update(ProductUpdateRequest $request, Product $product)
     {
 
-        // if validated
-        if ($request->validated()) {
-            // if product is not found, return 404
-            if (!$product) {
-                abort(404);
-            }
-            // get the validated data
-            $data = $request->validated();
-            // if thumbnail is uploaded, upload and save the thumbnail image
-            if ($request->hasFile('thumbnail')) {
-                // delete the old thumbnail image
+        // Route model binding ensures product exists
+        
+        // get the validated data
+        $data = $request->validated();
+        // if thumbnail is uploaded, upload and save the thumbnail image
+        if ($request->hasFile('thumbnail')) {
+            // delete the old thumbnail image if it exists
+            if ($product->thumbnail) {
                 Storage::disk('public')->delete($product->thumbnail);
-                $data['thumbnail'] = $this->uploadImage($request, 'thumbnail');
             }
-            // if first image is uploaded, upload and save the first image
-            if ($request->hasFile('first_image')) {
-                // delete the old first image
-                Storage::disk('public')->delete($product->first_image);
-                $data['first_image'] = $this->uploadImage($request, 'first_image');
-            }
-            // if second image is uploaded, upload and save the second image
-            if ($request->hasFile('second_image')) {
-                // delete the old second image
-                Storage::disk('public')->delete($product->second_image);
-                $data['second_image'] = $this->uploadImage($request, 'second_image');
-            }
-            // if third image is uploaded, upload and save the third image
-            if ($request->hasFile('third_image')) {
-                // delete the old third image
-                Storage::disk('public')->delete($product->third_image);
-                $data['third_image'] = $this->uploadImage($request, 'third_image');
-            }
-            // product slug
-            $data['slug'] = Str::slug($data['name']);
-            // update status
-            $data['status'] = $request->status; //1 for active, 0 for inactive
-            // update the product with the data
-            $product->update($data);
-            // pivot table for colors sync the colors to the product if color is selected
-            if ($request->has('color_id')) {
-                $product->colors()->sync($data['color_id']);
-            }
-            // pivot table for sizes sync the sizes to the product if size is selected
-            if ($request->has('size_id')) {
-                $product->sizes()->sync($data['size_id']);
-            }
-            // Redirect to the index page with a success message
-            return redirect()->route('admin.products.index')
-                ->with('success', 'Product updated successfully');
+            $data['thumbnail'] = $this->uploadImage($request, 'thumbnail');
         }
+        // if first image is uploaded, upload and save the first image
+        if ($request->hasFile('first_image')) {
+            // delete the old first image if it exists
+            if ($product->first_image) {
+                Storage::disk('public')->delete($product->first_image);
+            }
+            $data['first_image'] = $this->uploadImage($request, 'first_image');
+        }
+        // if second image is uploaded, upload and save the second image
+        if ($request->hasFile('second_image')) {
+            // delete the old second image if it exists
+            if ($product->second_image) {
+                Storage::disk('public')->delete($product->second_image);
+            }
+            $data['second_image'] = $this->uploadImage($request, 'second_image');
+        }
+        // if third image is uploaded, upload and save the third image
+        if ($request->hasFile('third_image')) {
+            // delete the old third image if it exists
+            if ($product->third_image) {
+                Storage::disk('public')->delete($product->third_image);
+            }
+            $data['third_image'] = $this->uploadImage($request, 'third_image');
+        }
+        
+        $data['slug'] = Str::slug($data['name']);        
+        $data['status'] = $data['status'] ?? $request->status;
+        
+        $colorIds = $data['color_id'] ?? [];
+        $sizeIds = $data['size_id'] ?? [];
+        // Remove color_id and size_id from data because they're handled via pivot tables
+        unset($data['color_id'], $data['size_id']);
 
-        // Redirect to the edit page with a error message
-        return redirect()->route('admin.products.edit', $product->id)
-            ->with('error', 'Product update failed');
+        // Sync the product with the data
+        $product->update($data);
+
+        // Sync colors to the product if color is selected
+        if (!empty($colorIds)) {
+            $product->colors()->sync($colorIds);
+        }
+        // Sync sizes to the product if size is selected
+        if (!empty($sizeIds)) {
+            $product->sizes()->sync($sizeIds);
+        }
+        // Redirect to the index page with a success message
+        return redirect()->route('admin.products.index')
+            ->with('success', 'Product updated successfully');
+    
     }
 
     /**
@@ -185,15 +193,22 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
 
-        // delete the product images
-        Storage::disk('public')->delete($product->thumbnail);
-        Storage::disk('public')->delete($product->first_image);
-        Storage::disk('public')->delete($product->second_image);
-        Storage::disk('public')->delete($product->third_image);
+        // Delete product images if they exist
+        if ($product->thumbnail) {
+            Storage::disk('public')->delete($product->thumbnail);
+        }
+        if ($product->first_image) {
+            Storage::disk('public')->delete($product->first_image);
+        }
+        if ($product->second_image) {
+            Storage::disk('public')->delete($product->second_image);
+        }
+        if ($product->third_image) {
+            Storage::disk('public')->delete($product->third_image);
+        }
 
-        // Delete the product
         $product->delete();
-        // Redirect to the index page with a success message
+        
         return redirect()->route('admin.products.index')
             ->with('success', 'Product deleted successfully');
     }
@@ -202,18 +217,18 @@ class ProductController extends Controller
     /**
      * Upload and save product images to the product
      */
-    public function uploadImage(Request $request, $type)
+    public function uploadImage(Request $request, $fieldName)
     {
         // Validate the request
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            $fieldName => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         // Generate a unique name for the image
-        $image_name = time().'_'.$type.'_'.$request->file('image')->getClientOriginalName();
+        $image_name = time().'_'.$fieldName.'_'.$request->file($fieldName)->getClientOriginalName();
         // Get the extension of the image
-        $image_extension = $request->file('image')->getClientOriginalExtension();
+        $image_extension = $request->file($fieldName)->getClientOriginalExtension();
         // Upload and save the image to the storage/app/public/images/products
-        $path = $request->file('image')->storeAs('images/products', $image_name.'.'.$image_extension, 'public'); // path like: storage/app/public/images/products/image_name.extension
+        $path = $request->file($fieldName)->storeAs('images/products', $image_name.'.'.$image_extension, 'public'); // path like: storage/app/public/images/products/image_name.extension
         // Returns: "images/products/1234567890_thumbnail_product_name.jpg" which is the path to the image
         return $path;
     }   
