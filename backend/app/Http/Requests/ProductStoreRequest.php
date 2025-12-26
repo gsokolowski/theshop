@@ -28,13 +28,13 @@ class ProductStoreRequest extends FormRequest
             'description' => 'required|string|max:5000',
             'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'first_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'second_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'third_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'second_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'third_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'required|boolean',
             'category_id' => 'required',
             'brand_id' => 'required',
-            'color_id' => 'required',
-            'size_id' => 'required',
+            'color_id' => 'required|array',
+            'size_id' => 'required|array',
         ];
     }
     public function messages(): array

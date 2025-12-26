@@ -22,8 +22,7 @@ class Product extends Model
         'third_image',
         'status',
         'category_id',
-        'brand_id',
-        'color_id'
+        'brand_id'
     ];
 
     // use slug for product url
@@ -44,16 +43,16 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    // Product belongs to color
-    public function color(): BelongsToMany
+    // Product belongs to many colors via pivot table color_product
+    public function colors(): BelongsToMany
     {
-        return $this->belongsToMany(Color::class);
+        return $this->belongsToMany(Color::class, 'color_product');
     }
 
-    // Product belongs to many sizes
+    // Product belongs to many sizes via pivot table product_size
     public function sizes(): BelongsToMany
     {
-        return $this->belongsToMany(Size::class);
+        return $this->belongsToMany(Size::class, 'product_size');
     }
 
     // Product belongs to many orders
