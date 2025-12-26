@@ -158,7 +158,7 @@
                         <select class="form-control @error('category_id') is-invalid @enderror" name="category_id" id="category_id">
                             <option value="" selected disabled>Select category</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -167,7 +167,7 @@
                         <select class="form-control @error('brand_id') is-invalid @enderror" name="brand_id" id="brand_id">
                             <option value="" selected disabled>Select brand</option>
                             @foreach ($brands as $brand)
-                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -176,7 +176,7 @@
                         <select class="form-control @error('color_id') is-invalid @enderror" name="color_id[]" id="color_id" multiple>
                             <!-- multiple select -->
                             @foreach ($colors as $color)
-                                <option value="{{ $color->id }}">{{ $color->name }}</option>
+                                <option value="{{ $color->id }}" {{ in_array($color->id, old('color_id', [])) ? 'selected' : '' }}>{{ $color->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -184,18 +184,16 @@
                         <label for="size_id">Size</label>
                         <select class="form-control @error('size_id') is-invalid @enderror" name="size_id[]" id="size_id" multiple>
                             @foreach ($sizes as $size)
-                                <option value="{{ $size->id }}">{{ $size->name }}</option>
+                                <option value="{{ $size->id }}" {{ in_array($size->id, old('size_id', [])) ? 'selected' : '' }}>{{ $size->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group">
-                    
-                    <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i>
-                        Create
-                    </button>
-                    </div>
-                    <br><br><br>
+                    <div class="form-group mb-6 pb-4" >                    
+                        <button type="submit" class="btn btn-sm btn-primary mt-4 mb-4">
+                            <i class="fas fa-plus btn-icon" ></i>
+                            Create
+                        </button>
+                    </div>                    
                 </form>
             </div>
         </div>
