@@ -10,18 +10,19 @@ Route::get('/user', function (Request $request) {
 
 
 // Product routes  use Api\ProductController.php to handle the requests
+// url: http://127.0.0.1:8000/api/products
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-// show a single product
+// url: http://127.0.0.1:8000/api/products/{product}
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-// filter products by category
+// url: http://127.0.0.1:8000/api/products/category/{category}
 Route::get('/products/category/{category}', [ProductController::class, 'filterByCategory'])->name('products.filter.category');
-// filter products by brand
+// url: http://127.0.0.1:8000/api/products/brand/{brand}
 Route::get('/products/brand/{brand}', [ProductController::class, 'filterByBrand'])->name('products.filter.brand');
-// filter products by color
+// url: http://127.0.0.1:8000/api/products/color/{color}
 Route::get('/products/color/{color}', [ProductController::class, 'filterByColor'])->name('products.filter.color');
-// filter products by size
+// url: http://127.0.0.1:8000/api/products/size/{size}
 Route::get('/products/size/{size}', [ProductController::class, 'filterBySize'])->name('products.filter.size');
-// filter products by search term
+// url: http://127.0.0.1:8000/api/products/search/{search}
 Route::get('/products/search/{search}', [ProductController::class, 'filterBySearchTerm'])->name('products.filter.search');
 
 

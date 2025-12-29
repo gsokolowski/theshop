@@ -15,23 +15,25 @@ use Illuminate\Support\Facades\Cache;
 class ProductController extends Controller
 {
     //create index method to return all products with their categories, brands, colors, sizes but use ProductResource to format the response
+    // http://127.0.0.1:8000/api/products
     public function index()
     {
         $products = ProductResource::collection(
             Product::with('category', 'brand', 'colors', 'sizes') // eager load the relationships
-                ->latest()
-                ->get()
-                ->additional([
-                    'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
-                    'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
-                    'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-                    'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get())
-                ]));
+            ->latest()
+            ->get())
+            ->additional([
+                'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
+                'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
+                'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
+                'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get())
+            ]);
         
         return $products; 
     }
 
     // Get Products by slug but use ProductResource to format the response and eager load the relationships
+    // http://127.0.0.1:8000/api/products/{product}
     public function show(Product $product)
     {
         // check if the product exists
