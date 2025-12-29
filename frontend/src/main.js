@@ -5,6 +5,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import './style.css'
 import App from './App.vue'
 import router from './router/index.js'  // import router
+import { createPinia } from 'pinia'
+
+const pinia = createPinia()
 
 // Configure axios (if needed)
 import axios from 'axios'
@@ -14,8 +17,9 @@ axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 // create app
 const app = createApp(App)
-
 // use router
 app.use(router)
-
-app.mount('#app')
+// use pinia
+app.use(pinia)
+// mount app to the div with id app
+app.mount('#app') 
