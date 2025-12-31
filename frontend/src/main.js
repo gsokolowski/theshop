@@ -2,9 +2,12 @@ import { createApp } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import 'vue-loading-overlay/dist/css/index.css';
 import './style.css'
-import App from './App.vue'
+import App from './App.vue' // import App component
 import router from './router/index.js'  // import router
+import {LoadingPlugin} from 'vue-loading-overlay';
+import VueDOMPurifyHTML from 'vue-dompurify-html' 
 import { createPinia } from 'pinia'
 
 const pinia = createPinia()
@@ -17,6 +20,8 @@ axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 // create app
 const app = createApp(App)
+app.use(VueDOMPurifyHTML) 
+app.use(LoadingPlugin)
 // use router
 app.use(router)
 // use pinia
