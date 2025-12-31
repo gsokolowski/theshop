@@ -7,8 +7,9 @@
             <ProductList />
         </div>
     </div>
+    
 </template>
 
 <script setup>
-import ProductList from './products/ProductsList.vue'
+  import ProductList from './products/ProductsList.vue'
 </script>
