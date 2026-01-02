@@ -13,6 +13,7 @@ export const useProductsStore = defineStore('products', {
         sizes: [], // sizes array
         isLoading: false, // isLoading state - boolean
         filter: null, // filter state - string or null
+        productsPerPage: 4, // products per page state - number
     }),
     getters: {
         getProducts: (state) => state.products,      // Returns products array
@@ -24,7 +25,12 @@ export const useProductsStore = defineStore('products', {
         // Returns products that are in stock (status = 1)
         getInStockProducts: (state) => {
             return state.products.filter(product => product.status === 1)
-        }, 
+        },
+        // Returns products per page state - number - getter
+        getProductsPerPage: (state) => state.productsPerPage, 
+
+        // all products count - getter
+        getAllProductsCount: (state) => state.products.length,
     },
     actions: {
       // fetch all products from the API
@@ -46,6 +52,6 @@ export const useProductsStore = defineStore('products', {
         } finally {
           this.isLoading = false
         }
-      },
+      },      
     },
   })
