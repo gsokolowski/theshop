@@ -1,14 +1,19 @@
 <template>
-    <div class="col-md-4">
+    <!-- Sidebar (1/3) -->
+    <aside class="col-md-4 bg-light p-4">
         <div class="d-flex align-items-center justify-content-between mb-3">
-            <h5>Filters</h5>
+            <h4>Filters</h4>
             <button class="btn btn-link text-dark"
-                @click="productsStore.clearFilters"
-                >Clear all</button>
+                @click="productsStore.clearFilters">
+                Clear all
+            </button>
         </div>
-        <Brands />
-    </div>
+        <div class="mb-3">
+            <Brands />
+        </div>
+    </aside>
 </template>
+
 <script setup>
     
     import Brands from "../partials/Brands.vue"
@@ -16,6 +21,8 @@
 
     //define the store
     const productsStore = useProductsStore()
+
 </script>
+
 <style scoped>
 </style>
