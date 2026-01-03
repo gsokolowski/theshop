@@ -1,8 +1,10 @@
 <template>
-    <div class="row">
-        <Spinner :store="productsStore" /> <!-- pass the productsStore to the Spinner component -->
-        <!-- ✅ Use store's productsPerPage directly -->
-        <ProductsListItem 
+    <div class="col-md-8 p-4">
+        <div class="row">
+            <Spinner :store="productsStore" /> 
+
+            <!-- ✅ Use store's productsPerPage directly -->
+            <ProductsListItem 
             v-for="product in productsStore.products.slice(0, productsStore.productsPerPage)" 
             :key="product.id" 
             :product="product"/> <!-- pass the product propsto the ProductsListItem component -->
@@ -11,7 +13,7 @@
             <div class="text-center mt-4">
                 <!-- if no more products to load hide the button -->
                 <!-- ✅ Use store's productsPerPage directly -->
-                 <button 
+                    <button 
                     name="loadMore" 
                     class="btn btn-outline-dark" 
                     @click="productsStore.loadMoreProducts()" 
@@ -19,6 +21,7 @@
                     <i class="bi bi-arrow-down"></i> Load More
                 </button>
             </div>
+        </div>
     </div>
 </template>
 
