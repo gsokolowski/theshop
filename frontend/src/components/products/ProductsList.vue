@@ -1,19 +1,21 @@
 <template>
     <div class="row">
         <Spinner :store="productsStore" /> <!-- pass the productsStore to the Spinner component -->
+        <!-- ✅ Use store's productsPerPage directly -->
         <ProductsListItem 
-            v-for="product in productsStore.products.slice(0, data.productsPerPage)" 
+            v-for="product in productsStore.products.slice(0, productsStore.productsPerPage)" 
             :key="product.id" 
             :product="product"/> <!-- pass the product propsto the ProductsListItem component -->
 
             <!-- load more products button -->
             <div class="text-center mt-4">
                 <!-- if no more products to load hide the button -->
-                 <!-- increment productsPerPage by productsStore.getProductsPerPage on click -->
-                <button 
+                <!-- ✅ Use store's productsPerPage directly -->
+                 <button 
+                    name="loadMore" 
                     class="btn btn-outline-dark" 
-                    @click="data.productsPerPage += productsStore.getProductsPerPage" 
-                    v-if="data.productsPerPage < productsStore.getAllProductsCount">
+                    @click="productsStore.loadMoreProducts()" 
+                    v-if="productsStore.productsPerPage < productsStore.getProductCount">
                     <i class="bi bi-arrow-down"></i> Load More
                 </button>
             </div>
@@ -25,16 +27,12 @@
     import { useProductsStore } from '../../stores/useProductsStore.js'
     import ProductsListItem from './ProductsListItem.vue'
     import Spinner from '../layouts/Spinner.vue'
-    import { onMounted, reactive } from 'vue';
+    import { onMounted } from 'vue'
 
+    console.log('ProductsList component mounted')
     // define the store variable and import the useProductsStore
     const productsStore = useProductsStore()
     
-    // defin how many products to show per page
-    const data = reactive({
-        productsPerPage: productsStore.getProductsPerPage // Local state for products per page
-    })
-
     // call fetchAllProducts when component mounts to fetch the products from the API
     onMounted(() => {
         productsStore.fetchAllProducts()

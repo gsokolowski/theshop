@@ -66,6 +66,7 @@ class ProductController extends Controller
     }
 
     // Filter Product by brand
+    // http://127.0.0.1:8000/api/products/brand/addidas - brand is the slug of the brand
     public function filterByBrand(Brand $brand)
     {
         $products = ProductResource::collection(
@@ -80,6 +81,7 @@ class ProductController extends Controller
                 'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get()),
                 'filter' => $brand->name
             ]);
+
         return $products;
     }
 

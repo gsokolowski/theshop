@@ -5,7 +5,8 @@
         <img :src="product.thumbnail" class="card-img-top" alt="Product Image">
         <div class="card-body">
             <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text" v-dompurify-html="product.description.substring(0,50)"></p>
+            <p class="card-text">{{ product.description.substring(0,50) }}</p>
+            <p class="card-text">Brand: {{ product.brand.name }}</p>
             <div class="d-flex justify-content-between align-items-center">
                 <span class="h5 mb-0">${{ product.price }}</span>
                 <div>

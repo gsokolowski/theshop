@@ -4,12 +4,14 @@
     <div class="row my-5">
         <div class="col-md-8">
             <!-- Display the ProductsList component -->
-            <ProductList />
+            <Sidebar />
+            <ProductsList />
         </div>
     </div>
     
 </template>
 
 <script setup>
-  import ProductList from './products/ProductsList.vue'
+    import Sidebar from './layouts/Sidebar.vue'
+  import ProductsList from './products/ProductsList.vue'
 </script>
