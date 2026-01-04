@@ -26,7 +26,7 @@ class ProductController extends Controller
                 'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
                 'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
                 'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-                'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get())
+                'sizes' => Size::orderBy('id', 'asc')->get(),
             ]);
         
         return $products; 
@@ -48,6 +48,7 @@ class ProductController extends Controller
     }
 
     // Filter Product by catergory
+    // http://127.0.0.1:8000/api/products/category/women - women is the slug of the category
     public function filterByCategory(Category $category)
     {
         $products = ProductResource::collection(
@@ -59,7 +60,7 @@ class ProductController extends Controller
                 'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
                 'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
                 'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-                'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get()),
+                'sizes' => Size::orderBy('id', 'asc')->get(),
                 'filter' => $category->name
             ]);
         return $products;
@@ -78,7 +79,7 @@ class ProductController extends Controller
                 'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
                 'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
                 'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-                'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get()),
+                'sizes' => Size::orderBy('id', 'asc')->get(),
                 'filter' => $brand->name
             ]);
 
@@ -86,36 +87,42 @@ class ProductController extends Controller
     }
 
     // Filter Product by color
+    // http://127.0.0.1:8000/api/products/color/1 - 1 is the id of the color
     public function filterByColor(Color $color)
     {
         $products = ProductResource::collection(
             Product::with('category', 'brand', 'colors', 'sizes') // eager load the relationships
-            ->where('color_id', $color->id)
+            ->whereHas('colors', function($query) use ($color) {
+                $query->where('colors.id', $color->id);
+            })
             ->latest()
             ->get())
             ->additional([ // additional data to the response
                 'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
                 'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
                 'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-                'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get()),
+                'sizes' => Size::orderBy('id', 'asc')->get(),
                 'filter' => $color->name
             ]);
         return $products;
     }
 
     // Filter Product by size
+    // http://127.0.0.1:8000/api/products/size/1 - 1 is the id of the size
     public function filterBySize(Size $size)
     {
         $products = ProductResource::collection(
             Product::with('category', 'brand', 'colors', 'sizes') // eager load the relationships
-            ->where('size_id', $size->id)
+            ->whereHas('sizes', function($query) use ($size) {
+                $query->where('sizes.id', $size->id);
+            })
             ->latest()
             ->get())
             ->additional([ // additional data to the response
                 'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
                 'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
                 'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-                'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get()),
+                'sizes' => Size::orderBy('id', 'asc')->get(),
                 'filter' => $size->name
             ]);
         return $products;

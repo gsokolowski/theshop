@@ -36,7 +36,7 @@ export const useProductsStore = defineStore('products', {
        * How Load more button works:
        * When the user clicks the load more button, the products per page state is increased by 4.
        * When I call different action like filterProductsByBrand, fetchAllProducts, etc., I call the resetProductsPerPage action to reset the products per page state to 4.
-       * I have removes local state reactive state for products per page to control everythong in the store.
+       * I have removes local state reactive state for products per page to control
        */
 
       // reset products per page state to 4 when the filter is changed action
@@ -74,16 +74,75 @@ export const useProductsStore = defineStore('products', {
         }
       },
       
-      // filter products by brand - action
-      async filterProductsByBrand(brand) {
-        console.log('Filtering products by brand:', brand)
+      // filter products by categorySlug - action
+      async filterProductsByCategory(categorySlug) {
+        console.log('Filtering products by category:', categorySlug)
         this.resetProductsPerPage() // Reset before fetching products
         // set the isLoading state to true
         this.isLoading = true
         // try to fetch the products from the API
         try {
           // fetch the products from the API
-          const response = await axios.get(`/api/products/brand/${brand}`) // use axios.defaults.baseURL to get the products
+          const response = await axios.get(`/api/products/category/${categorySlug}`) // use axios.defaults.baseURL to get the products
+          this.products = response.data.data //Access nested data property
+          this.productCount = response.data.data.length
+          console.log('Product count:', this.productCount)
+        } catch (error) {
+          console.error('Error fetching products:', error)
+        } finally {
+          this.isLoading = false
+        }
+      },
+
+      // filter products by brandSlug - action
+      async filterProductsByBrand(brandSlug) {
+        console.log('Filtering products by brand:', brandSlug)
+        this.resetProductsPerPage() // Reset before fetching products
+        // set the isLoading state to true
+        this.isLoading = true
+        // try to fetch the products from the API
+        try {
+          // fetch the products from the API
+          const response = await axios.get(`/api/products/brand/${brandSlug}`) // use axios.defaults.baseURL to get the products
+          this.products = response.data.data //Access nested data property
+          this.productCount = response.data.data.length
+          console.log('Product count:', this.productCount)
+        } catch (error) {
+          console.error('Error fetching products:', error)
+        } finally {
+          this.isLoading = false
+        }
+      },
+      // filter products by size - action
+      async filterProductsBySize(sizeId) {
+        console.log('Filtering products by size:', sizeId)
+        this.resetProductsPerPage() // Reset before fetching products
+        // set the isLoading state to true
+        this.isLoading = true
+        // try to fetch the products from the API
+        try {
+          // fetch the products from the API
+          const response = await axios.get(`/api/products/size/${sizeId}`) // use axios.defaults.baseURL to get the products
+          this.products = response.data.data //Access nested data property
+          this.productCount = response.data.data.length
+          console.log('Product count:', this.productCount)
+        } catch (error) {
+          console.error('Error fetching products:', error)
+        } finally {
+          this.isLoading = false
+        }
+      },
+      
+      // filter products by color - action
+      async filterProductsByColor(colorId) {
+        console.log('Filtering products by color:', colorId)
+        this.resetProductsPerPage() // Reset before fetching products
+        // set the isLoading state to true
+        this.isLoading = true
+        // try to fetch the products from the API
+        try {
+          // fetch the products from the API
+          const response = await axios.get(`/api/products/color/${colorId}`) // use axios.defaults.baseURL to get the products
           this.products = response.data.data //Access nested data property
           this.productCount = response.data.data.length
           console.log('Product count:', this.productCount)
