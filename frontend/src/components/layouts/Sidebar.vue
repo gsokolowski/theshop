@@ -10,13 +10,19 @@
         </div>
         <div class="mb-3">
             <Brands />
-        </div>
+            <Categories />
+            <Sizes />
+            <Colors />
+        </div>  
     </aside>
 </template>
 
 <script setup>
-    
+    import Colors from "../partials/Colors.vue"
     import Brands from "../partials/Brands.vue"
+    import Categories from "../partials/Categories.vue"
+    import Sizes from "../partials/Sizes.vue"
+
     import { useProductsStore } from "../../stores/useProductsStore"
 
     //define the store
