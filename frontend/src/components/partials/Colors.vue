@@ -1,6 +1,6 @@
 <!-- dispalys all colors list in a sidebar -->
 <template>
-  <div class="mb-3">
+  <div class="mb-3 mt-3">
     <h6>Colors</h6>
     <div class="d-flex flex-wrap justify-content-start">
         <div class="border border-light-subtle shadow-sm border-2 rounded mb-1 me-1" 

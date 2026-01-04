@@ -9,8 +9,8 @@
             </button>
         </div>
         <div class="mb-3">
-            <Brands />
             <Categories />
+            <Brands />
             <Sizes />
             <Colors />
         </div>  

@@ -1,6 +1,6 @@
 <!-- displays all sizes list in a sidebar -->
 <template>
-    <h6>Sizes</h6>
+    <h6 class="mt-3 mb-3">Sizes</h6>
     <div class="d-flex flex-wrap gap-2">
         <div 
             v-for="size in productsStore.sizes"
