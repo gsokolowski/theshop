@@ -1,6 +1,6 @@
 <!-- dispalys all categories list in a sidebar -->
 <template>
-    <h6>Categories</h6>
+    <h6 class="mt-3 mb-3">Categories</h6>
     <ul class="nav d-flex flex-column">
         <li class="nav-item mb-1" v-for="category in productsStore.categories"
             :key="category.id">
