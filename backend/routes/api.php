@@ -23,6 +23,6 @@ Route::get('/products/color/{color}', [ProductController::class, 'filterByColor'
 // url: http://127.0.0.1:8000/api/products/size/{size} - size is the slug of the size
 Route::get('/products/size/{size}', [ProductController::class, 'filterBySize'])->name('products.filter.size');
 // url: http://127.0.0.1:8000/api/products/search/{search} - search is the search term
-Route::get('/products/search/{search}', [ProductController::class, 'filterBySearchTerm'])->name('products.filter.search');
+Route::get('/products/search/{searchTerm}', [ProductController::class, 'filterBySearchTerm'])->name('products.filter.searchTerm');
 
 
