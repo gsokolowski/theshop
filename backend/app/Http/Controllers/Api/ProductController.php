@@ -129,6 +129,7 @@ class ProductController extends Controller
     }
 
     // Filter Product by searchTern
+    // http://127.0.0.1:8000/api/products/search/kids - where kids is the search term
     public function filterBySearchTerm(Request $request)
     {
         $products = ProductResource::collection(
