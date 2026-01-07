@@ -10,13 +10,13 @@
     <div v-if="isLoading">
         <h1>Loading...</h1>
     </div>
-    <div v-else-if="product && product.thumbnail">       
+    <div v-else-if="product && product.thumbnail && imagesReady">       
         <div class="row">
             <div class="col-6 mb-3">
             <!-- Thumbnail image -->
             <div class="mb-3 rounded">
                 <VueImageZoomer 
-                    v-if="product.thumbnail" 
+                    v-if="product.thumbnail && imagesReady" 
                     :key="product.slug"
                     :regular="product.thumbnail" 
                 />
@@ -28,11 +28,12 @@
                     :key="productImage.id"
                     class="col-6"
                 >
-                    <VueImageZoomer 
+                <VueImageZoomer 
+                    v-if="productImage.src && imagesReady"
                     img-class="img-fluid rounded"   
-                        :regular="productImage.src" 
-                        :key="productImage.id"
-                    />
+                    :regular="productImage.src" 
+                    :key="productImage.id"
+                />
                 </div>
             </div>
         </div>
@@ -120,35 +121,43 @@
 
 <script setup>
     import { useProductDetailsStore } from '../../stores/useProductDetailsStore'
-    import { onMounted, computed, watch, reactive } from 'vue'
+    import { onMounted, computed, watch, reactive, ref, nextTick } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
     import Spinner from '../layouts/Spinner.vue'
-    
     
     const route = useRoute() // to get the slug from the route
     const router = useRouter() // to get back to the products list
 
     const productDetailsStore = useProductDetailsStore()
 
-    // ✅ Use computed to make it reactive
+    // Use computed to make it reactive
     const product = computed(() => productDetailsStore.getProduct)
     const productImages = computed(() => productDetailsStore.getProductImages)
     const isLoading = computed(() => productDetailsStore.getIsLoading)
 
-    // ✅ Function to fetch product
-    const fetchProduct = () => {
-        productDetailsStore.fetchProduct(route.params.slug) // fetch the product from the API
+
+    // ✅ Track when images are ready
+    const imagesReady = ref(false)
+
+    // Function to fetch product and track when images are ready
+    const fetchProduct = async () => {
+        imagesReady.value = false
+        productDetailsStore.fetchProduct(route.params.slug)
+        
+        // ✅ Wait for DOM to update
+        await nextTick()
+        await nextTick() // Double nextTick to ensure VueImageZoomer can access DOM
+        imagesReady.value = true
     }
 
-    // ✅ Fetch on mount
     onMounted(() => {
-        fetchProduct()
+        fetchProduct() // fetch the product from the API on mount
     })
-    
-    // ✅ Watch for route changes (when navigating between products)
-    watch(() => route.params.slug, (newSlug) => {
+
+    // Watches route.params.slug for changes. When the slug changes, it calls fetchProduct() to load the new product.
+    watch(() => route.params.slug, async (newSlug) => {
         if (newSlug) {
-            fetchProduct()
+            await fetchProduct()
         }
     })
 

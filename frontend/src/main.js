@@ -9,9 +9,9 @@ import App from './App.vue' // import App component
 import router from './router/index.js'  // import router
 import {LoadingPlugin} from 'vue-loading-overlay'
 import VueDOMPurifyHTML from 'vue-dompurify-html' 
-import { createPinia } from 'pinia'  // ✅ First
 import VueImageZoomer from 'vue-image-zoomer'  // ✅ After Pinia
 import 'vue-image-zoomer/dist/style.css';
+import { createPinia } from 'pinia'  // ✅ First
 
 const pinia = createPinia()
 
