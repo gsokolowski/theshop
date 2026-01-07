@@ -123,9 +123,8 @@
     import { onMounted, computed, watch, reactive } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
     import Spinner from '../layouts/Spinner.vue'
-    import { VueImageZoomer } from 'vue-image-zoomer'
-    import 'vue-image-zoomer/dist/style.css';
-
+    
+    
     const route = useRoute() // to get the slug from the route
     const router = useRouter() // to get back to the products list
 
