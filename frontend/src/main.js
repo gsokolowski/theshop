@@ -2,13 +2,15 @@ import { createApp } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import 'vue-loading-overlay/dist/css/index.css';
+import 'vue-loading-overlay/dist/css/index.css'
+import 'vue-image-zoomer/dist/style.css'
 import './style.css'
 import App from './App.vue' // import App component
 import router from './router/index.js'  // import router
-import {LoadingPlugin} from 'vue-loading-overlay';
+import {LoadingPlugin} from 'vue-loading-overlay'
 import VueDOMPurifyHTML from 'vue-dompurify-html' 
-import { createPinia } from 'pinia'
+import { createPinia } from 'pinia'  // ✅ First
+import VueImageZoomer from 'vue-image-zoomer'  // ✅ After Pinia
 
 const pinia = createPinia()
 
@@ -20,7 +22,10 @@ axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 // create app
 const app = createApp(App)
-app.use(VueDOMPurifyHTML) 
+app.use(VueDOMPurifyHTML)
+// use vue image zoomer
+app.use(VueImageZoomer)
+// use loading plugin
 app.use(LoadingPlugin)
 // use router
 app.use(router)

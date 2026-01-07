@@ -4,7 +4,9 @@
     <div class="card mb-2" style="max-width: 320px">
         <img :src="product.thumbnail" class="card-img-top" alt="Product Image">
         <div class="card-body">
-            <h5 class="card-title">{{ product.name }}</h5>
+            <router-link :to="{ name: 'product', params: { slug: product.slug } }">
+                <h5 class="card-title">{{ product.name }}</h5>
+            </router-link>
             <p class="card-text">{{ product.description.substring(0,50) }}</p>
             <p class="card-text">Brand: {{ product.brand.name }}</p>
             <div class="d-flex justify-content-between align-items-center">

@@ -9,6 +9,7 @@
             </button>
         </div>
         <div class="mb-3">
+            <SearchForm />
             <Categories />
             <Brands />
             <Sizes />
@@ -22,6 +23,7 @@
     import Brands from "../partials/Brands.vue"
     import Categories from "../partials/Categories.vue"
     import Sizes from "../partials/Sizes.vue"
+    import SearchForm from "../partials/SearchForm.vue"
 
     import { useProductsStore } from "../../stores/useProductsStore"
 
