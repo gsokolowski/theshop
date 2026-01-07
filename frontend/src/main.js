@@ -11,6 +11,7 @@ import {LoadingPlugin} from 'vue-loading-overlay'
 import VueDOMPurifyHTML from 'vue-dompurify-html' 
 import { createPinia } from 'pinia'  // ✅ First
 import VueImageZoomer from 'vue-image-zoomer'  // ✅ After Pinia
+import 'vue-image-zoomer/dist/style.css';
 
 const pinia = createPinia()
 
@@ -25,7 +26,7 @@ const app = createApp(App)
 app.use(VueDOMPurifyHTML)
 // use vue image zoomer
 app.use(VueImageZoomer)
-// use loading plugin
+// use loading plugin for loading spinner
 app.use(LoadingPlugin)
 // use router
 app.use(router)
