@@ -15,6 +15,7 @@ export const useProductsStore = defineStore('products', {
         filter: null, // filter state - string or null
         productsPerPage: 4, // products per page state - number
         productCount:10, // product count state - number - default is 10
+        searchTerm: '', // search term state - string - default is empty string
     }),
     getters: {
         getProducts: (state) => state.products,      // Returns products array
@@ -113,6 +114,7 @@ export const useProductsStore = defineStore('products', {
           this.isLoading = false
         }
       },
+      
       // filter products by size - action
       async filterProductsBySize(sizeId) {
         console.log('Filtering products by size:', sizeId)
@@ -153,6 +155,26 @@ export const useProductsStore = defineStore('products', {
         }
       },
 
+      // filter products by searchTerm - action
+      async filterProductsBySearchTerm() {
+        console.log('Filtering products by search term:', this.searchTerm)
+        this.resetProductsPerPage() // Reset before fetching products
+        // set the isLoading state to true
+        this.isLoading = true
+        // try to fetch the products from the API
+        try {
+          // fetch the products from the API
+          const response = await axios.get(`/api/products/search/${this.searchTerm}`) // use axios.defaults.baseURL to get the products
+          this.products = response.data.data //Access nested data property
+          this.productCount = response.data.data.length
+          console.log('Product count:', this.productCount)
+        } catch (error) {
+          console.error('Error fetching products:', error)
+        } finally {
+          this.isLoading = false
+        }
+      },
+      
       // clear filters - action
       clearFilters() {
         this.resetProductsPerPage() // Reset before fetching products
