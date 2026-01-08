@@ -34,7 +34,7 @@ export const useProductDetailsStore = defineStore('product', {
                 const response = await axios.get(`/api/products/${slug}`)
                 this.product = response.data.data
                 this.productThumbnail = response.data.data.thumbnail || ''
-                
+
                 // ✅ Reset and populate images array
                 this.productImages = []
                 if (response.data.data.first_image) {
