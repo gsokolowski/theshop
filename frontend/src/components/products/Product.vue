@@ -52,40 +52,38 @@
                         Out Stock
                     </span>
                 </div>
+                <div class="mb-2">
+                    <span class="h6 mb-0 mt-2">Select Color</span>
+                </div>
                 <div class="d-flex flex-wrap justify-content-start">
-                    <div class="border border-light-subtle shadow-sm border-2 rounded mb-1 me-1" 
-                        v-for="color in product.colors"
+                    <div 
+                        :class="`${data.chosenColor?.id === color.id ? 'border border-light-subtle shadow-sm border-2 rounded' : ''}  mb-1 me-1`" 
+                        v-for="color in productDetailsStore.product?.colors"
                         :key="color.id"
-                        @click="setChosenColor(color)"
                         :style="{
                             backgroundColor:color.name,
                             width:'30px',
                             height:'30px',
                             cursor:'pointer'
                         }"
-                        >
+                        @click="setChosenColor(color)"
+                    >
                     </div>
                 </div>
-
+                <div class="mt-2">
+                    <span class="h6 mb-0">Select Size</span>
+                </div>
                 <div class="d-flex flex-wrap gap-2">
-                    <div 
-                        v-for="size in product.sizes"
+                    <div class="d-flex flex-wrap justify-content-start align-items-center my-3">
+                    <button 
+                        :class="`${data.chosenSize?.id === size.id ? 'btn btn-primary mb-3 mx-1 rounded-0' : 'btn btn-sm btn-outline-secondary mb-3 mx-1'}`"
+                        v-for="size in productDetailsStore.product?.sizes"
                         :key="size.id"
                         @click="setChosenSize(size)"
-                        :style="{
-                            width: '35px',
-                            height: '35px',
-                            border: '1px solid #ddd',
-                            borderRadius: '4px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: 'normal'
-                        }">
+                    >
                         {{ size.name }}
-                    </div>
+                    </button>
+                </div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center">
@@ -109,7 +107,12 @@
                         class="form-control"
                     >
                 </div>
-                <button class="btn btn-danger btn-sm"><i class="bi bi-cart-plus"></i> Add to Cart</button>
+                <button class="btn btn-danger btn-sm" 
+                    @click="handleAddToCart"
+                    :disabled="!data.chosenColor || !data.chosenSize || !data.qty "
+                >
+                    <i class="bi bi-cart-plus"></i> Add to Cart
+                </button>
                 <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-heart"></i></button>
             </div>
         </div>
@@ -121,14 +124,18 @@
 
 <script setup>
     import { useProductDetailsStore } from '../../stores/useProductDetailsStore'
+    import { useCartStore } from '../../stores/useCartStore'
     import { onMounted, computed, watch, reactive, ref, nextTick } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
     import Spinner from '../layouts/Spinner.vue'
     
     const route = useRoute() // to get the slug from the route
     const router = useRouter() // to get back to the products list
+    const toast = useToast()
 
     const productDetailsStore = useProductDetailsStore()
+    const cartStore = useCartStore()
 
     // Use computed to make it reactive
     const product = computed(() => productDetailsStore.getProduct)
@@ -171,13 +178,34 @@
     //set the chosen color by user
     const setChosenColor = (color) => {
         data.chosenColor = color
-        console.log('Chosen color:', data.chosenColor)
+        console.log('Data', data)
     }
 
     //set the chosen size by user
     const setChosenSize = (size) => {
         data.chosenSize = size
-        console.log('Chosen size:', data.chosenSize)
+        console.log('Data', data)
+    }
+
+    // Button calls Add to cart handler when clicked
+    const handleAddToCart = () => {
+        // Check if product is out of stock
+        if (!productDetailsStore.product?.status) {
+            toast.warning("Product is out of stock")
+            return
+        }        
+        // item to add to the cart
+        const item = { // you can do verification here
+            // crate unique reference for the item
+            reference: `${productDetailsStore.getProduct.id}-${data.chosenColor.id}-${data.chosenSize.id}`,
+            product: productDetailsStore.getProduct, // or product.value passing the whole product object
+            qty: data.qty, // quantity
+            color: data.chosenColor, // color object
+            size: data.chosenSize // size object
+        }
+
+        // send the item to the cartStore.addToCart(item)
+        cartStore.addToCart(item)
     }
     
 </script>
