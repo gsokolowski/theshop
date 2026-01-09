@@ -36,22 +36,21 @@ export const useCartStore = defineStore('cart', {
             console.log('Maximum Quentity', item.product.qty);
             console.log('Current Quentity', item.qty);
             if(item.qty >= item.product.qty) {
-                toast.error("Maximum quantity reached")
+                toast.info("Maximum quantity of " + item.product.qty + " reached")
                 return
             }
             item.qty++
-            toast.success("Quantity increased")
             console.log('Cart Items', this.cartItems);
         },
         // decrease the quantity of the selected item in the cart
         decreaseQuantity(item) {
             console.log('Current Quentity', item.qty);
             if(item.qty <= 1) {
-                toast.error("Minimum quantity reached")
+                toast.info("Minimum quantity reached")
+                this.removeItem(item)
                 return
             }
             item.qty--
-            toast.success("Quantity decreased")
             console.log('Cart Items', this.cartItems);
         },
         // remove the selected item from the cart
