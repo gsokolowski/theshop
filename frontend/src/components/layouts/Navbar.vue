@@ -28,6 +28,11 @@
                             <i class="bi bi-info-circle-fill"></i> About
                           </router-link>
                         </li>
+                        <li class="nav-item">
+                          <router-link class="nav-link" aria-current="page" to="/cart">
+                            <i class="bi bi-cart-fill"></i> Cart({{ cartItemsCount }})
+                          </router-link>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -36,6 +41,13 @@
   </template>
   
   <script setup>
+    import { useCartStore } from '../../stores/useCartStore'
+    import { computed } from 'vue'
+    
+    const cartStore = useCartStore()
+    
+    const cartItemsCount = computed(() => cartStore.cartItems.length)
+
   </script>
   
   <style scoped>
