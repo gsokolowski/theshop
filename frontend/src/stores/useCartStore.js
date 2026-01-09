@@ -56,13 +56,15 @@ export const useCartStore = defineStore('cart', {
         },
         // remove the selected item from the cart
         removeItem(item) {
+            // remove passed item from cartItems array - overwrite cartItems array with the new array
             this.cartItems = this.cartItems.filter(cartItem => cartItem.reference !== item.reference)
+            
             toast.success("Item removed from cart")
             console.log('Cart Items', this.cartItems);
         },
-        // clear the cart
+        // clear the cart from the items in the cartItems array
         clearCart() {
-            this.cartItems = []
+            this.cartItems = [] // override state cartItems array with an empty array
             toast.success("Cart cleared")
             console.log('Cart Items', this.cartItems);
         },
