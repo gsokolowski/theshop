@@ -1,15 +1,32 @@
 <?php
 
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
+// User routes are protected and require authentication using Laravel Sanctum API token.
+Route::middleware('auth:sanctum')->group(function () {
+    // url: http://127.0.0.1:8000/api/user
+    Route::get('/user', [UserController::class, 'loggedInUser'])->name('user.loggedInUser');
+    // url: http://127.0.0.1:8000/api/user/logout
+    Route::post('/user/logout', [UserController::class, 'logout'])->name('user.logout');
+    // url: http://127.0.0.1:8000/api/user/profile/update
+    Route::put('/user/profile/update', [UserController::class, 'updateProfile'])->name('user.profile.update');
+    // url: http://127.0.0.1:8000/api/user/password/update
+    Route::put('/user/password/update', [UserController::class, 'updatePassword'])->name('user.password.update');
+    // url: http://127.0.0.1:8000/api/user
+    Route::delete('/user', [UserController::class, 'destroy'])->name('user.destroy');
+});
+
+// url: http://127.0.0.1:8000/api/user/register
+Route::post('/user/register', [UserController::class, 'store'])->name('user.store');
+// url: http://127.0.0.1:8000/api/user/login
+Route::post('/user/login', [UserController::class, 'login'])->name('user.login');
 
 
-// Product routes  use Api\ProductController.php to handle the requests
+// Product routes  use Api\ProductController.php to handle the requests and are opened to all users.
 // url: http://127.0.0.1:8000/api/products
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 // url: http://127.0.0.1:8000/api/products/{product}
