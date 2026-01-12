@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'vue-loading-overlay/dist/css/index.css'
-import 'vue-image-zoomer/dist/style.css'
 import "vue-toastification/dist/index.css";
 import 'vue-image-zoomer/dist/style.css';
 import './style.css'
@@ -25,6 +24,7 @@ axios.defaults.baseURL = 'http://127.0.0.1:8000'
 axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
+import { useAuthStore } from './stores/useAuthStore'
 
 const app = createApp(App)
     app.use(router)
@@ -33,4 +33,9 @@ const app = createApp(App)
     app.use(LoadingPlugin) // use loading plugin for loading spinner
     app.use(Toast) // use toast
     app.use(pinia) // use pinia
+
+    // Initialize axios headers from persisted state
+    const authStore = useAuthStore()
+    authStore.initializeAxiosHeaders() // initialize access_token for authorization header
+
     app.mount('#app') // mount app to the div with id app
