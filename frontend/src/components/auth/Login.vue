@@ -35,12 +35,18 @@
                           required
                           autocomplete="current-password">
                   </div>
-                  
-                  <!-- Error message -->
-                  <div v-if="authStore.errorMessage" class="alert alert-danger" role="alert">
-                      {{ authStore.errorMessage }}
+
+                  <!-- Validation message -->
+                  <div v-if="authStore.getValidationMessage" class="alert alert-danger" role="alert">
+                        {{ authStore.getValidationMessage }}
                   </div>
-                  
+
+                  <!-- Validation errors -->
+                  <ValidationErrors 
+                     :errors="authStore.getValidationErrors" 
+                     :visible="false" 
+                  />
+
                   <!-- Submit button -->
                   <div class="form-group d-grid mb-3">
                       <button 
@@ -69,6 +75,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useRouter } from 'vue-router'
+import ValidationErrors from '../common/ValidationErrors.vue' // ✅ Import the component
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -79,6 +86,9 @@ const formData = ref({
 })
 
 const handleSubmit = async () => {
+    // Clear any previous errors
+    authStore.setValidationErrors({})
+    
     try {
         await authStore.login({
             email: formData.value.email,
@@ -88,12 +98,18 @@ const handleSubmit = async () => {
         // Redirect to home page after successful login
         router.push('/')
     } catch (error) {
-        // Error is already handled in the store
+        // Backend validation errors are handled in the store authStore.validationErrors and shown in the component Login.vue above
+        // So you don't need to show a toast here
         console.error('Login error:', error)
     }
 }
 
-onMounted(() => authStore.setErrorMessage(''))
+onMounted(() => {
+    // Clear any previous errors
+    authStore.setValidationErrors({})
+    // Clear any previous validation message
+    authStore.setValidationMessage('')
+})
 </script>
 
 <style scoped>

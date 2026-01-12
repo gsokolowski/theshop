@@ -58,10 +58,16 @@
                           required>
                   </div>
                   
-                  <!-- Error message from store -->
-                  <div v-if="authStore.errorMessage" class="alert alert-danger" role="alert">
-                      {{ authStore.errorMessage }}
+                  <!-- Validation message invisible by default -->
+                  <div v-if="authStore.getValidationMessage" class="alert alert-danger" role="alert" style="display: none;">
+                        {{ authStore.getValidationMessage }}
                   </div>
+
+                  <!-- Validation errors -->
+                  <ValidationErrors 
+                     :errors="authStore.getValidationErrors" 
+                     :visible="true" 
+                  />
                   
                   <!-- Submit button -->
                   <div class="form-group d-grid mb-3">
@@ -83,6 +89,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useRouter } from 'vue-router'
+import ValidationErrors from '../common/ValidationErrors.vue' // ✅ Import the component
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -96,7 +103,7 @@ const formData = ref({
 
 const handleSubmit = async () => {
   // Clear any previous errors
-  authStore.setErrorMessage('')
+  authStore.setValidationErrors({})
   
   console.log('=== FORM COMPONENT DEBUG ===')
   console.log('All form data:', formData.value)
@@ -120,7 +127,12 @@ const handleSubmit = async () => {
   }
 }
 
-onMounted(() => authStore.setErrorMessage(''))
+onMounted(() => {
+    // Clear any previous errors
+    authStore.setValidationErrors({})
+    // Clear any previous validation message
+    authStore.setValidationMessage('')
+})
 
 </script>
 

@@ -9,23 +9,25 @@ export const useAuthStore = defineStore('auth', {
         isUserLoggedIn: false,
         user: null,
         accessToken: null,
-        errorMessage: '',
+        validationErrors: {}, // object to store validation errors from backend
+        validationMessage: '', // string to store validation message from backend
         isLoading: false,
     }),
     persist: true,
     getters: {
         getIsUserLoggedIn: (state) => state.isUserLoggedIn,      // Returns isUserLoggedIn state - boolean
-        getUser: (state) => state.user,      // Returns user object
+        getUser: (state) => state.user,      // Returns currently logged in user object
         getAccessToken: (state) => state.accessToken,      // Returns accessToken string
-        getErrorMessage: (state) => state.errorMessage,      // Returns errorMessage string
+        getValidationErrors: (state) => state.validationErrors,      // Returns validationErrors object
+        getValidationMessage: (state) => state.validationMessage,      // Returns validationMessage string
         getIsLoading: (state) => state.isLoading,      // Returns isLoading state - boolean
     },
     actions: {
-        // set isUserLoggedIn state to true or false
+        // set isUserLoggedIn state to true if user is logged in, false if not
         setUserLoggedIn(value) {
             this.isUserLoggedIn = value
         },
-        // set current user object
+        // set currently logged in user object
         setUser(user) {
             this.user = user
         },
@@ -33,18 +35,29 @@ export const useAuthStore = defineStore('auth', {
         setAccessToken(accessToken) {
             this.accessToken = accessToken
         },
-        // set errorMessage state to the error message string
-        setErrorMessage(errorMessage) {
-            this.errorMessage = errorMessage
+        // set validationErrors state to the validation errors object
+        setValidationErrors(validationErrors) {
+            this.validationErrors = validationErrors
+        },
+        // set validationMessage state to the validation message string
+        setValidationMessage(validationMessage) {
+            this.validationMessage = validationMessage
         },
         // set isLoading state to true or false
         setIsLoading(value) {
             this.isLoading = value
         },
+        // Initialize axios headers from persisted state
+        initializeAxiosHeaders() {
+            if (this.accessToken) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${this.accessToken}`
+            }
+        },
         // Action to login the user and set the user object and isLoggedIn state to true
         async login(credentials) {
             this.setIsLoading(true)
-            this.setErrorMessage('')
+            this.setValidationErrors({})
+            this.setValidationMessage('')
             
             try {
                 const response = await axios.post('/api/user/login', {
@@ -61,8 +74,8 @@ export const useAuthStore = defineStore('auth', {
                 this.setIsLoading(false)
 
                 // Set axios default header for future requests
-                axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`
-                
+                this.initializeAxiosHeaders() // initialize axios headers from persisted state
+                            
                 // Show success toast
                 toast.success(response.data.message + ' Welcome back!')
 
@@ -71,21 +84,20 @@ export const useAuthStore = defineStore('auth', {
             } catch (error) {
                 // Handle validation errors (422) or authentication errors (401)
                 // Prioritize specific errors over generic message
-                const errorMessage = error.response?.data?.errors ? 
-                                    Object.values(error.response.data.errors).flat().join(', ') :
-                                    error.response?.data?.message || 
-                                    'Login failed. Please try again.'
+                const validationErrors = error.response?.data?.errors ? error.response.data.errors : {}
+                const validationMessage = error.response?.data?.message ? error.response.data.message : ''
                 
-                this.setErrorMessage(errorMessage)
+                this.setValidationErrors(validationErrors)
+                this.setValidationMessage(validationMessage)
                 this.setIsLoading(false)
-                
+                console.log('Validation message:', validationMessage)
                 throw error // Re-throw so component can handle it
             }
         },
         // Action to register the user and set the user object and isLoggedIn state to true
         async register(credentials) {
             this.setIsLoading(true)
-            this.setErrorMessage('')
+            this.setValidationErrors({})
             
             console.log('=== STORE DEBUG ===')
             console.log('Credentials received:', credentials)
@@ -100,7 +112,7 @@ export const useAuthStore = defineStore('auth', {
                 
                 // Registration successful - set user data (but don't log in yet, no token returned)
                 this.setUser(response.data.user)
-                this.setErrorMessage('')
+                this.setValidationErrors({})
                 this.setIsLoading(false)
                 
                 // Show success toast
@@ -110,15 +122,12 @@ export const useAuthStore = defineStore('auth', {
                 
             } catch (error) {
                 // Handle validation errors (422) or other errors
-                const errorMessage = error.response?.data?.message || 
-                                    error.response?.data?.errors ? 
-                                    Object.values(error.response.data.errors).flat().join(', ') : 
-                                    'Registration failed. Please try again.'
-                this.setErrorMessage(errorMessage)
+                const validationErrors = error.response?.data?.errors ? error.response.data.errors : {}
+                this.setValidationErrors(validationErrors)
                 this.setIsLoading(false)
                 
                 // Backend validation errors are handled and shown in the component Registration.vue
-                console.error('Registration error:', errorMessage)
+                console.error('Registration error:', validationErrors)
                 
                 throw error // Re-throw so component can handle it
             }
@@ -126,7 +135,7 @@ export const useAuthStore = defineStore('auth', {
         // Action to logout the user and set the user object and isLoggedIn state to false
         async logout() {
             this.setIsLoading(true)
-            this.setErrorMessage('')  
+            this.setValidationErrors({})  
 
             try {
                 // Call logout endpoint if token exists
@@ -139,7 +148,7 @@ export const useAuthStore = defineStore('auth', {
                 }
             } catch (error) {
                 console.error('Logout error:', error)
-                this.setErrorMessage('Logout failed. Please try again.')
+                this.setValidationErrors({})
                 this.setIsLoading(false)
                 // Continue with logout even if API call fails
             } finally {
@@ -153,9 +162,10 @@ export const useAuthStore = defineStore('auth', {
                 delete axios.defaults.headers.common['Authorization']
             }
         },
+        // Action to get the currently logged in user object
         async getLoggedInUser() {
             this.setIsLoading(true)
-            this.setErrorMessage('')
+            this.setValidationErrors({})
             
             try {
                 const response = await axios.get('/api/user')
@@ -164,7 +174,7 @@ export const useAuthStore = defineStore('auth', {
                 this.setUser(response.data.user)
                 this.setAccessToken(response.data.access_token)
                 this.setUserLoggedIn(true)
-                this.setErrorMessage('')
+                this.setValidationErrors({})
                 this.setIsLoading(false)
                 
                 // Update axios default header with current token
@@ -176,7 +186,7 @@ export const useAuthStore = defineStore('auth', {
                 
             } catch (error) {
                 // Handle authentication errors (401) or other errors
-                const errorMessage = error.response?.data?.message || 'Failed to fetch user data.'
+                const validationErrors = error.response?.data?.errors ? error.response.data.errors : {}
                 
                 // If 401 Unauthorized, user is not authenticated - clear state
                 if (error.response?.status === 401) {
@@ -184,9 +194,9 @@ export const useAuthStore = defineStore('auth', {
                     this.setUserLoggedIn(false)
                     this.setAccessToken(null)
                     delete axios.defaults.headers.common['Authorization']
-                    this.setErrorMessage('Session expired. Please login again.')
+                    this.setValidationErrors({})
                 } else {
-                    this.setErrorMessage(errorMessage)
+                    this.setValidationErrors(validationErrors)
                 }
                 
                 this.setIsLoading(false)
