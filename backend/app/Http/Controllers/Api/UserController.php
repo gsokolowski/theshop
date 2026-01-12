@@ -20,7 +20,7 @@ class UserController extends Controller
      * Register a new user using UserStoreRequest Form Request
      * url: http://127.0.0.1:8000/api/user/register
      */
-    public function store(UserStoreRequest $request)
+    public function register(UserStoreRequest $request)
     {
         // Validate the request using the UserStoreRequest Form Request
 
@@ -52,7 +52,7 @@ class UserController extends Controller
         // If user does not exist or password is incorrect, return error
         if ( ! $user || !Hash::check($validated['password'], $user->password)) {
             return response()->json([
-                'message' => 'Invalid credentials',
+                'message' => 'Email or password is incorrect',
             ], 401); // 401 Unauthorized status code
         }
 
@@ -88,10 +88,12 @@ class UserController extends Controller
      * url: http://127.0.0.1:8000/api/user
      * This endpoint is used to get the currently logged in user
      * It returns the user data and the access token from the request
+     * The route uses auth:sanctum middleware to protect the route
+     * Pass the Authorization: Bearer {token} header. No body parameters needed.
      */
-    public function loggedInUser(Request $request)
+    public function loggedInUser(Request $request) 
     {        
-        $user = $request->user(); // get the currently logged in user
+        $user = $request->user(); // get the currently logged in user, $request->user(); eturns the authenticated user
         
         // return response with user and 200 status code
         return response()->json([

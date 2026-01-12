@@ -31,4 +31,11 @@ class AuthUserRequest extends FormRequest
             'password' => 'required|string|min:8|max:255',
         ];
     }
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Email is required',
+            'password.required' => 'Password is required',
+        ];
+    }
 }

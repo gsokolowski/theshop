@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // url: http://127.0.0.1:8000/api/user/register
-Route::post('/user/register', [UserController::class, 'store'])->name('user.store');
+Route::post('/user/register', [UserController::class, 'register'])->name('user.register');
 // url: http://127.0.0.1:8000/api/user/login
 Route::post('/user/login', [UserController::class, 'login'])->name('user.login');
 
