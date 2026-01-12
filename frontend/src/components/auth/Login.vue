@@ -1,29 +1,99 @@
-<!-- Register component -->
+<!-- Login component -->
 <template>
   <div class="row justify-content-center">
-      <!-- Main content - 25% width (col-md-3) centered -->
       <div class="col-md-4 p-4">
-        <div class="text-center mb-4">
-          <h2>Login</h2>
-        </div>
-        <form>
-          <div class="form-group mb-3">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter email">
+          <div class="text-center mb-4">
+              <h2>Login</h2>
           </div>
-          <div class="form-group mb-3">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter password">
+          <div class="row">
+              <p>Login to your account to continue shopping</p>
           </div>
-          <div class="form-group d-grid mb-3">
-            <button type="submit" class="btn btn-primary">Login</button>
+          <div class="row">
+              <form @submit.prevent="handleSubmit" novalidate>
+                  <!-- Email field -->
+                  <div class="form-group mb-3">
+                      <label for="email">Email</label>
+                      <input 
+                          type="email" 
+                          class="form-control" 
+                          id="email" 
+                          v-model="formData.email"
+                          placeholder="Enter your email"
+                          required
+                          autocomplete="email">
+                  </div>
+                  
+                  <!-- Password field -->
+                  <div class="form-group mb-3">
+                      <label for="password">Password</label>
+                      <input 
+                          type="password" 
+                          class="form-control" 
+                          id="password" 
+                          v-model="formData.password"
+                          placeholder="Enter your password"
+                          required
+                          autocomplete="current-password">
+                  </div>
+                  
+                  <!-- Error message -->
+                  <div v-if="authStore.errorMessage" class="alert alert-danger" role="alert">
+                      {{ authStore.errorMessage }}
+                  </div>
+                  
+                  <!-- Submit button -->
+                  <div class="form-group d-grid mb-3">
+                      <button 
+                          type="submit" 
+                          class="btn btn-primary"
+                          :disabled="authStore.isLoading">
+                          <span v-if="authStore.isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                          {{ authStore.isLoading ? 'Logging in...' : 'Login' }}
+                      </button>
+                  </div>
+                  
+                  <!-- Link to register -->
+                  <div class="text-center">
+                      <p class="mb-0">
+                          Don't have an account? 
+                          <router-link to="/register">Register here</router-link>
+                      </p>
+                  </div>
+              </form>
           </div>
-        </form>
       </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import { useAuthStore } from '../../stores/useAuthStore'
+import { useRouter } from 'vue-router'
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const formData = ref({
+    email: '',
+    password: ''
+})
+
+const handleSubmit = async () => {
+    try {
+        await authStore.login({
+            email: formData.value.email,
+            password: formData.value.password
+        })
+        
+        // Redirect to home page after successful login
+        router.push('/')
+    } catch (error) {
+        // Error is already handled in the store
+        console.error('Login error:', error)
+    }
+}
+
+onMounted(() => authStore.setErrorMessage(''))
 </script>
 
 <style scoped>
