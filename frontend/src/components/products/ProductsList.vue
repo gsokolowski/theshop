@@ -36,7 +36,7 @@
     // import the useProductsStore
     import { useProductsStore } from '../../stores/useProductsStore.js'
     import ProductsListItem from './ProductsListItem.vue'
-    import Spinner from '../layouts/Spinner.vue'
+    import Spinner from '../common/Spinner.vue'
     import { onMounted } from 'vue'
 
     console.log('ProductsList component mounted')

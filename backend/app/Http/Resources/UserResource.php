@@ -23,7 +23,7 @@ class UserResource extends JsonResource
             'country' => $this->country,
             'zip_code' => $this->zip_code,
             'phone_number' => $this->phone_number,
-            'profile_image' => $this->profile_image ? asset('storage/' . $this->profile_image) : null,
+            'profile_image' => $this->profile_image_url, //get the profile image url from the user model
             'profile_completed' => $this->profile_completed,
             'orders' => $this->orders,
             'reviews' => $this->reviews,
