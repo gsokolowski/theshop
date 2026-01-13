@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useRouter } from 'vue-router'
 import ValidationErrors from '../common/ValidationErrors.vue' // ✅ Import the component
@@ -94,7 +94,7 @@ import ValidationErrors from '../common/ValidationErrors.vue' // ✅ Import the 
 const authStore = useAuthStore()
 const router = useRouter()
 
-const formData = ref({
+const formData = reactive({
   name: '',
   email: '',
   password: '',
@@ -112,10 +112,10 @@ const handleSubmit = async () => {
   try {
       // make actual API call to register the user
       await authStore.register({
-          name: formData.value.name.trim(),
-          email: formData.value.email.trim(),
-          password: formData.value.password,
-          confirm_password: formData.value.confirm_password
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          password: formData.password,
+          confirm_password: formData.confirm_password
       })
       
       // Redirect to login page after successful registration

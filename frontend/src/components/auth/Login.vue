@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useRouter } from 'vue-router'
 import ValidationErrors from '../common/ValidationErrors.vue' 
@@ -80,7 +80,7 @@ import ValidationErrors from '../common/ValidationErrors.vue'
 const authStore = useAuthStore()
 const router = useRouter()
 
-const formData = ref({
+const formData = reactive({
     email: '',
     password: ''
 })
@@ -91,8 +91,8 @@ const handleSubmit = async () => {
     
     try {
         await authStore.login({
-            email: formData.value.email,
-            password: formData.value.password
+            email: formData.email,
+            password: formData.password
         })
         
         // Redirect to home page after successful login
