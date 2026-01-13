@@ -104,6 +104,7 @@ const formData = ref({
 const handleSubmit = async () => {
   // Clear any previous errors
   authStore.setValidationErrors({})
+  authStore.setValidationMessage('')
   
   console.log('=== FORM COMPONENT DEBUG ===')
   console.log('All form data:', formData.value)

@@ -128,7 +128,7 @@
     import { onMounted, computed, watch, reactive, ref, nextTick } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
-    import Spinner from '../layouts/Spinner.vue'
+    import Spinner from '../common/Spinner.vue'
     
     const route = useRoute() // to get the slug from the route
     const router = useRouter() // to get back to the products list

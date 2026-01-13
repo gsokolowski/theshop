@@ -1,4 +1,3 @@
-<!-- Home component -->
 <template>
     <div class="row min-vh-100">
         <Sidebar />

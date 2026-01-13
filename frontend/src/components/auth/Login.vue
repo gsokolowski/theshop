@@ -75,7 +75,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useRouter } from 'vue-router'
-import ValidationErrors from '../common/ValidationErrors.vue' // ✅ Import the component
+import ValidationErrors from '../common/ValidationErrors.vue' 
 
 const authStore = useAuthStore()
 const router = useRouter()
