@@ -31,7 +31,7 @@
                                 <td>Sizes</td>
                                 <td>Status</td>
                                 <td></td>
-                            </tr>
+                            </tr>`
                         </thead>
                         <tbody>
                             @foreach ($products as $key => $product)
