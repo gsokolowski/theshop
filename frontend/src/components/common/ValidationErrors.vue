@@ -1,6 +1,6 @@
 <template>
     <div 
-        v-if="errors && Object.keys(errors).length > 0 && visible" 
+        v-if="errors && Object.keys(errors).length > 0" 
         class="alert alert-danger" 
         role="alert">
         <ul class="mb-0">
@@ -18,10 +18,6 @@ defineProps({
     errors: {
         type: Object,
         default: () => ({})
-    },
-    visible: {
-        type: Boolean,
-        default: true
     }
 })
 </script>

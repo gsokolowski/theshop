@@ -133,6 +133,7 @@ class UserController extends Controller
         
         // Update the user - Added profile_image to update array
         $request->user()->update([
+            'name' => $validated['name'] ?? $request->user()->name, // if name is not provided, use the current name
             'address' => $validated['address'] ?? null,
             'city' => $validated['city'] ?? null,
             'country' => $validated['country'] ?? null,

@@ -2,8 +2,6 @@
     <div class="col-md-4 bg-light p-4">
         <div class="text-center">
             <Spinner :store="authStore" />
-            <ValidationErrors :errors="authStore.validationErrors" />
-            
             <!-- Profile Image -->
             <div class="card p-2">                
                 <div class="d-flex flex-column justify-content-center align-items-center">
@@ -20,6 +18,7 @@
                     <!-- ✅ CHANGED: Added v-if to hide form by default -->
                     <!-- Simple Image Upload Form -->
                     <form 
+                        name="profileImageForm"
                         v-if="showForm"
                         @submit.prevent="handleImageUpdate" 
                         enctype="multipart/form-data" 
@@ -33,6 +32,8 @@
                                 @change="handleFileSelect"
                                 ref="fileInput"
                             >
+                            <!-- simple validation of this file input -->
+                            
                         </div>
                         <!-- ✅ CHANGED: Changed button layout and added Cancel button -->
                         <div class="d-flex gap-2">
@@ -54,6 +55,11 @@
                         </li>
                         <li class="list-group-item">
                              {{ user?.email }}
+                        </li>
+                        <li class="list-group-item">
+                        <router-link to="/user/orders" class="text-decoration-none text-dark">
+                            <i class="bi bi-bag-check-fill"></i> Orders
+                        </router-link>
                         </li>
                     </ul>
                 </div>
@@ -96,6 +102,7 @@ const handleImageUpdate = async () => {
         toast.error('Please select an image')
         return
     }
+    console.log('handleImageUpdate called')
 
     // Create FormData for file upload
     const uploadData = new FormData()

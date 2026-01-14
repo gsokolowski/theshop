@@ -23,6 +23,7 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             //
+            'name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'country' => 'nullable|string|max:255',
@@ -35,6 +36,7 @@ class UserUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'name.nullable' => 'The name is required.',
             'address.string' => 'The address must be a string.',
             'address.max' => 'The address must be less than 255 characters.',
             'city.string' => 'The city must be a string.',
