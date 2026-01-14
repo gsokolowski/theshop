@@ -15,8 +15,6 @@
                         @click="showForm = !showForm"
                         title="Click to change profile image"
                     >
-                    <!-- ✅ CHANGED: Added v-if to hide form by default -->
-                    <!-- Simple Image Upload Form -->
                     <form 
                         name="profileImageForm"
                         v-if="showForm"
@@ -32,10 +30,7 @@
                                 @change="handleFileSelect"
                                 ref="fileInput"
                             >
-                            <!-- simple validation of this file input -->
-                            
                         </div>
-                        <!-- ✅ CHANGED: Changed button layout and added Cancel button -->
                         <div class="d-flex gap-2">
                             <button 
                                 type="submit" 

@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('title', 'Products')
 @section('content-dashboard')
-    <div class="row">
+    <div class="row mb-5">
         @include('admin.layouts.sidebar')
         <div class="col-md-9">
         <div class="row mt-2">
@@ -41,18 +41,18 @@
                                     <td>{{ $product->slug }}</td>
                                     <td>{{ $product->qty }}</td>
                                     <td>{{ $product->price }}</td>
-                                    <td>
+                                    <td width="150px">
                                         @if ($product->thumbnail)
-                                            <img src="{{ asset('storage/'.$product->thumbnail) }}" alt="{{ $product->name }}" width="50" class="img-fluid rounded-3xl">
+                                            <img src="{{ asset('storage/'.$product->thumbnail) }}" alt="{{ $product->name }}" width="50" class="img-fluid rounded-3xl float-start me-2">
                                         @endif
                                         @if ($product->first_image)
-                                            <img src="{{ asset('storage/'.$product->first_image) }}" alt="{{ $product->name }}" width="50" class="img-fluid rounded-3xl">
+                                            <img src="{{ asset('storage/'.$product->first_image) }}" alt="{{ $product->name }}" width="50" class="img-fluid rounded-3xl float-start me-2">
                                         @endif
                                         @if ($product->second_image)
-                                            <img src="{{ asset('storage/'.$product->second_image) }}" alt="{{ $product->name }}" width="50" class="img-fluid rounded-3xl">
+                                            <img src="{{ asset('storage/'.$product->second_image) }}" alt="{{ $product->name }}" width="50" class="img-fluid rounded-3xl float-start me-2">
                                         @endif
                                         @if ($product->third_image)
-                                        <img src="{{ asset('storage/'.$product->third_image) }}" alt="{{ $product->name }}" width="50" class="img-fluid rounded-3xl">
+                                        <img src="{{ asset('storage/'.$product->third_image) }}" alt="{{ $product->name }}" width="50" class="img-fluid rounded-3xl float-start me-2">
                                         @endif
                                     </td>
                                     <td>{{ $product->category->name }}</td>
