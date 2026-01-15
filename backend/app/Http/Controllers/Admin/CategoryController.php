@@ -43,10 +43,8 @@ class CategoryController extends Controller
         $data['slug'] = Str::slug($data['name']);
         Category::create($data);
         // Redirect to the index page with a success message
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully');
-
-        // Redirect to the create page with a error message
-        return redirect()->route('admin.categories.create')->with('error', 'Category creation failed');
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Category created successfully');
     }
 
     /**
@@ -84,10 +82,6 @@ class CategoryController extends Controller
         // Redirect to the index page with a success message
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category updated successfully');                
-        
-        // Redirect to the edit page with a error message
-        return redirect()->route('admin.categories.edit', $category->slug)
-            ->with('error', 'Category update failed');
     }
 
     /**

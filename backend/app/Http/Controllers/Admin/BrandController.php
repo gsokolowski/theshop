@@ -45,7 +45,8 @@ class BrandController extends Controller
         Brand::create($data);
         
         // Redirect to the index page with a success message
-        return redirect()->route('admin.brands.index')->with('success', 'Brand created successfully');
+        return redirect()->route('admin.brands.index')
+            ->with('success', 'Brand created successfully');
 
     }
 
@@ -81,11 +82,8 @@ class BrandController extends Controller
         $data['slug'] = Str::slug($data['name']);
         $brand->update($data);
         // Redirect to the index page with a success message
-        return redirect()->route('admin.brands.index')->with('success', 'Brand updated successfully');
-
-        // Redirect to the edit page with a error message
-        return redirect()->route('admin.brands.edit', $brand->slug)
-            ->with('error', 'Brand update failed');
+        return redirect()->route('admin.brands.index')
+            ->with('success', 'Brand updated successfully');
     }
 
     /**
