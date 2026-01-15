@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
 use Illuminate\Support\Facades\Route;
@@ -61,4 +62,13 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+
+    // Coupon individual routes
+    Route::get('/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
+    Route::get('/coupons/create', [CouponController::class, 'create'])->name('admin.coupons.create');
+    Route::post('/coupons', [CouponController::class, 'store'])->name('admin.coupons.store');
+    Route::get('/coupons/{coupon}', [CouponController::class, 'show'])->name('admin.coupons.show');
+    Route::get('/coupons/{coupon}/edit', [CouponController::class, 'edit'])->name('admin.coupons.edit');
+    Route::put('/coupons/{coupon}', [CouponController::class, 'update'])->name('admin.coupons.update');
+    Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');
 });

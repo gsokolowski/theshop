@@ -42,9 +42,6 @@ class SizeController extends Controller
         Size::create($data);
         // Redirect to the index page with a success message
         return redirect()->route('admin.sizes.index')->with('success', 'Size created successfully');
-
-        // Redirect to the create page with a error message
-        return redirect()->route('admin.sizes.create')->with('error', 'Size creation failed');
     }
 
     /**
@@ -80,10 +77,6 @@ class SizeController extends Controller
         // Redirect to the index page with a success message
         return redirect()->route('admin.sizes.index')
             ->with('success', 'Size updated successfully');
-
-        // Redirect to the edit page with a error message
-        return redirect()->route('admin.sizes.edit', $size->id)
-        ->with('error', 'Size update failed');
     }
 
     /**

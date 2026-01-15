@@ -42,9 +42,6 @@ class ColorController extends Controller
         Color::create($data);
         // Redirect to the index page with a success message
         return redirect()->route('admin.colors.index')->with('success', 'Color created successfully');
-
-        // Redirect to the create page with a error message
-        return redirect()->route('admin.colors.create')->with('error', 'Color creation failed');
     }
 
     /**
@@ -78,11 +75,8 @@ class ColorController extends Controller
         $data = $request->validated();
         $color->update($data);
         // Redirect to the index page with a success message
-        return redirect()->route('admin.colors.index')->with('success', 'Color updated successfully');
-
-        // Redirect to the edit page with a error message
-        return redirect()->route('admin.colors.edit', $color->id)
-            ->with('error', 'Color update failed');
+        return redirect()->route('admin.colors.index')
+            ->with('success', 'Color updated successfully');
     }
 
     /**
