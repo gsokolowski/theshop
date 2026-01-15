@@ -1,7 +1,7 @@
 <template>
-  <div class="row min-vh-100">
+  <div class="row">
       <ProfileSidebar/>
-      <ProfileUpdate/>
+      <ProfileUpdate :updateProfile="true" />
   </div>
 </template>
 

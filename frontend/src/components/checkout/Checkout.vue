@@ -1,0 +1,131 @@
+<template>
+    <div>
+        <div class="row">
+            <ProfileUpdate :updateProfile="false" />
+            <div class="col-md-4 bg-light p-4">
+            <ul class="list-group">
+                <li class="list-group-item d-flex"
+                    v-for="item in cartStore.getCartItems"
+                    :key="item.reference"
+                >
+                    <img :src="item.product.thumbnail" 
+                        width="100" 
+                        class="img-fluid rounded me-2"
+                        :alt="item.product.name"    
+                    >
+                    <div class="d-flex flex-column">
+                        <h6 class="my-1">
+                            <strong>{{ item.product.name }}</strong>
+                        </h6>
+                        <span class="text-normal">
+                            <span class="text-normal">Color: {{ item.color.name }}</span>
+                        </span>
+                        <span class="text-normal">
+                            <span>Size: {{ item.size.name }}</span>
+                        </span>
+                    </div>
+                    <div class="d-flex flex-column ms-auto">
+                        <span class="text-normal">
+                            ${{ item.product.price }} <i>x</i> {{ item.qty }}
+                        </span>
+                        <span class="text-normal fw-bold">
+                            ${{ item.product.price * item.qty }}
+                        </span>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="fw-bold">
+                        Discount 10%
+                    </span>
+                    <span class="fw-bold text-danger">
+                        -${{ (cartTotalPrice * 0.1).toFixed(2) }}
+                    </span>
+                </li>                    
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="fw-bold">Total</span>
+                    <span class="fw-bold text-normal">${{ cartTotalPrice.toFixed(2) }}</span>
+                </li>
+            </ul>
+            <button 
+            class="btn btn-primary w-100 mt-3" 
+            @click="handleCheckoutSubmit"
+            :disabled="cartTotalItems <= 0 || user.profile_completed == false"
+            >
+                Pay Now
+            </button>
+            </div>
+        </div>        
+    </div>
+</template>
+
+<script setup>
+    import { computed, onMounted } from 'vue';
+    import { useCartStore } from '../../stores/useCartStore'
+    import { useAuthStore } from '../../stores/useAuthStore';
+    import { useRouter } from 'vue-router';
+    import Spinner from '../common/Spinner.vue';
+    import ValidationErrors from '../common/ValidationErrors.vue';
+    import { useToast } from 'vue-toastification';
+    import ProfileUpdate from '../profile/ProfileUpdate.vue';
+
+    // define the stores
+    const cartStore = useCartStore()
+    const authStore = useAuthStore()
+
+    // define router
+    const router = useRouter()
+
+    // define the computed properties
+    const cartItems = computed(() => cartStore.cartItems)
+    const user = computed(() => authStore.getUser)
+    const isUserLoggedIn = computed(() => authStore.isUserLoggedIn)
+
+    // define toast
+    const toast = useToast()
+
+    // define the computed properties
+    const cartTotalItems = computed(() => cartItems.value.length)
+    const cartTotalPrice = computed(() => cartItems.value.reduce((total, item) => total + (item.product.price * item.qty), 0))
+    
+    // define the methods
+    const handleCheckoutSubmit = async () => {
+        console.log('handleCheckoutSubmit called')
+        try {
+            authStore.setIsLoading(true)
+            // const response = await axios.post('/api/checkout', {
+            //     cartItems: cartItems.value
+            // })
+            console.log('Payment successful response:', response)
+            toast.success('Payment successful')
+            router.push('/')
+            return
+        } catch (error) {
+            toast.error('Error checking out:', error)
+            console.error('Error checking out:', error)
+        }
+        finally {
+            authStore.setIsLoading(false)
+        }
+    }
+
+    
+
+    // define the mounted hook
+    onMounted(() => {
+        console.log('Cart Items', cartItems.value)
+        console.log('User', user.value)
+        console.log('Is User Logged In', isUserLoggedIn.value)
+        
+        // redirect user to home page if cartTotalItems is 0
+        if (cartTotalItems.value <= 0) {
+            toast.error('Your cart is empty')
+            router.push('/')
+            return
+        }
+
+    })
+</script>
+
+<style scoped>
+
+</style>

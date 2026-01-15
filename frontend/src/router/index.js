@@ -9,7 +9,7 @@ import Product from '../components/products/Product.vue'
 import Cart from '../components/cart/Cart.vue'
 import Profile from '../components/profile/Profile.vue'
 import Orders from '../components/profile/Orders.vue'
-
+import Checkout from '../components/checkout/Checkout.vue'
 
 function checkIfUserIsLoggedIn() {
   const authStore = useAuthStore()
@@ -30,6 +30,7 @@ const routes = [
   { path: '/product/:slug', name: 'product', component: Product },
   { path: '/cart', name: 'cart', component: Cart },
   { path: '/user/orders', name: 'orders', component: Orders, beforeEnter: checkIfUserIsLoggedIn },
+  { path: '/checkout', name: 'checkout', component: Checkout, beforeEnter: checkIfUserIsLoggedIn },
 ]
 
 export default createRouter({
