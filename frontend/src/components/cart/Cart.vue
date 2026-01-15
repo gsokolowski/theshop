@@ -65,7 +65,12 @@
                                     <span class="fw-bold">Total:</span> ${{ cartTotalPrice.toFixed(2) }}
                                 </td>
                                 <td class="text-end">
-                                    <button class="btn btn-primary" @click="router.push('/checkout')">Checkout</button>
+                                    <button 
+                                    class="btn btn-primary" 
+                                    @click="router.push('/checkout')"
+                                    :disabled="cartTotalItems === 0"
+                                    :class="{'disabled': cartTotalItems === 0}"
+                                    >Checkout</button>
                                 </td>
                             </tr>
                             <tr>
@@ -93,6 +98,7 @@
     import { computed } from 'vue'
 
     const cartStore = useCartStore()
+    // define the computed properties
     const cartItems = computed(() => cartStore.cartItems)
     const cartTotalItems = computed(() => cartItems.value.length)
     const cartTotalPrice = computed(() => cartItems.value.reduce((total, item) => total + (item.product.price * item.qty), 0))

@@ -4,7 +4,9 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0 text-center">Update Profile</h5>
+                        <h5 class="card-title mb-0 text-center">
+                            {{ updateProfile ? 'Update Profile' : 'Billing Address' }}
+                        </h5>
                     </div>
                     <div class="card-body">
                         <Spinner :store="authStore" />
@@ -77,7 +79,8 @@
                                 />
                             </div>
                             <div class="d-flex justify-content-end">
-                                <button 
+                                <button
+                                v-if="updateProfile"
                                 type="submit" 
                                 class="btn btn-primary"
                                 :disabled="authStore.isLoading"
@@ -86,9 +89,9 @@
                                     {{ authStore.isLoading ? 'Updating...' : 'Update Profile' }}
                                 </button>
                             </div>
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <p>Name: {{ user.name }}</p>
-                            </div>
+                            </div> -->
                         </form>
                     </div>
                 </div>
@@ -116,6 +119,15 @@
         country: '',
         zip_code: '',
         phone_number: '',
+    })
+
+    // define the props
+    const props = defineProps({
+        updateProfile: {
+            type: Boolean,
+            required: false,
+            default: false
+        }
     })
 
     // define toast

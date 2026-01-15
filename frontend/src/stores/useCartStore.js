@@ -12,8 +12,9 @@ export const useCartStore = defineStore('cart', {
     }),
     persist: true, // persist the cart items array
     getters: {
-        getErrorMessage: (state) => state.errorMessage,      // Returns error message string
+        getCartItems: (state) => state.cartItems,      // Returns cart items array
         getIsLoading: (state) => state.isLoading,      // Returns isLoading state - boolean
+        getErrorMessage: (state) => state.errorMessage,      // Returns error message string
     },
     actions: {
         // add selected by user product with size and color as an item to the cart
