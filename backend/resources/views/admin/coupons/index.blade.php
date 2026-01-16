@@ -32,7 +32,17 @@
                                     <td>{{ $key += 1 }}</td>
                                     <td>{{ $coupon->name }}</td>
                                     <td>{{ $coupon->discount }}</td>
-                                    <td>{{ $coupon->valid_until }}</td>
+                                    <td>
+                                        @if ($coupon->isValid())
+                                            <span class="bg-success border border-dark p-1 text-white">
+                                                Valid until {{ \Carbon\Carbon::parse($coupon->valid_until)->format('Y-m-d H:i')}}
+                                            </span>
+                                        @else
+                                            <span class="bg-danger border border-dark p-1 text-white">
+                                                Expired on {{ \Carbon\Carbon::parse($coupon->valid_until)->format('Y-m-d H:i')}}
+                                            </span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{route('admin.coupons.edit',$coupon->id)}}" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i>

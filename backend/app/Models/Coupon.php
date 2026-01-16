@@ -22,6 +22,15 @@ class Coupon extends Model
         'discount',
         'valid_until',
     ];
+    
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'valid_until' => 'datetime:Y-m-d H:i',
+    ];
 
     // Convert coupon code to uppercase
     public function setCodeAttribute($value)
@@ -33,7 +42,7 @@ class Coupon extends Model
     public function isValid()
     {
         // If coupon is valid until is greater than current date, return true
-        if ($this->valid_until > Carbon::now()) {
+        if ($this->valid_until > Carbon::now()->format('Y-m-d H:i')) {
             return true;
         }
         return false;
