@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('title', 'Coupons')
 @section('content-dashboard')
-    <div class="row">
+    <div class="row mb-5">
         @include('admin.layouts.sidebar')
         <div class="col-md-9">
         <div class="row mt-2">
@@ -63,11 +63,11 @@
                     <div class="form-group">
                         <label for="valid_until">Valid Until</label>
                         <input 
-                            type="date" 
+                            type="datetime-local" 
                             class="form-control @error('valid_until') is-invalid @enderror"
                             name="valid_until" 
                             id="valid_until"
-                            value="{{old('valid_until')}}"
+                            value="{{Carbon\Carbon::now()->addDays(1)->format('Y-m-d')}}"
                             placeholder="Enter valid until date">
                         @error('valid_until')
                             <div class="invalid-feedback">

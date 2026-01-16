@@ -64,11 +64,11 @@
                     <div class="form-group">
                         <label for="valid_until">Valid Until</label>
                         <input 
-                            type="date" 
+                            type="datetime-local" 
                             class="form-control @error('valid_until') is-invalid @enderror"
                             name="valid_until"
                             id="valid_until"
-                            value="{{old('valid_until', $coupon->valid_until)}}"
+                            value="{{old('valid_until', $coupon->valid_until ? \Carbon\Carbon::parse($coupon->valid_until)->format('Y-m-d\TH:i') : '')}}"
                             placeholder="Enter valid until date">
                         @error('valid_until')
                             <div class="invalid-feedback">
