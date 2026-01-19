@@ -34,11 +34,14 @@
                     </div>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
+                    <Coupon />
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
                     <span class="fw-bold">
-                        Discount 10%
+                        Discount {{ cartStore.validCoupon.discount }} %
                     </span>
                     <span class="fw-bold text-danger">
-                        -${{ (cartTotalPrice * 0.1).toFixed(2) }}
+                        -${{ cartTotalDiscount.toFixed(2) }}
                     </span>
                 </li>                    
                 <li class="list-group-item d-flex justify-content-between">
@@ -63,11 +66,10 @@
     import { useCartStore } from '../../stores/useCartStore'
     import { useAuthStore } from '../../stores/useAuthStore';
     import { useRouter } from 'vue-router';
-    import Spinner from '../common/Spinner.vue';
-    import ValidationErrors from '../common/ValidationErrors.vue';
     import { useToast } from 'vue-toastification';
     import ProfileUpdate from '../profile/ProfileUpdate.vue';
-
+    import Coupon from '../coupons/Coupon.vue';
+    
     // define the stores
     const cartStore = useCartStore()
     const authStore = useAuthStore()
@@ -85,8 +87,9 @@
 
     // define the computed properties
     const cartTotalItems = computed(() => cartItems.value.length)
-    const cartTotalPrice = computed(() => cartItems.value.reduce((total, item) => total + (item.product.price * item.qty), 0))
-    
+    const cartTotalDiscount = computed(() => cartItems.value.reduce((total, item) => total + (item.product.price * item.qty * cartStore.validCoupon.discount / 100), 0))
+    const cartTotalPrice = computed(() => cartItems.value.reduce((total, item) => total + (item.product.price * item.qty), 0) - cartTotalDiscount.value)
+
     // define the methods
     const handleCheckoutSubmit = async () => {
         console.log('handleCheckoutSubmit called')
