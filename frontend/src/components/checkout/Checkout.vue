@@ -107,9 +107,6 @@
             authStore.setIsLoading(false)
         }
     }
-
-    
-
     // define the mounted hook
     onMounted(() => {
         console.log('Cart Items', cartItems.value)
