@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -18,6 +19,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/password/update', [UserController::class, 'updatePassword'])->name('user.password.update');
     // url: http://127.0.0.1:8000/api/user
     Route::delete('/user', [UserController::class, 'destroy'])->name('user.destroy');
+    // url: http://127.0.0.1:8000/api/coupon and pass the coupon name as a parameter
+    Route::get('/coupon', [CouponController::class, 'getCouponByName'])->name('coupon.get');
 });
 
 // url: http://127.0.0.1:8000/api/user/register
@@ -29,6 +32,8 @@ Route::post('/user/login', [UserController::class, 'login'])->name('user.login')
 // Product routes  use Api\ProductController.php to handle the requests and are opened to all users.
 // url: http://127.0.0.1:8000/api/products
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+// url: http://127.0.0.1:8000/api/products/search?searchTerm=your-search-term
+Route::get('/products/search', [ProductController::class, 'filterBySearchTerm'])->name('products.filter.searchTerm');
 // url: http://127.0.0.1:8000/api/products/{product}
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 // url: http://127.0.0.1:8000/api/products/category/{category}
@@ -39,7 +44,4 @@ Route::get('/products/brand/{brand}', [ProductController::class, 'filterByBrand'
 Route::get('/products/color/{color}', [ProductController::class, 'filterByColor'])->name('products.filter.color');
 // url: http://127.0.0.1:8000/api/products/size/{size} - size is the slug of the size
 Route::get('/products/size/{size}', [ProductController::class, 'filterBySize'])->name('products.filter.size');
-// url: http://127.0.0.1:8000/api/products/search/{search} - search is the search term
-Route::get('/products/search/{searchTerm}', [ProductController::class, 'filterBySearchTerm'])->name('products.filter.searchTerm');
-
 
