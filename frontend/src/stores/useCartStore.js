@@ -9,6 +9,13 @@ export const useCartStore = defineStore('cart', {
         cartItems: [], // cart items array
         isLoading: false, // isLoading state - boolean
         errorMessage: '', // error message string
+        validCoupon: {
+            coupon_id: null,
+            name: null,
+            discount: null,
+            valid_until: null,
+        },
+        uniqueHash: null,
     }),
     persist: true, // persist the cart items array
     getters: {
@@ -68,6 +75,34 @@ export const useCartStore = defineStore('cart', {
             toast.success("Cart cleared")
             console.log('Cart Items', this.cartItems);
         },
-
+        // set the valid coupon
+        setValidCoupon(coupon) {
+            this.validCoupon = coupon
+        },
+        // add the coupon to the cart item
+        addCouponToCartItem(coupon_id) {
+            this.cartItems = this.cartItems.map(cartItem => {
+                return {...cartItem, coupon_id: coupon_id}
+            })
+            console.log('Cart Items with coupon', this.cartItems);
+        },
+        // remove the coupon from the cart cartItems array
+        removeCouponFromAllItems() {
+            this.cartItems = this.cartItems.map(cartItem => {
+                return {...cartItem, coupon_id: null}
+            })
+            // Clear the valid coupon state
+            this.validCoupon = {
+                coupon_id: null,
+                name: null,
+                discount: null,
+                valid_until: null,
+            }
+            console.log('Cart Items without coupon', this.cartItems);
+        },
+        // set the unique hash
+        setUniqueHash(hash) {
+            this.uniqueHash = hash
+        },
     }
   })

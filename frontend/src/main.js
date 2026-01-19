@@ -36,6 +36,7 @@ const app = createApp(App)
 
     // Initialize axios headers from persisted state
     const authStore = useAuthStore()
-    authStore.initializeAxiosHeaders() // initialize access_token for authorization header
+    // if access_token is set, set it in the axios headers by default
+    authStore.initializeAxiosHeaders()
 
     app.mount('#app') // mount app to the div with id app
