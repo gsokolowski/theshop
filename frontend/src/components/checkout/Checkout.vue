@@ -69,6 +69,7 @@
     import { useToast } from 'vue-toastification';
     import ProfileUpdate from '../profile/ProfileUpdate.vue';
     import Coupon from '../coupons/Coupon.vue';
+    import axios from 'axios'; // for API calls
     
     // define the stores
     const cartStore = useCartStore()
@@ -92,18 +93,38 @@
 
     // define the methods
     const handleCheckoutSubmit = async () => {
-        console.log('handleCheckoutSubmit called')
+        console.log('handleCheckoutSubmit called')        
         try {
-            authStore.setIsLoading(true)
-            // const response = await axios.post('/api/checkout', {
-            //     cartItems: cartItems.value
-            // })
+            authStore.setIsLoading(true) 
+
+            //Transform cartItems to match backend expectations
+            const cartItemsData = cartItems.value.map(item => ({
+                product_id: item.product.id,  // Extract product ID
+                qty: item.qty,
+                price: item.product.price,  // Backend needs price for calculation
+                coupon_id: item.coupon_id || null
+            }))
+            console.log('Cart Items Data', cartItemsData)
+
+            const response = await axios.post('/api/orders', {
+                cartItems: cartItemsData
+            })
             console.log('Payment successful response:', response)
-            toast.success('Payment successful')
+            // ✅ CHANGED: Use response message instead of hardcoded
+            toast.success(response.data.message || 'Payment successful')
+
+            // clear the cart
+            cartStore.clearCart()
+            // remove the coupon from all items
+            cartStore.removeCouponFromAllItems()
+            
             router.push('/')
             return
         } catch (error) {
-            toast.error('Error checking out:', error)
+            const errorMessage = error.response?.data?.message || 
+                           error.response?.data?.error || 
+                           'Error checking out'
+            toast.error(errorMessage)
             console.error('Error checking out:', error)
         }
         finally {

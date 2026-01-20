@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CouponController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -21,6 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/user', [UserController::class, 'destroy'])->name('user.destroy');
     // url: http://127.0.0.1:8000/api/coupon/{name} and pass the coupon name as route  parameter
     Route::get('/coupon/{name}', [CouponController::class, 'getCouponByName'])->name('coupon.get');
+    // url: http://127.0.0.1:8000/api/orders
+    Route::post('/orders', [OrderController::class, 'storeUserCartItemsOrders'])->name('orders.store');
 });
 
 // url: http://127.0.0.1:8000/api/user/register
