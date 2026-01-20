@@ -19,8 +19,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/password/update', [UserController::class, 'updatePassword'])->name('user.password.update');
     // url: http://127.0.0.1:8000/api/user
     Route::delete('/user', [UserController::class, 'destroy'])->name('user.destroy');
-    // url: http://127.0.0.1:8000/api/coupon and pass the coupon name as a parameter
-    Route::get('/coupon', [CouponController::class, 'getCouponByName'])->name('coupon.get');
+    // url: http://127.0.0.1:8000/api/coupon/{name} and pass the coupon name as route  parameter
+    Route::get('/coupon/{name}', [CouponController::class, 'getCouponByName'])->name('coupon.get');
 });
 
 // url: http://127.0.0.1:8000/api/user/register
