@@ -9,15 +9,19 @@ use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
-    // get coupon by name and return the coupon resource
-    // url: http://127.0.0.1:8000/api/coupon?name=TESTCOUPON
-    public function getCouponByName(Request $request)
+    // url: http://127.0.0.1:8000/api/coupon/{name} as route parameter
+    // Example: http://127.0.0.1:8000/api/coupon/TESTCOUPON
+    public function getCouponByName(string $name)
     {
-        $coupon = Coupon::where('name', $request->query('name'))->first();
+        $coupon = Coupon::where('name', $name)->first();
         if (! $coupon || ! $coupon->isValid()) {
-            return response()->json(['message' => 'Coupon not found or is not valid'], 404);
+            return response()->json([
+                'error' => 'Invalid or expired coupon'
+            ], 404);
         }
-        // return the coupon resource
-        return new CouponResource($coupon);
-    }
+        // return the coupon resource with success message
+        return response()->json([
+            'message' => 'Coupon applied successfully',
+            'data' => new CouponResource($coupon)
+        ], 200);    }
 }

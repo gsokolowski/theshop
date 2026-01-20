@@ -36,7 +36,7 @@
                 <li class="list-group-item d-flex justify-content-between">
                     <Coupon />
                 </li>
-                <li class="list-group-item d-flex justify-content-between">
+                <li v-if="cartTotalDiscount > 0" class="list-group-item d-flex justify-content-between">
                     <span class="fw-bold">
                         Discount {{ cartStore.validCoupon.discount }} %
                     </span>
