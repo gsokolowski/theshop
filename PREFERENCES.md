@@ -58,3 +58,15 @@
 - Use Bootstrap Icons for icons (`<i class="bi bi-icon-name"></i>`)
 - Use `object-fit: cover` for images
 - Use `rounded-circle` class for profile images
+
+## API Code
+- All API responses must be JSON with the following structure:
+  - `message`: string (success/error message, null on error) - **Required**
+  - `data`: mixed|null (response data, null on error) - **Required**
+  - `error`: string|null (error message if any, null on success) - **Optional**
+  - `status`: integer (HTTP status code: 200, 201, 400, 401, 404, etc.) - **Optional**
+- Use a standardized response helper method in the base Controller class
+- Example success response: `{ "message": "Operation successful", "data": {...} }`
+- Example success response with all fields: `{ "message": "Operation successful", "error": null, "data": {...}, "status": 200 }`
+- Example error response: `{ "message": "Error description", "data": null }`
+- Example error response with all fields: `{ "message": null, "error": "Error description", "data": null, "status": 400 }`
