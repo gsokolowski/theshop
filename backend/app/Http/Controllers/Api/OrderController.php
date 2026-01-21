@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderStoreRequest;
+use App\Http\Requests\StripePaymentRequest;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Stripe\Checkout\Session as StripeSession;
+use Stripe\Stripe;
+use Stripe\Exception\ApiErrorException;
 
 class OrderController extends Controller
 {
@@ -16,41 +21,44 @@ class OrderController extends Controller
     public function storeUserCartItemsOrders(OrderStoreRequest $request)
     {
         try {
-            DB::beginTransaction();
-
+            DB::beginTransaction(); // ✅ ADDED: Missing transaction
+            
             $validated = $request->validated();
-            $createdOrders = [];
-
+            $createdOrders = []; // ✅ ADDED: Store created orders
+            
             foreach ($validated['cartItems'] as $item) {
                 $order = Order::create([
                     'qty' => $item['qty'],
                     'user_id' => $request->user()->id,
-                    'coupon_id' => $item['coupon_id'] ?? null, // ✅ CHANGED: Use null coalescing
+                    'coupon_id' => $item['coupon_id'] ?? null,
                     'total' => $this->calculateEachOrderTotal(
                         $item['qty'], 
                         $item['price'], 
-                        $item['coupon_id'] ?? null // ✅ CHANGED: Use null coalescing
+                        $item['coupon_id'] ?? null
                     ),
                 ]);
-                // attach the product to the order_product pivot table using the product_id
-                $order->products()->attach($item['product_id']); 
-                // load the products, user and coupon for the order using the load method to avoid n+1 queries
-                $createdOrders[] = $order;
+                $order->products()->attach($item['product_id']);
+                $createdOrders[] = $order->load('products', 'user', 'coupon'); // ✅ ADDED: Load relationships
             }
+            
+            DB::commit(); // ✅ ADDED: Commit transaction
 
-            DB::commit();
-
+            // ✅ CHANGED: Follow PREFERENCES.md format
             return response()->json([
                 'message' => 'Orders stored successfully',
-                'data' => $createdOrders, // ✅ CHANGED: Include data field
+                'data' => [
+                    'user' => UserResource::make($request->user()->fresh()), // ✅ CHANGED: Put user inside data
+                    'orders' => $createdOrders // ✅ ADDED: Return created orders
+                ]
             ], 201);
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            DB::rollBack(); // ✅ ADDED: Rollback on error
             
             return response()->json([
                 'message' => 'Failed to create orders',
                 'data' => null,
+                'error' => $e->getMessage() // ✅ ADDED: Include error message
             ], 500);
         }
     }
@@ -61,7 +69,7 @@ class OrderController extends Controller
         $discount = 0;
         $total = $price * $qty;
         
-        // ✅ CHANGED: Check if coupon_id exists before querying
+        // Check if coupon_id exists before querying
         if ($coupon_id) {
             $coupon = Coupon::find($coupon_id);
             
@@ -72,5 +80,79 @@ class OrderController extends Controller
         
         $orderTotal = $total - $discount;
         return $orderTotal;
+    }
+
+    // pay for the orders with stripe payment gateway
+    // api: http://127.0.0.1:8000/api/orders/pay
+    public function payOrdersByStripe(StripePaymentRequest $request)
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        try {
+            $validated = $request->validated();
+            // check if URL already has route params
+            $successUrl = $validated['success_url'];
+            $separator = str_contains($successUrl, '?') ? '&' : '?';
+            $successUrlWithSession = $successUrl . $separator . 'session_id={CHECKOUT_SESSION_ID}';
+    
+            $checkout_session = StripeSession::create([
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'usd',
+                        'product_data' => [
+                            'name' => 'The Store'
+                        ],
+                        'unit_amount' => $this->calculateTotalToPay($validated['cartItems'])
+                    ],
+                    'quantity' => 1
+                ]],
+                'mode' => 'payment',
+                // the url to redirect to after the payment is successful
+                'success_url' => $successUrlWithSession,
+                // the url to redirect to after the payment is cancelled
+                'cancel_url' => $validated['cancel_url'],
+                'metadata' => [
+                    'user_id' => $request->user()->id,
+                    'cart_items' => json_encode($validated['cartItems'])
+                ]
+            ]);
+            //return the link to the stripe checkout form
+            return response()->json([
+                'message' => 'Checkout session created successfully',
+                'data' => [
+                    'url' => $checkout_session->url,
+                    'session_id' => $checkout_session->id
+                ]
+            ], 200);
+
+        } catch (ApiErrorException $e) {
+            // ✅ ADDED: Better error handling
+            return response()->json([
+                'message' => 'Failed to create checkout session',
+                'data' => null,
+                'error' => $e->getMessage()
+            ], 500);
+        } catch (\Exception $e) { // ✅ ADDED: Catch general exceptions
+            return response()->json([
+                'message' => 'Failed to create checkout session',
+                'data' => null,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    /**
+     * Calculate the total to pay
+     */
+    public function calculateTotalToPay($items)
+    {
+        $total = 0;
+        foreach ($items as $item) {
+            $total += $this->calculateEachOrderTotal(
+                $item['qty'],
+                $item['price'],
+                $item['coupon_id'] ?? null
+            );
+        }
+        return (int) ($total * 100);
     }
 }
