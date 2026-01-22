@@ -3,9 +3,13 @@
   <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
           <div class="container">
-              <router-link class="navbar-brand" to="/">
-                  <a class="navbar-brand" href="#">The Shop</a>
-              </router-link>                
+            <router-link 
+                class="navbar-brand" 
+                to="/"
+                @click="handleShopClick"
+            >
+                The Shop
+            </router-link>              
               <div class="collapse navbar-collapse" id="navbarNav">
                   <ul class="navbar-nav ms-auto">
                       <li class="nav-item">
@@ -63,12 +67,22 @@
 <script setup>
 import { useCartStore } from '../../stores/useCartStore'
 import { useAuthStore } from '../../stores/useAuthStore'
-import { computed } from 'vue'
+import { useProductsStore } from '../../stores/useProductsStore'
+
 import { useRouter } from 'vue-router'
+import { computed } from 'vue'
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
+const productsStore = useProductsStore()
+
 const router = useRouter()
+
+const handleShopClick = () => {
+    // clear filters when user clicks on the shop navbar link
+    productsStore.clearFilters()
+    console.log('Filters cleared - shop clicked')
+}
 
 const cartItemsCount = computed(() => cartStore.cartItems.length)
 

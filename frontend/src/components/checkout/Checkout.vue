@@ -34,6 +34,7 @@
                     </div>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
+                    <!-- Coupon component -->
                     <Coupon />
                 </li>
                 <li v-if="cartTotalDiscount > 0" class="list-group-item d-flex justify-content-between">
@@ -49,13 +50,10 @@
                     <span class="fw-bold text-normal">${{ cartTotalPrice.toFixed(2) }}</span>
                 </li>
             </ul>
-            <button 
-            class="btn btn-primary w-100 mt-3" 
-            @click="handleCheckoutSubmit"
-            :disabled="cartTotalItems <= 0 || user.profile_completed == false"
-            >
-                Pay Now
-            </button>
+            <!-- Stripe component button with link to stripe payment page -->
+            <Stripe 
+                v-if="user.profile_completed == true && cartTotalItems > 0"
+                />
             </div>
         </div>        
     </div>
@@ -70,7 +68,8 @@
     import ProfileUpdate from '../profile/ProfileUpdate.vue';
     import Coupon from '../coupons/Coupon.vue';
     import axios from 'axios'; // for API calls
-    
+    import Stripe from '../payment/Stripe.vue';
+
     // define the stores
     const cartStore = useCartStore()
     const authStore = useAuthStore()
@@ -91,46 +90,7 @@
     const cartTotalDiscount = computed(() => cartItems.value.reduce((total, item) => total + (item.product.price * item.qty * cartStore.validCoupon.discount / 100), 0))
     const cartTotalPrice = computed(() => cartItems.value.reduce((total, item) => total + (item.product.price * item.qty), 0) - cartTotalDiscount.value)
 
-    // define the methods
-    const handleCheckoutSubmit = async () => {
-        console.log('handleCheckoutSubmit called')        
-        try {
-            authStore.setIsLoading(true) 
-
-            //Transform cartItems to match backend expectations
-            const cartItemsData = cartItems.value.map(item => ({
-                product_id: item.product.id,  // Extract product ID
-                qty: item.qty,
-                price: item.product.price,  // Backend needs price for calculation
-                coupon_id: item.coupon_id || null
-            }))
-            console.log('Cart Items Data', cartItemsData)
-
-            const response = await axios.post('/api/orders', {
-                cartItems: cartItemsData
-            })
-            console.log('Payment successful response:', response)
-            // ✅ CHANGED: Use response message instead of hardcoded
-            toast.success(response.data.message || 'Payment successful')
-
-            // clear the cart
-            cartStore.clearCart()
-            // remove the coupon from all items
-            cartStore.removeCouponFromAllItems()
-            
-            router.push('/')
-            return
-        } catch (error) {
-            const errorMessage = error.response?.data?.message || 
-                           error.response?.data?.error || 
-                           'Error checking out'
-            toast.error(errorMessage)
-            console.error('Error checking out:', error)
-        }
-        finally {
-            authStore.setIsLoading(false)
-        }
-    }
+    
     // define the mounted hook
     onMounted(() => {
         console.log('Cart Items', cartItems.value)
