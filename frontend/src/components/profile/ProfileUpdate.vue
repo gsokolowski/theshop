@@ -9,7 +9,7 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <!-- <Spinner :store="authStore" /> -->
+                        <Spinner :store="authStore" />
                         <ValidationErrors :errors="authStore.validationErrors" />
                         <form name="profileUpdateForm" @submit.prevent="handleProfileUpdateSubmit" novalidate>
                             <div class="mb-3">
@@ -165,6 +165,8 @@
     console.log('Current User:', authStore.user)
 
     onMounted(() => {
+        authStore.setIsLoading(false)
+        
         // Clear any previous errors
         authStore.setValidationErrors({})
         authStore.setValidationMessage('')

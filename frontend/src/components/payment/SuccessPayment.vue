@@ -48,6 +48,7 @@
             }))
             console.log('Cart Items Data', cartItemsData)
 
+            // call the api/orders endpoint to store user orders
             const response = await axios.post(`/api/orders`,
                 {
                     cartItems : cartItemsData,
