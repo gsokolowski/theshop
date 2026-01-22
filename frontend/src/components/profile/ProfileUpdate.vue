@@ -9,7 +9,7 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <Spinner :store="authStore" />
+                        <!-- <Spinner :store="authStore" /> -->
                         <ValidationErrors :errors="authStore.validationErrors" />
                         <form name="profileUpdateForm" @submit.prevent="handleProfileUpdateSubmit" novalidate>
                             <div class="mb-3">
@@ -89,9 +89,6 @@
                                     {{ authStore.isLoading ? 'Updating...' : 'Update Profile' }}
                                 </button>
                             </div>
-                            <!-- <div class="mb-3">
-                                <p>Name: {{ user.name }}</p>
-                            </div> -->
                         </form>
                     </div>
                 </div>
