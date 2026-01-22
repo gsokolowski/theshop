@@ -67,7 +67,6 @@
     import { useToast } from 'vue-toastification';
     import ProfileUpdate from '../profile/ProfileUpdate.vue';
     import Coupon from '../coupons/Coupon.vue';
-    import axios from 'axios'; // for API calls
     import Stripe from '../payment/Stripe.vue';
 
     // define the stores
