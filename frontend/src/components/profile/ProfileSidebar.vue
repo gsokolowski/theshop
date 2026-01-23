@@ -46,7 +46,10 @@
                     
                     <ul class="list-group w-100 text-center mt-2">
                         <li class="list-group-item">
-                             {{ user?.name }}
+                        <router-link to="/profile" class="text-decoration-none text-dark">
+                            <i class="bi bi-person-fill"></i>
+                            {{ user?.name }}
+                        </router-link>
                         </li>
                         <li class="list-group-item">
                              {{ user?.email }}

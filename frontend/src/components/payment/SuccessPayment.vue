@@ -63,6 +63,8 @@
             cartStore.removeCouponFromAllItems()
 
             if (response.data.data?.user) {
+                // setUser() stores orders - Stores the entire user object, including orders
+                // under Pina auth/user/orders
                 authStore.setUser(response.data.data.user)
             }
             toast.success("Check your orders status in your profile tab",{
