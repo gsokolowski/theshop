@@ -39,6 +39,11 @@
                               <i class="bi bi-person-fill"></i> {{ authStore.getUser?.name }}
                           </router-link>
                           </li>
+                          <li class="nav-item">
+                          <router-link class="nav-link" aria-current="page" to="/user/orders">
+                              <i class="bi bi-bag-check-fill"></i> Orders
+                          </router-link>
+                          </li>
 
                           <li class="nav-item">
                               <a class="nav-link" href="#" @click.prevent="handleLogout">
