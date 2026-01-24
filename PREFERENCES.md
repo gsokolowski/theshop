@@ -70,3 +70,34 @@
 - Example success response with all fields: `{ "message": "Operation successful", "error": null, "data": {...}, "status": 200 }`
 - Example error response: `{ "message": "Error description", "data": null }`
 - Example error response with all fields: `{ "message": null, "error": "Error description", "data": null, "status": 400 }`
+
+## Form Requests / Validation
+- For every new Controller, create corresponding Form Request classes following the naming convention: `ModelActionRequest.php`
+  - Examples: `OrderUpdateRequest.php`, `ProductStoreRequest.php`, `CategoryUpdateRequest.php`
+- Form Requests should be placed in `app/Http/Requests/` directory
+- Use Form Requests instead of inline validation in Controllers
+- Form Requests must include:
+  - `authorize()` method returning `bool` (typically `true` for admin routes, middleware handles authorization)
+  - `rules()` method returning validation rules array
+  - `messages()` method returning custom validation messages array (optional but recommended)
+- Controllers should type-hint Form Requests in method parameters (e.g., `public function update(OrderUpdateRequest $request, Order $order)`
+
+## Backend / Laravel Controllers
+- Always separate database calls from view calls in Controller methods
+  - First, execute the database query and store the result in a variable
+  - Then, pass that variable to the view
+  - Example:
+    // ✅ CORRECT: Separate DB call from view
+    public function index()
+    {
+        $orders = Order::with('user', 'products')->latest()->get();
+        return view('admin.orders.index', ['orders' => $orders]);
+    }
+    
+    // ❌ INCORRECT: DB call inline with view
+    public function index()
+    {
+        return view('admin.orders.index', [
+            'orders' => Order::with('user', 'products')->latest()->get()
+        ]);
+    }

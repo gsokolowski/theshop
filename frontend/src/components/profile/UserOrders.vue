@@ -46,9 +46,9 @@
                             <td>{{ order.created_at }}</td>
                             <td>
                                 <span class="badge bg-success my-1 rounded-0"
-                                    v-if="order.delivered_at"
+                                    v-if="order.deliverd_at"
                                 >
-                                    {{ order.delivered_at }}
+                                    {{ order.deliverd_at }}
                                 </span>
                                 <i v-else class="text-muted">Pending...</i>
                             </td>
@@ -73,7 +73,7 @@
     import { useAuthStore } from "../../stores/useAuthStore"
     import ProfileSidebar from "./ProfileSidebar.vue"
     import Alert from "../layouts/Alert.vue"
-    import { reactive } from "vue"
+    import { reactive, onMounted } from "vue"
 
     //define how many orders to show on the user orders page
     const data = reactive({
@@ -91,6 +91,16 @@
             return 
         }
     }
+    
+    // Refresh user data (including orders) when component mounts to sync with backend changes
+    onMounted(async () => {
+        try {
+            await authStore.getLoggedInUser()
+        } catch (error) {
+            console.error('Error refreshing user orders:', error)
+        }
+    })
+
 </script>
 
 <style scoped>
