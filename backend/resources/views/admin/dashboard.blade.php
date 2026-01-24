@@ -16,7 +16,7 @@
                                     <div class="card-header bg-white">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class ="badge bg-dark">
-                                                Total Orders
+                                                Today's Orders
                                             </strong>
                                             <span class="badge bg-dark">
                                                 {{ $todayOrders->count() }}
