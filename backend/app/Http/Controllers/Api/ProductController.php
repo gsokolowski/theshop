@@ -129,11 +129,9 @@ class ProductController extends Controller
     }
 
     // Filter Product by searchTerm route with query parameter searchTerm
-    // url: http://127.0.0.1:8000/api/products/search?searchTerm=your-search-term
-    public function filterBySearchTerm(Request $request)
+    // url: http://127.0.0.1:8000/api/products/search/{searchTerm}
+    public function filterBySearchTerm($searchTerm)
     {
-        $searchTerm = $request->query('searchTerm');
-        
         if (!$searchTerm) {
             return response()->json(['message' => 'searchTerm parameter is required'], 400);
         }
@@ -141,6 +139,7 @@ class ProductController extends Controller
         $products = ProductResource::collection(
             Product::with('category', 'brand', 'colors', 'sizes') // eager load the relationships
             ->where('name', 'like', '%' . $searchTerm . '%')
+            ->orWhere('description', 'like', '%' . $searchTerm . '%')
             ->latest()
             ->get())
             ->additional([ // additional data to the response

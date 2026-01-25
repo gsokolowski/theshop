@@ -37,8 +37,8 @@ Route::post('/user/login', [UserController::class, 'login'])->name('user.login')
 // Product routes  use Api\ProductController.php to handle the requests and are opened to all users.
 // url: http://127.0.0.1:8000/api/products
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-// url: http://127.0.0.1:8000/api/products/search?searchTerm=your-search-term
-Route::get('/products/search', [ProductController::class, 'filterBySearchTerm'])->name('products.filter.searchTerm');
+// url: http://127.0.0.1:8000/api/products/search/{searchTerm}
+Route::get('/products/search/{searchTerm}', [ProductController::class, 'filterBySearchTerm'])->name('products.filter.searchTerm');
 // url: http://127.0.0.1:8000/api/products/{product}
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 // url: http://127.0.0.1:8000/api/products/category/{category}
