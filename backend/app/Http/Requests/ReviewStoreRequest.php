@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class ReviewStoreRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true; // Middleware handles authentication
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'title' => 'required|string|max:255',
+            'body' => 'required|string|max:5000',
+            'rating' => 'required|integer|min:1|max:5',
+            'product_id' => 'required|integer|exists:products,id',
+        ];
+    }
+
+    /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'The title field is required.',
+            'title.string' => 'The title must be a string.',
+            'title.max' => 'The title must not exceed 255 characters.',
+            'body.required' => 'The body field is required.',
+            'body.string' => 'The body must be a string.',
+            'body.max' => 'The body must not exceed 5000 characters.',
+            'rating.required' => 'The rating field is required.',
+            'rating.integer' => 'The rating must be an integer.',
+            'rating.min' => 'The rating must be at least 1.',
+            'rating.max' => 'The rating must not exceed 5.',
+            'product_id.required' => 'The product ID is required.',
+            'product_id.integer' => 'The product ID must be an integer.',
+            'product_id.exists' => 'The selected product does not exist.',
+        ];
+    }
+}
