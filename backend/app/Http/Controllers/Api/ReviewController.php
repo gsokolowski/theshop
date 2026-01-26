@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api; // ✅ CHANGED: Correct namespace
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReviewStoreRequest;
