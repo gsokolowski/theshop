@@ -28,7 +28,7 @@ class ReviewSeeder extends Seeder
                 Review::create([
                     'title' => fake()->sentence(rand(3, 6)),
                     'body' => fake()->paragraph(rand(2, 4)),
-                    'rating' => fake()->numberBetween(3, 5),
+                    'rating' => fake()->randomFloat(1, 3.5, 5.0),
                     'approved' => fake()->boolean(70), // 70% approved
                     'user_id' => $users->random()->id,
                     'product_id' => $product->id,
@@ -41,7 +41,7 @@ class ReviewSeeder extends Seeder
             Review::create([
                 'title' => fake()->sentence(rand(3, 6)),
                 'body' => fake()->paragraph(rand(2, 4)),
-                'rating' => fake()->numberBetween(4, 5),
+                'rating' => fake()->randomFloat(1, 4.5, 5.0),
                 'approved' => true,
                 'user_id' => $users->random()->id,
                 'product_id' => $products->random()->id,
@@ -52,7 +52,7 @@ class ReviewSeeder extends Seeder
             Review::create([
                 'title' => fake()->sentence(rand(3, 6)),
                 'body' => fake()->paragraph(rand(2, 4)),
-                'rating' => fake()->numberBetween(3, 5),
+                'rating' => fake()->randomFloat(1, 3.5, 5.0),
                 'approved' => false,
                 'user_id' => $users->random()->id,
                 'product_id' => $products->random()->id,

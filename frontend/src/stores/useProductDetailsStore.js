@@ -11,6 +11,10 @@ export const useProductDetailsStore = defineStore('product', {
         productImages: [], // product images array
         isLoading: false, // isLoading state - boolean
         errorMessage: '', // error message string
+        reviewsToUpdate: {
+            updating: false,
+            data: null, // review data to update
+        }
     }),
     getters: {
         getProduct: (state) => state.product,      // Returns product array

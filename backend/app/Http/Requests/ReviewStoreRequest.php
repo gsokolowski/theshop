@@ -24,7 +24,7 @@ class ReviewStoreRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'body' => 'required|string|max:5000',
-            'rating' => 'required|integer|min:1|max:5',
+            'rating' => 'required|numeric|min:1|max:5',
             'product_id' => 'required|integer|exists:products,id',
         ];
     }
@@ -44,7 +44,7 @@ class ReviewStoreRequest extends FormRequest
             'body.string' => 'The body must be a string.',
             'body.max' => 'The body must not exceed 5000 characters.',
             'rating.required' => 'The rating field is required.',
-            'rating.integer' => 'The rating must be an integer.',
+            'rating.numeric' => 'The rating must be a number.',
             'rating.min' => 'The rating must be at least 1.',
             'rating.max' => 'The rating must not exceed 5.',
             'product_id.required' => 'The product ID is required.',

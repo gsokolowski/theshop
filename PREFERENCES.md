@@ -101,3 +101,18 @@
             'orders' => Order::with('user', 'products')->latest()->get()
         ]);
     }
+- When you have an authorized user (via `auth:sanctum` middleware), always use `$request->user()->id` to get the authenticated user's ID
+  - Never accept `user_id` from the request body or validated data - always get it from the authenticated user
+  - This prevents users from tampering with the `user_id` field
+  - Example:
+    // ✅ CORRECT: Get user_id from authenticated user
+    $review = Review::create([
+        'title' => $validated['title'],
+        'user_id' => $request->user()->id, // Get from authenticated user
+    ]);
+    
+    // ❌ INCORRECT: Accept user_id from request
+    $review = Review::create([
+        'title' => $validated['title'],
+        'user_id' => $validated['user_id'], // ❌ Can be tampered with
+    ]);    

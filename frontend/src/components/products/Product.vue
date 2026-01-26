@@ -13,112 +13,114 @@
     <div v-else-if="product && product.thumbnail && imagesReady">       
         <div class="row">
             <div class="col-6 mb-3">
-            <!-- Thumbnail image -->
-            <div class="mb-3 rounded">
-                <VueImageZoomer 
-                    v-if="product.thumbnail && imagesReady" 
-                    :key="product.slug"
-                    :regular="product.thumbnail" 
-                />
-            </div>
-            <!-- Other images below thumbnail -->
-            <div v-if="productImages && productImages.length > 0" class="row g-2 rounded">
-                <div 
-                    v-for="productImage in productImages"
-                    :key="productImage.id"
-                    class="col-6"
-                >
-                <VueImageZoomer 
-                    v-if="productImage.src && imagesReady"
-                    img-class="img-fluid rounded"   
-                    :regular="productImage.src" 
-                    :key="productImage.id"
-                />
+                <!-- Thumbnail image -->
+                <div class="mb-3 rounded">
+                    <VueImageZoomer 
+                        v-if="product.thumbnail && imagesReady" 
+                        :key="product.slug"
+                        :regular="product.thumbnail" 
+                    />
                 </div>
-            </div>
-        </div>
-        <div class="col-sm-6">
-        <div class="card mb-2" style="max-width: 320px">
-            <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text">{{ product.description}}</p>
-                <p class="card-text fw-bold">Brand: {{ product.brand.name }}</p>
-                <p class="card-text fw-bold">Category: {{ product.category.name }}</p>
-                <div class="mb-2">
-                    <span class="badge bg-success" v-if="productDetailsStore.product?.status">
-                        In Stock
-                    </span>
-                    <span class="badge bg-warning" v-else>
-                        Out Stock
-                    </span>
-                </div>
-                <div class="mb-2">
-                    <span class="h6 mb-0 mt-2">Select Color</span>
-                </div>
-                <div class="d-flex flex-wrap justify-content-start">
+                <!-- Other images below thumbnail -->
+                <div v-if="productImages && productImages.length > 0" class="row g-2 rounded">
                     <div 
-                        :class="`${data.chosenColor?.id === color.id ? 'border border-light-subtle shadow-sm border-2 rounded' : ''}  mb-1 me-1`" 
-                        v-for="color in productDetailsStore.product?.colors"
-                        :key="color.id"
-                        :style="{
-                            backgroundColor:color.name,
-                            width:'30px',
-                            height:'30px',
-                            cursor:'pointer'
-                        }"
-                        @click="setChosenColor(color)"
+                        v-for="productImage in productImages"
+                        :key="productImage.id"
+                        class="col-6"
                     >
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <span class="h6 mb-0">Select Size</span>
-                </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <div class="d-flex flex-wrap justify-content-start align-items-center my-3">
-                    <button 
-                        :class="`${data.chosenSize?.id === size.id ? 'btn btn-primary mb-3 mx-1 rounded-0' : 'btn btn-sm btn-outline-secondary mb-3 mx-1'}`"
-                        v-for="size in productDetailsStore.product?.sizes"
-                        :key="size.id"
-                        @click="setChosenSize(size)"
-                    >
-                        {{ size.name }}
-                    </button>
-                </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="h5 mb-0 mt-2">${{ product.price }}</span>
-                    <div>
-                        <i class="bi bi-star-fill text-warning"></i>
-                        <i class="bi bi-star-fill text-warning"></i>
-                        <i class="bi bi-star-fill text-warning"></i>
-                        <i class="bi bi-star-fill text-warning"></i>
-                        <i class="bi bi-star-half text-warning"></i>
-                        <small class="text-muted">({{ product.reviews.length }})</small>
+                    <VueImageZoomer 
+                        v-if="productImage.src && imagesReady"
+                        img-class="img-fluid rounded"   
+                        :regular="productImage.src" 
+                        :key="productImage.id"
+                    />
                     </div>
                 </div>
             </div>
-            <div class="card-footer d-flex justify-content-between bg-light">
-                <div>
-                    <input type="number" 
-                        v-model="data.qty" 
-                        min="1"
-                        :max="product.qty"
-                        class="form-control"
-                    >
+            <div class="col-sm-6">
+                <div class="card mb-2" style="max-width: 320px">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description}}</p>
+                        <p class="card-text fw-bold">Brand: {{ product.brand.name }}</p>
+                        <p class="card-text fw-bold">Category: {{ product.category.name }}</p>
+                        <div class="mb-2">
+                            <span class="badge bg-success" v-if="productDetailsStore.product?.status">
+                                In Stock
+                            </span>
+                            <span class="badge bg-warning" v-else>
+                                Out Stock
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="h6 mb-0 mt-2">Select Color</span>
+                        </div>
+                        <div class="d-flex flex-wrap justify-content-start">
+                            <div 
+                                :class="`${data.chosenColor?.id === color.id ? 'border border-light-subtle shadow-sm border-2 rounded' : ''}  mb-1 me-1`" 
+                                v-for="color in productDetailsStore.product?.colors"
+                                :key="color.id"
+                                :style="{
+                                    backgroundColor:color.name,
+                                    width:'30px',
+                                    height:'30px',
+                                    cursor:'pointer'
+                                }"
+                                @click="setChosenColor(color)"
+                            >
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <span class="h6 mb-0">Select Size</span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <div class="d-flex flex-wrap justify-content-start align-items-center my-3">
+                            <button 
+                                :class="`${data.chosenSize?.id === size.id ? 'btn btn-primary mb-3 mx-1 rounded-0' : 'btn btn-sm btn-outline-secondary mb-3 mx-1'}`"
+                                v-for="size in productDetailsStore.product?.sizes"
+                                :key="size.id"
+                                @click="setChosenSize(size)"
+                            >
+                                {{ size.name }}
+                            </button>
+                        </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 mb-0 mt-2">${{ product.price }}</span>
+                            <div>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-half text-warning"></i>
+                                <small class="text-muted">({{ product.reviews.length }})</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between bg-light">
+                        <div>
+                            <input type="number" 
+                                v-model="data.qty" 
+                                min="1"
+                                :max="product.qty"
+                                class="form-control"
+                            >
+                        </div>
+                        <button class="btn btn-danger btn-sm" 
+                            @click="handleAddToCart"
+                            :disabled="!data.chosenColor || !data.chosenSize || !data.qty "
+                        >
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-heart"></i></button>
+                    </div>
                 </div>
-                <button class="btn btn-danger btn-sm" 
-                    @click="handleAddToCart"
-                    :disabled="!data.chosenColor || !data.chosenSize || !data.qty "
-                >
-                    <i class="bi bi-cart-plus"></i> Add to Cart
-                </button>
-                <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-heart"></i></button>
+                <div class="col-sm-6">
+                    <AddReview :rating="data.rating" :max-rating="5" :increment="1" />
+                </div>
             </div>
         </div>
-
-        </div>
-    </div>
     </div>
 </template>
 
@@ -129,6 +131,7 @@
     import { useRoute, useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
     import Spinner from '../common/Spinner.vue'
+    import AddReview from '../reviews/AddReview.vue'
     
     const route = useRoute() // to get the slug from the route
     const router = useRouter() // to get back to the products list
