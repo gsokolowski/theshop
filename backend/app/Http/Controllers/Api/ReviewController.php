@@ -58,7 +58,7 @@ class ReviewController extends Controller
                 'body' => $validated['body'],
                 'rating' => $validated['rating'],
                 'product_id' => $validated['product_id'],
-                'user_id' => $user->id,
+                'user_id' => $user->id, // Get user_id from authenticated user
                 'approved' => false, // New reviews start as unapproved
             ]);
             
