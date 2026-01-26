@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders', [OrderController::class, 'storeUserCartItemsOrders'])->name('orders.store');
     // url: http://127.0.0.1:8000/api/orders/pay
     Route::post('/orders/pay', [OrderController::class, 'payOrdersByStripe'])->name('orders.pay');
+    // url: http://127.0.0.1:8000/api/reviews
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    // url: http://127.0.0.1:8000/api/reviews/{review}
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    // url: http://127.0.0.1:8000/api/reviews/{review}
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // url: http://127.0.0.1:8000/api/user/register
