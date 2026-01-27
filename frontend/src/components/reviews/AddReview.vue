@@ -79,9 +79,7 @@
                 product_id: product.value.id, // ✅ Use product.value.id directly
             })
 
-            if (response.status === 201) {
-                toast.success('Review submitted successfully!')
-            }
+            toast.success('Review submitted successfully!')
             console.log('Post review response', response)
 
             // Clear form
@@ -89,7 +87,17 @@
             data.body = ''
             data.rating = 0
         } catch (error) {
-            toast.error('Failed to submit review')
+            
+            if (error.response?.status === 401) {
+                toast.error('Please login to submit a review')
+                router.push('/login') // Redirect to login page
+            } else if (error.response?.data?.error) {
+                toast.error(error.response.data.error)
+            } else if (error.response?.data?.message) {
+                toast.error(error.response.data.message)
+            } else {
+                toast.error('Failed to submit review')
+            }
             console.error('Error:', error)
         }
     }

@@ -116,10 +116,10 @@
                         <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-heart"></i></button>
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <AddReview :rating="data.rating" :max-rating="5" :increment="1" />
-                </div>
             </div>
+        </div>
+        <div class="col-sm-6">
+            <AddReview :rating="data.rating" :max-rating="5" :increment="1" />
         </div>
     </div>
 </template>
