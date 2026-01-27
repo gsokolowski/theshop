@@ -119,6 +119,7 @@
             </div>
         </div>
         <div class="row">                    
+            <ReviewList />
             <AddReview :rating="data.rating" :max-rating="5" :increment="1" />
         </div>
     </div>
@@ -132,6 +133,7 @@
     import { useToast } from 'vue-toastification'
     import Spinner from '../common/Spinner.vue'
     import AddReview from '../reviews/AddReview.vue'
+    import ReviewList from '../reviews/ReviewList.vue'
     
     const route = useRoute() // to get the slug from the route
     const router = useRouter() // to get back to the products list
