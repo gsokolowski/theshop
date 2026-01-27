@@ -120,7 +120,8 @@
         </div>
         <div class="row">                    
             <ReviewList />
-            <AddReview :rating="data.rating" :max-rating="5" :increment="1" />
+            <EditReview ref="editReviewRef" v-if="isEditingReview" />
+            <AddReview v-else :rating="data.rating" :max-rating="5" :increment="1" />
         </div>
     </div>
 </template>
@@ -133,6 +134,7 @@
     import { useToast } from 'vue-toastification'
     import Spinner from '../common/Spinner.vue'
     import AddReview from '../reviews/AddReview.vue'
+    import EditReview from '../reviews/EditReview.vue'
     import ReviewList from '../reviews/ReviewList.vue'
     
     const route = useRoute() // to get the slug from the route
@@ -146,9 +148,26 @@
     const product = computed(() => productDetailsStore.getProduct)
     const productImages = computed(() => productDetailsStore.getProductImages)
     const isLoading = computed(() => productDetailsStore.getIsLoading)
+    
+    // Check if user is editing a review
+    const isEditingReview = computed(() => {
+        const reviewToUpdate = productDetailsStore.getReviewToUpdate
+        return reviewToUpdate.updating === true && reviewToUpdate.data.id !== null
+    })
 
+    // Ref for EditReview component
+    const editReviewRef = ref(null)
 
-    // ✅ Track when images are ready
+    // Watch for edit mode and scroll to form
+    watch(isEditingReview, async (isEditing) => {
+        if (isEditing) {
+            await nextTick() // Wait for EditReview component to render
+            if (editReviewRef.value?.$el) {
+                editReviewRef.value.$el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }
+        }
+    })
+    // Track when images are ready
     const imagesReady = ref(false)
 
     // Function to fetch product and track when images are ready

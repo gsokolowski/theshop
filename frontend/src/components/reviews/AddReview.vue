@@ -7,7 +7,13 @@
             </h5>
         </div>
         <div class="card-body">
-            <form @submit.prevent="handleAddReview">
+            <!-- Show message if user hasn't purchased the product -->
+            <div v-if="!hasPurchasedProduct" class="text-center text-muted py-4">
+                <p class="mb-0">You must purchase this product before you can leave a review.</p>
+            </div>
+            
+            <!-- Show form if user has purchased -->
+            <form v-else @submit.prevent="handleAddReview">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title *</label>
                     <input 
@@ -45,6 +51,7 @@
 
 <script setup>
     import { useProductDetailsStore } from '../../stores/useProductDetailsStore'
+    import { useAuthStore } from '../../stores/useAuthStore'
     import { useToast } from 'vue-toastification'
     import { useRouter } from 'vue-router'
     import Spinner from '../common/Spinner.vue'
@@ -53,20 +60,45 @@
     
 
     const productDetailsStore = useProductDetailsStore()
+    const authStore = useAuthStore()
 
     const toast = useToast()
     const router = useRouter() 
 
     const product = computed(() => productDetailsStore.getProduct)
 
+    // Check if user has purchased the product
+    const hasPurchasedProduct = computed(() => {
+        // If user is not logged in, they can't have purchased anything
+        if (!authStore.isUserLoggedIn || !authStore.user) {
+            return false
+        }
+        
+        // If user has no orders, they haven't purchased the product
+        if (!authStore.user.orders || authStore.user.orders.length === 0) {
+            return false
+        }
+        
+        // Check if any order contains the current product
+        const productId = product.value?.id
+        if (!productId) {
+            return false
+        }
+        
+        // Check all orders to see if any contains this product
+        return authStore.user.orders.some(order => 
+            order.products && order.products.some(p => p.id === productId)
+        )
+    })
+
     // define the data object
     const data = reactive({
         title: '',
         body: '',
         rating: 0,
-        
     })
     
+    // handle add review to be able to display errors in Component not from store
     const handleAddReview = async () => {
         try {
             // Validation check before sending
@@ -74,20 +106,27 @@
                 toast.error('Product not found')
                 return
             }
+            // Check if user has purchased the product before submitting
+            if (!hasPurchasedProduct.value) {
+                toast.error('You must purchase this product before you can leave a review')
+                return
+            }  
+            // Validation check for title, body, and rating          
             if (!data.title.trim() || !data.body.trim() || data.rating === 0) {
                 toast.error('Please fill in all fields and select a rating')
                 return
             }
             
             // Call store method with product_id included
-            await productDetailsStore.addReview({
+            const response = await productDetailsStore.addReview({
                 title: data.title,
                 body: data.body,
                 rating: data.rating,
-                product_id: product.value.id, // Set dynamically from computed product
+                product_id: product.value.id,
             })
             
-            toast.success('Review submitted successfully!')
+            // Display success message from backend response
+            toast.success(response.data.message || 'Review submitted successfully!')
             
             // Clear form
             data.title = ''
@@ -107,8 +146,6 @@
             console.error('Error:', error)
         }
     }
-
-
 </script>
 
 <style scoped>
