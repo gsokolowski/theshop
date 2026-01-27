@@ -118,7 +118,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="row">                    
             <AddReview :rating="data.rating" :max-rating="5" :increment="1" />
         </div>
     </div>
