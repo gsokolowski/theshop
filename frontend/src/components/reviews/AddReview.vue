@@ -1,37 +1,45 @@
 <template>
-    <div class="mb-3">
-        <h5>Add Review</h5>
-        <form @submit.prevent="handleAddReview">
-            <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
-                <input 
-                type="text" 
-                class="form-control" 
-                id="title" 
-                v-model="data.title"
-                placeholder="Enter title"
-                >
-            </div>
-            <div class="mb-3">
-                <label for="body" class="form-label">Body</label>
-                <textarea 
+    <div class="card mb-2 col-md-8 offset-md-1">
+        <Spinner :store="productDetailsStore" />
+        <div class="card-header bg-white">
+            <h5 class="text-center mt-2">
+                Add your review
+            </h5>
+        </div>
+        <div class="card-body">
+            <form @submit.prevent="handleAddReview">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title *</label>
+                    <input 
+                    type="text" 
                     class="form-control" 
-                    id="body" 
-                    v-model="data.body"
-                    placeholder="Enter body"
-                    rows="3"
-                ></textarea>
-            </div>
-            <div class="mb-3">
-                <StarRating 
-                    v-model:rating="data.rating" 
-                    :increment="0.5"
-                    :max-rating="5"
-                    :show-rating="false"
-                />
-            </div>
-            <button class="btn btn-primary" type="submit">Add Review</button>        
-        </form>
+                    id="title" 
+                    v-model="data.title"
+                    placeholder="title"
+                    >
+                </div>
+                <div class="mb-3">
+                    <label for="body" class="form-label">Body *</label>
+                    <textarea 
+                        class="form-control" 
+                        id="body" 
+                        v-model="data.body"
+                        placeholder="body"
+                        rows="3"
+                    ></textarea>
+                </div>
+                <div class="mb-3">
+                    <StarRating 
+                        v-model:rating="data.rating" 
+                        :increment="0.5"
+                        :max-rating="5"
+                        :show-rating="false"
+                        :star-size="40"
+                    />
+                </div>
+                <button class="btn btn-primary" type="submit">Add Review</button>        
+            </form>
+        </div>
     </div>
 </template>
 
