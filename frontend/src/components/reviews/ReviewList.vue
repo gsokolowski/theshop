@@ -58,12 +58,12 @@
                     <div class="d-flex flex-column align-items-center"
                         v-if="authStore.isUserLoggedIn && authStore.user.id === review.user_id">
                         <button class="btn btn-sm btn-danger mb-2"
-                            @click="productDetailsStore.removeReview(review)"
+                            @click="handleRemoveReview(review)" 
                             >
                             <i class="bi bi-trash"></i>
                         </button>
                         <button class="btn btn-sm btn-warning mb-2"
-                            @click="productDetailsStore.editReview(review)"
+                            @click="handleEditReview(review)" 
                             >
                             <i class="bi bi-pencil"></i>
                         </button>
@@ -77,17 +77,53 @@
 <script setup>
     import { useProductDetailsStore } from '../../stores/useProductDetailsStore'
     import { useAuthStore } from '../../stores/useAuthStore'
+    import { useToast } from 'vue-toastification' // ✅ ADDED: Import toast
     import { computed } from 'vue' 
     import Spinner from '../common/Spinner.vue'
 
     const productDetailsStore = useProductDetailsStore()
-    const reviews = computed(() => productDetailsStore.getReviews)
-
-    // will be used to check which review belongs to the logged in user
     const authStore = useAuthStore()
+    const toast = useToast() // ✅ ADDED: Initialize toast
+
+    const reviews = computed(() => productDetailsStore.getReviews)
     const user = computed(() => authStore.getUser)
 
-    console.log('User', user.value)
+    // Handle remove review with success/error handling
+    const handleRemoveReview = async (review) => {
+        try {
+            const response = await productDetailsStore.removeReview(review)
+            // If we reach here, the review was deleted successfully
+            if (response.status === 200) {
+                toast.success(response.data.message)
+            } else {
+                toast.error(response.data.error)
+            }
+        } catch (error) {
+            // Error handling
+            if (error.response?.data?.error) {
+                toast.error(error.response.data.error)
+            } else if (error.response?.data?.message) {
+                toast.error(error.response.data.message)
+            } else {
+                toast.error('Failed to delete review')
+            }
+            console.error('Error deleting review:', error)
+        }
+    }
+
+    // Handle edit review with success/error handling
+    const handleEditReview = async (review) => {
+        // TODO: Open edit modal or navigate to edit page
+        // For now, just show a message
+        try {
+            // This is a placeholder - you'll need to implement the edit functionality
+            // For example, open a modal with the review data pre-filled
+            toast.info('Edit functionality coming soon')
+        } catch (error) {
+            toast.error('Failed to edit review')
+            console.error('Error editing review:', error)
+        }
+    }
 </script>
 
 <style scoped>

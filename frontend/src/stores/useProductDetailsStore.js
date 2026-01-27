@@ -89,13 +89,16 @@ export const useProductDetailsStore = defineStore('product', {
         async removeReview(review) {
             try {
                 // Make API call to delete review
-                await axios.delete(`/api/reviews/${review.id}`)
+                const response = await axios.delete(`/api/reviews/${review.id}`)
                 
-                // Only update local state if API call succeeds
+                // ✅ CHANGED: If we reach here, the API call succeeded (no exception thrown)
+                // Update local state - remove the review from the array
                 if (this.product?.reviews) {
                     this.product.reviews = this.product.reviews.filter(r => r.id !== review.id)
                 }
-                toast.success('Review removed successfully!')
+                
+                // ✅ REMOVED: toast - let component handle UI notifications
+                return response // Return response so component can handle success
             } catch (error) {
                 console.error('Error removing review:', error)
                 this.errorMessage = error.response?.data?.error || 'Failed to remove review'
