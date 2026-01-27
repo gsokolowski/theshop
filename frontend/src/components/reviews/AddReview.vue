@@ -46,59 +46,57 @@
 <script setup>
     import { useProductDetailsStore } from '../../stores/useProductDetailsStore'
     import { useToast } from 'vue-toastification'
-    import { useRoute } from 'vue-router'
+    import { useRouter } from 'vue-router'
+    import Spinner from '../common/Spinner.vue'
     import StarRating from 'vue-star-rating'
-    import { onMounted, reactive, computed} from 'vue'
-    import axios from 'axios'
+    import {reactive, computed} from 'vue'
+    
 
     const productDetailsStore = useProductDetailsStore()
 
     const toast = useToast()
-    const route = useRoute()
+    const router = useRouter() 
 
     const product = computed(() => productDetailsStore.getProduct)
-    console.log('Product ID', product.value.id)
 
     // define the data object
     const data = reactive({
         title: '',
         body: '',
         rating: 0,
+        
     })
     
-    // handle add review
     const handleAddReview = async () => {
         try {
-
-            // Access product.value?.id directly (with optional chaining for safety)
+            // Validation check before sending
             if (!product.value?.id) {
                 toast.error('Product not found')
                 return
             }
-            // Validation check before sending
             if (!data.title.trim() || !data.body.trim() || data.rating === 0) {
                 toast.error('Please fill in all fields and select a rating')
                 return
             }
-            const response = await axios.post('/api/reviews', {
+            
+            // Call store method with product_id included
+            await productDetailsStore.addReview({
                 title: data.title,
                 body: data.body,
                 rating: data.rating,
-                product_id: product.value.id, // ✅ Use product.value.id directly
+                product_id: product.value.id, // Set dynamically from computed product
             })
-
+            
             toast.success('Review submitted successfully!')
-            console.log('Post review response', response)
-
+            
             // Clear form
             data.title = ''
             data.body = ''
             data.rating = 0
         } catch (error) {
-            
             if (error.response?.status === 401) {
                 toast.error('Please login to submit a review')
-                router.push('/login') // Redirect to login page
+                router.push('/login')
             } else if (error.response?.data?.error) {
                 toast.error(error.response.data.error)
             } else if (error.response?.data?.message) {
@@ -109,6 +107,7 @@
             console.error('Error:', error)
         }
     }
+
 
 </script>
 
