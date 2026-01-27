@@ -108,6 +108,7 @@ class ReviewController extends Controller
                     'title' => $validated['title'],
                     'body' => $validated['body'],
                     'rating' => $validated['rating'],
+                    'approved' => false, // Updated reviews start as unapproved
                 ]);
             
             // Refresh review to get latest data

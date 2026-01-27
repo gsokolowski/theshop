@@ -13,7 +13,7 @@
             </div>
             
             <!-- Reviews list -->
-            <div v-for="review in reviews" :key="review.id" class="border-bottom pb-3 mb-3">
+            <div v-for="review in reviews" :key="review.id" class="border-bottom pb-3 mb-3 review-item">
                 <div class="d-flex align-items-start mb-2">
                     <!-- User profile image -->
                     <img 
@@ -55,7 +55,8 @@
                         <p class="mb-0 text-muted">{{ review.body }}</p>
                         <small class="text-muted">{{ review.created_at }}</small>
                     </div>
-                    <div class="d-flex flex-column align-items-center"
+                    <!-- ✅ CHANGED: Added review-actions class and kept existing conditions -->
+                    <div class="d-flex flex-column align-items-center review-actions"
                         v-if="authStore.isUserLoggedIn && authStore.user.id === review.user_id">
                         <button class="btn btn-sm btn-danger mb-2"
                             @click="handleRemoveReview(review)" 
@@ -111,23 +112,25 @@
         }
     }
 
-    // Handle edit review with success/error handling
-    const handleEditReview = async (review) => {
-        // TODO: Open edit modal or navigate to edit page
-        // For now, just show a message
-        try {
-            // This is a placeholder - you'll need to implement the edit functionality
-            // For example, open a modal with the review data pre-filled
-            toast.info('Edit functionality coming soon')
-        } catch (error) {
-            toast.error('Failed to edit review')
-            console.error('Error editing review:', error)
-        }
+    // Handle edit review - set review to update in store
+    const handleEditReview = (review) => {
+        productDetailsStore.setReviewToUpdate(review)
     }
 </script>
 
 <style scoped>
     .border-bottom:last-child {
         border-bottom: none !important;
+    }
+    
+    /* Hide review actions by default */
+    .review-item .review-actions {
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+    }
+    
+    /* Show review actions on hover */
+    .review-item:hover .review-actions {
+        opacity: 1;
     }
 </style>

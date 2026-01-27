@@ -13,9 +13,14 @@ export const useProductDetailsStore = defineStore('product', {
         productImages: [], // product images array
         isLoading: false, // isLoading state - boolean
         errorMessage: '', // error message string
-        reviewsToUpdate: {
+        reviewToUpdate: {
             updating: false,
-            data: null, // review data to update
+            data: {
+                title: '',
+                body: '',
+                rating: 0,
+                id: null,
+            }, // review data to update
         }
     }),
     getters: {
@@ -25,6 +30,7 @@ export const useProductDetailsStore = defineStore('product', {
         getErrorMessage: (state) => state.errorMessage,      // Returns error message string
         getIsLoading: (state) => state.isLoading,      // Returns isLoading state - boolean
         getReviews: (state) => state.product?.reviews || [],      // Returns reviews array
+        getReviewToUpdate: (state) => state.reviewToUpdate,      // Returns reviewToUpdate state
     },
     actions: {
         async fetchProduct(slug) {
@@ -105,7 +111,27 @@ export const useProductDetailsStore = defineStore('product', {
                 throw error // Re-throw so component can handle it
             }
         },
-        async editReview(review) {
+        setReviewToUpdate(review) {
+            // Set the review to be updated
+            this.reviewToUpdate.updating = true
+            this.reviewToUpdate.data = {
+                id: review.id,
+                title: review.title,
+                body: review.body,
+                rating: Number(review.rating) || 0,
+            }
+        },
+        clearReviewToUpdate() {
+            // Reset reviewToUpdate state
+            this.reviewToUpdate.updating = false
+            this.reviewToUpdate.data = {
+                title: '',
+                body: '',
+                rating: 0,
+                id: null,
+            }
+        },
+        async updateReview(review) {
             try {
                 // Make API call to update review
                 const response = await axios.put(`/api/reviews/${review.id}`, {
@@ -114,12 +140,14 @@ export const useProductDetailsStore = defineStore('product', {
                     rating: review.rating,
                 })
                 
-                // Update local state with the response from API (ensures we have latest data)
-                if (this.product?.reviews && response.data?.data?.review) {
-                    this.product.reviews = this.product.reviews.map(r => 
-                        r.id === review.id ? response.data.data.review : r
-                    )
+                // Always remove updated review from list (updated reviews are unapproved and need re-approval)
+                if (this.product?.reviews) {
+                    this.product.reviews = this.product.reviews.filter(r => r.id !== review.id)
                 }
+                // Clear reviewToUpdate state after successful update
+                this.clearReviewToUpdate()
+
+                return response
             } catch (error) {
                 console.error('Error updating review:', error)
                 this.errorMessage = error.response?.data?.error || 'Failed to update review'
