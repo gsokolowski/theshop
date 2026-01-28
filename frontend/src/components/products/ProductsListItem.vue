@@ -11,7 +11,7 @@
             <p class="card-text">Brand: {{ product.brand.name }}</p>
             <div class="d-flex justify-content-between align-items-center">
                 <span class="h5 mb-0">${{ product.price }}</span>
-                <div class="d-flex align-items-center"> 
+                <div v-if="product.reviews.length > 0" class="d-flex align-items-center"> 
                     <StarRating 
                     :rating="Number(averageRating)"
                     :increment="0.5"
