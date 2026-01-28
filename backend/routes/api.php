@@ -33,6 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     // url: http://127.0.0.1:8000/api/reviews/{review}
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    // url: http://127.0.0.1:8000/api/reviews/check/{product}
+    Route::get('/reviews/check/{product_id}', [ReviewController::class, 'check'])->name('reviews.check');
 });
 
 // url: http://127.0.0.1:8000/api/user/register
