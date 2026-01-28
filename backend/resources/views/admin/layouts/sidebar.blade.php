@@ -54,6 +54,12 @@
                         Orders
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2 @if(request()->routeIs('admin.reviews.index')) text-dark @endif" aria-current="page" href="{{route('admin.reviews.index')}}">
+                        <i class="fa-solid fa-star"></i>
+                        Reviews
+                    </a>
+                </li>
                 
             </ul>
             <hr class="my-3">
