@@ -1,3 +1,4 @@
+<!--Full Product Details Page-->
 <template>
     <div class="row">
         <Spinner :store="productDetailsStore" />   
@@ -88,13 +89,16 @@
 
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="h5 mb-0 mt-2">${{ product.price }}</span>
-                            <div>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-half text-warning"></i>
-                                <small class="text-muted">({{ product.reviews.length }})</small>
+                            <div class="d-flex align-items-center"> 
+                                <StarRating 
+                                :rating="Number(averageRating)"
+                                :increment="0.5"
+                                :max-rating="5"
+                                :show-rating="false"
+                                :star-size="20"
+                                :read-only="true"
+                            />
+                                <small class="text-muted ms-2 mt-2">({{ product.reviews.length }})</small>
                             </div>
                         </div>
                     </div>
@@ -121,7 +125,7 @@
         <div class="row">                    
             <ReviewList />
             <EditReview ref="editReviewRef" v-if="isEditingReview" />
-            <AddReview v-else :rating="data.rating" :max-rating="5" :increment="1" />
+            <AddReview v-else :rating="data.rating" :max-rating="5" :increment="0.5" />
         </div>
     </div>
 </template>
@@ -136,6 +140,7 @@
     import AddReview from '../reviews/AddReview.vue'
     import EditReview from '../reviews/EditReview.vue'
     import ReviewList from '../reviews/ReviewList.vue'
+    import StarRating from 'vue-star-rating' // Import StarRating component
     
     const route = useRoute() // to get the slug from the route
     const router = useRouter() // to get back to the products list
@@ -157,6 +162,9 @@
 
     // Ref for EditReview component
     const editReviewRef = ref(null)
+
+    // Use the getter from store instead of local computed to get the average rating
+    const averageRating = computed(() => productDetailsStore.getAverageRating)
 
     // Watch for edit mode and scroll to form
     watch(isEditingReview, async (isEditing) => {

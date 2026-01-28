@@ -31,6 +31,14 @@ export const useProductDetailsStore = defineStore('product', {
         getIsLoading: (state) => state.isLoading,      // Returns isLoading state - boolean
         getReviews: (state) => state.product?.reviews || [],      // Returns reviews array
         getReviewToUpdate: (state) => state.reviewToUpdate,      // Returns reviewToUpdate state
+        getAverageRating: (state) => {
+            // Returns avarage rating for the product
+            const reviews = state.product?.reviews || []
+            if (reviews.length === 0) return 0
+            const totalRating = reviews.reduce((sum, review) => sum + Number(review.rating), 0)
+            const average = totalRating / reviews.length
+            return Math.round(average * 2) / 2 // round to nearest 0.5
+        },
     },
     actions: {
         async fetchProduct(slug) {

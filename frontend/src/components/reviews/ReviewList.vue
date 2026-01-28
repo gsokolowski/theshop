@@ -39,13 +39,14 @@
                         
                         <!-- Rating stars -->
                         <div class="mb-2">
-                            <span 
-                                v-for="star in 5" 
-                                :key="star"
-                                :class="star <= review.rating ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
-                                class="bi"
-                            ></span>
-                            <span class="ms-2 text-muted">({{ review.rating }})</span>
+                            <StarRating 
+                                :rating="Number(review.rating)"
+                                :increment="0.5"
+                                :max-rating="5"
+                                :show-rating="false"
+                                :star-size="20"
+                                :read-only="true"
+                            />
                         </div>
                         
                         <!-- Review title -->
@@ -78,13 +79,14 @@
 <script setup>
     import { useProductDetailsStore } from '../../stores/useProductDetailsStore'
     import { useAuthStore } from '../../stores/useAuthStore'
-    import { useToast } from 'vue-toastification' // ✅ ADDED: Import toast
+    import { useToast } from 'vue-toastification' // Import toast
     import { computed } from 'vue' 
     import Spinner from '../common/Spinner.vue'
+    import StarRating from 'vue-star-rating' // Import StarRating component
 
     const productDetailsStore = useProductDetailsStore()
     const authStore = useAuthStore()
-    const toast = useToast() // ✅ ADDED: Initialize toast
+    const toast = useToast() //  Initialize toast
 
     const reviews = computed(() => productDetailsStore.getReviews)
     const user = computed(() => authStore.getUser)
