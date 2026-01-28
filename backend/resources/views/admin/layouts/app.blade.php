@@ -84,6 +84,7 @@
                 confirmButtonText: "Yes, delete it!"
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // submit the form with the id
                     document.getElementById(id).submit();
                 }
             });
