@@ -12,6 +12,11 @@
                 <p class="mb-0">You must purchase this product before you can leave a review.</p>
             </div>
             
+            <!-- Display message if user already has a review -->
+            <div v-else-if="hasExistingReview" class="text-center text-success py-4">
+                <p class="mb-0">Your already have a review for this product.</p>
+            </div>
+
             <!-- Show form if user has purchased -->
             <form v-else @submit.prevent="handleAddReview">
                 <div class="mb-3">
@@ -56,8 +61,8 @@
     import { useRouter } from 'vue-router'
     import Spinner from '../common/Spinner.vue'
     import StarRating from 'vue-star-rating'
-    import {reactive, computed} from 'vue'
-    
+    import {reactive, computed, ref, onMounted, watch} from 'vue'
+    import axios from 'axios'
 
     const productDetailsStore = useProductDetailsStore()
     const authStore = useAuthStore()
@@ -66,6 +71,9 @@
     const router = useRouter() 
 
     const product = computed(() => productDetailsStore.getProduct)
+
+    // Track if user already has a review
+    const hasExistingReview = ref(false)
 
     // Check if user has purchased the product
     const hasPurchasedProduct = computed(() => {
@@ -90,6 +98,39 @@
             order.products && order.products.some(p => p.id === productId)
         )
     })
+
+    // ✅ CHANGED: Check if user already has a review for this product (approved or unapproved)
+    const checkExistingReview = async () => {
+        if (!authStore.isUserLoggedIn || !authStore.user || !product.value?.id) {
+            hasExistingReview.value = false
+            return
+        }
+        
+        try {
+            // ✅ CHANGED: Make proper API call to check if user has a review
+            const response = await axios.get(`/api/reviews/check/${product.value.id}`)
+            
+            if (response.data?.data?.has_review) {
+                hasExistingReview.value = true
+            } else {
+                hasExistingReview.value = false
+            }
+        } catch (error) {
+            // If error, assume no review exists
+            hasExistingReview.value = false
+            console.error('Error checking review:', error)
+        }
+    }
+
+    // ✅ ADDED: Check on mount and watch for product changes
+    onMounted(() => {
+        checkExistingReview()
+    })
+
+    // ✅ ADDED: Watch product to re-check when product changes
+    watch(() => product.value?.reviews, () => {
+        checkExistingReview()
+    }, { deep: true })
 
     // define the data object
     const data = reactive({
@@ -116,7 +157,11 @@
                 toast.error('Please fill in all fields and select a rating')
                 return
             }
-            
+            // ✅ ADDED: Check if user already has a review
+            if (hasExistingReview.value) {
+                toast.error('You have already submitted a review for this product')
+                return
+            }            
             // Call store method with product_id included
             const response = await productDetailsStore.addReview({
                 title: data.title,
@@ -127,7 +172,10 @@
             
             // Display success message from backend response
             toast.success(response.data.message || 'Review submitted successfully!')
-            
+
+            // Set flag after successful submission
+            hasExistingReview.value = true            
+
             // Clear form
             data.title = ''
             data.body = ''

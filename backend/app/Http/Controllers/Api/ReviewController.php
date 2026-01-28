@@ -173,4 +173,54 @@ class ReviewController extends Controller
             ], 500);
         }
     }
+
+
+    // Check if user has a review for a product (approved or unapproved)
+    // url: http://127.0.0.1:8000/api/reviews/check/{product_id}
+    public function check(Request $request, $product_id)
+    {
+        try {
+            $user = $request->user();
+            
+            if (!$user) {
+                return response()->json([
+                    'message' => null,
+                    'error' => 'User not authenticated',
+                    'data' => null,
+                    'status' => 401,
+                ], 401);
+            }
+            
+            // ✅ CHANGED: Find product by ID instead of route model binding
+            $product = Product::find($product_id);
+            
+            if (!$product) {
+                return response()->json([
+                    'message' => null,
+                    'error' => 'Product not found',
+                    'data' => null,
+                    'status' => 404,
+                ], 404);
+            }
+            
+            // Check if user has any review (approved or unapproved) for this product
+            $hasReview = $user->reviews()->where('product_id', $product->id)->exists();
+            
+            return response()->json([
+                'message' => 'Review check completed',
+                'data' => [
+                    'has_review' => $hasReview,
+                ],
+                'status' => 200,
+            ], 200);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => null,
+                'error' => 'Failed to check review: ' . $e->getMessage(),
+                'data' => null,
+                'status' => 500,
+            ], 500);
+        }
+    }
 }
