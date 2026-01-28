@@ -23,7 +23,6 @@ export const useProductsStore = defineStore('products', {
         getBrands: (state) => state.brands,          // Returns brands array
         getColors: (state) => state.colors,          // Returns colors array
         getSizes: (state) => state.sizes,            // Returns sizes array
-
         // Returns products that are in stock (status = 1)
         getInStockProducts: (state) => {
             return state.products.filter(product => product.status === 1)

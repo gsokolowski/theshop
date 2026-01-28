@@ -11,13 +11,16 @@
             <p class="card-text">Brand: {{ product.brand.name }}</p>
             <div class="d-flex justify-content-between align-items-center">
                 <span class="h5 mb-0">${{ product.price }}</span>
-                <div>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-half text-warning"></i>
-                    <small class="text-muted">({{ product.reviews.length }})</small>
+                <div class="d-flex align-items-center"> 
+                    <StarRating 
+                    :rating="Number(averageRating)"
+                    :increment="0.5"
+                    :max-rating="5"
+                    :show-rating="false"
+                    :star-size="20"
+                    :read-only="true"
+                />
+                    <small class="text-muted ms-2 mt-2">({{ product.reviews.length }})</small>
                 </div>
             </div>
         </div>
@@ -30,6 +33,20 @@
 </template>
 
 <script setup>
+import StarRating from 'vue-star-rating' // Import StarRating component
+import { useProductsStore } from '../../stores/useProductsStore.js'
+import { computed } from 'vue'
+const productsStore = useProductsStore()
+
+// Use the getter from store instead of local computed to get the average rating
+// Calculate average rating for this specific product
+const averageRating = computed(() => {
+    const reviews = props.product?.reviews || []
+    if (reviews.length === 0) return 0
+    const totalRating = reviews.reduce((sum, review) => sum + Number(review.rating), 0)
+    const average = totalRating / reviews.length
+    return Math.round(average * 2) / 2 // round to nearest 0.5
+})
 
 // define the props for the component  it is passed from the ProductsList component
 const props = defineProps({
