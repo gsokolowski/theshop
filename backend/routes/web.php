@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SizeController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 // General route to acction login 
@@ -83,4 +84,9 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('admin.reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
+
+    // User individual routes
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('admin.users.restore');
 });
