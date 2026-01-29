@@ -54,7 +54,7 @@
                                         <td width="150px">
                                             <div class="d-flex align-items-center">
                                                 @if ($review->product->thumbnail)
-                                                    <img src="{{ asset('storage/'.$review->product->thumbnail) }}" alt="{{ $review->product->name }}" width="30" height="30" class="img-fluid rounded me-2" style="object-fit: cover;">
+                                                    <img src="{{ asset('storage/'.$review->product->thumbnail) }}" alt="{{ $review->product->name }}" width="60" height="60" class="img-fluid rounded me-2" style="object-fit: cover;">
                                                 @endif
                                                 <span class="badge bg-light text-dark">{{ Str::limit($review->product->name, 15) }}</span>
                                             </div>

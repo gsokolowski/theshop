@@ -37,25 +37,43 @@
                   <!-- Password field -->
                   <div class="form-group mb-3">
                       <label for="password">Password</label>
-                      <input 
-                          type="password" 
-                          class="form-control" 
-                          id="password" 
-                          v-model="formData.password"
-                          placeholder="Password*"
-                          required>
+                      <div class="position-relative">
+                          <input 
+                              :type="showPassword ? 'text' : 'password'"
+                              class="form-control" 
+                              id="password" 
+                              v-model="formData.password"
+                              placeholder="Password*"
+                              required>
+                          <button 
+                              type="button"
+                              class="btn btn-link position-absolute end-0 top-50 translate-middle-y pe-3"
+                              style="border: none; background: none; z-index: 10;"
+                              @click="showPassword = !showPassword">
+                              <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                          </button>
+                      </div>
                   </div>
                   
                   <!-- Confirm Password field -->
                   <div class="form-group mb-3">
                       <label for="confirm_password">Confirm Password</label>
-                      <input 
-                          type="password" 
-                          class="form-control" 
-                          id="confirm_password" 
-                          v-model="formData.confirm_password"
-                          placeholder="Confirm Password*"
-                          required>
+                      <div class="position-relative">
+                          <input 
+                              :type="showConfirmPassword ? 'text' : 'password'"
+                              class="form-control" 
+                              id="confirm_password" 
+                              v-model="formData.confirm_password"
+                              placeholder="Confirm Password*"
+                              required>
+                          <button 
+                              type="button"
+                              class="btn btn-link position-absolute end-0 top-50 translate-middle-y pe-3"
+                              style="border: none; background: none; z-index: 10;"
+                              @click="showConfirmPassword = !showConfirmPassword">
+                              <i :class="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                          </button>
+                      </div>
                   </div>
                   
                   <!-- Validation message invisible by default -->
@@ -86,13 +104,17 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useRouter } from 'vue-router'
 import ValidationErrors from '../common/ValidationErrors.vue' // ✅ Import the component
 
 const authStore = useAuthStore()
 const router = useRouter()
+
+// ✅ ADDED: Password visibility state
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const formData = reactive({
   name: '',
