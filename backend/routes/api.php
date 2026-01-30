@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CouponController;
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReviewController;
@@ -35,6 +36,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
     // url: http://127.0.0.1:8000/api/reviews/check/{product}
     Route::get('/reviews/check/{product_id}', [ReviewController::class, 'check'])->name('reviews.check');
+    // url: http://127.0.0.1:8000/api/cart
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    // url: http://127.0.0.1:8000/api/cart
+    Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
+    // url: http://127.0.0.1:8000/api/cart/{cart}
+    Route::put('/cart/{cart}', [CartController::class, 'update'])->name('cart.update');
+    // url: http://127.0.0.1:8000/api/cart/{cart}
+    Route::delete('/cart/{cart}', [CartController::class, 'destroy'])->name('cart.destroy');
 });
 
 // url: http://127.0.0.1:8000/api/user/register
