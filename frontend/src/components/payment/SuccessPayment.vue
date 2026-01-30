@@ -44,7 +44,10 @@
                 product_id: item.product.id,  // Extract product ID
                 qty: item.qty,
                 price: item.product.price,  // Backend needs price for calculation
-                coupon_id: item.coupon_id || null
+                coupon_id: item.coupon_id || null,
+                // ✅ ADDED: Include color_id and size_id for pivot table
+                color_id: item.color.id,
+                size_id: item.size.id
             }))
             console.log('Cart Items Data', cartItemsData)
 

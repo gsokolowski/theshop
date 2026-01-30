@@ -27,6 +27,9 @@ class OrderStoreRequest extends FormRequest
             'cartItems.*.qty' => 'required|integer|min:1',
             'cartItems.*.price' => 'required|numeric|min:0',
             'cartItems.*.coupon_id' => 'nullable|integer|exists:coupons,id',
+            // ✅ ADDED: Validation rules for color_id and size_id
+            'cartItems.*.color_id' => 'required|integer|exists:colors,id',
+            'cartItems.*.size_id' => 'required|integer|exists:sizes,id',
         ];      
     }
     /**
@@ -51,6 +54,13 @@ class OrderStoreRequest extends FormRequest
             'cartItems.*.price.min' => 'Price must be greater than or equal to 0',
             'cartItems.*.coupon_id.integer' => 'Coupon ID must be an integer',
             'cartItems.*.coupon_id.exists' => 'Invalid coupon ID',
+            // ✅ ADDED: Validation messages for color_id and size_id
+            'cartItems.*.color_id.required' => 'Color ID is required for each cart item',
+            'cartItems.*.color_id.integer' => 'Color ID must be an integer',
+            'cartItems.*.color_id.exists' => 'Invalid color ID',
+            'cartItems.*.size_id.required' => 'Size ID is required for each cart item',
+            'cartItems.*.size_id.integer' => 'Size ID must be an integer',
+            'cartItems.*.size_id.exists' => 'Invalid size ID',
         ];
     }
 }

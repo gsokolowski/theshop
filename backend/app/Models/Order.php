@@ -23,7 +23,8 @@ class Order extends Model
     // Order belongs to many products
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class);
+        // ✅ CHANGED: Include color_id and size_id in pivot table
+        return $this->belongsToMany(Product::class)->withPivot(['color_id', 'size_id']);
     }
 
     // Each Order belongs to user

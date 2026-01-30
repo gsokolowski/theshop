@@ -62,7 +62,12 @@ class User extends Authenticatable
     // User orders relationship
     public function orders(): HasMany
     {
-        return $this->hasMany(Order::class)->with('products')->orderBy('id', 'desc');
+        // ✅ CHANGED: Load products with pivot data (color_id, size_id) and their color/size relationships
+        return $this->hasMany(Order::class)
+            ->with(['products' => function ($query) {
+                $query->with(['colors', 'sizes']);
+            }])
+            ->orderBy('id', 'desc');
     }
 
     // User reviews relationship

@@ -39,7 +39,11 @@ class OrderController extends Controller
                         $item['coupon_id'] ?? null
                     ),
                 ]);
-                $order->products()->attach($item['product_id']);
+                // ✅ CHANGED: Attach product with color_id and size_id in pivot table
+                $order->products()->attach($item['product_id'], [
+                    'color_id' => $item['color_id'],
+                    'size_id' => $item['size_id'],
+                ]);
                 $createdOrders[] = $order->load('products', 'user', 'coupon');
             }
             

@@ -10,6 +10,8 @@
                             <th>Product Name</th>
                             <th>Product Price</th>
                             <th>Qty</th>
+                            <th>Color</th>
+                            <th>Size</th>
                             <th>Total</th>
                             <th>Order Date</th>
                             <th>Delivered at</th>
@@ -42,6 +44,40 @@
                                 </div>
                             </td>
                             <td>{{ order.qty }}</td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <div 
+                                        v-for="product in order.products"
+                                        :key="product.id"
+                                        class="my-1"
+                                    >
+                                        <!-- ✅ ADDED: Display color from pivot data -->
+                                        <div 
+                                            v-if="product.pivot?.color_id"
+                                            class="border border-light-subtle border-1 rounded d-inline-block"
+                                            :style="{
+                                                backgroundColor: getColorName(product.pivot.color_id, product.colors),
+                                                width: '25px',
+                                                height: '25px'
+                                            }"
+                                            :title="getColorName(product.pivot.color_id, product.colors)"
+                                        ></div>
+                                        <span v-else class="text-muted">-</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span 
+                                        v-for="product in order.products"
+                                        :key="product.id"
+                                        class="bg-light text-dark me-2 p-1 fw-bold my-1 d-inline-block"
+                                    >
+                                        <!-- ✅ ADDED: Display size from pivot data -->
+                                        {{ getSizeName(product.pivot?.size_id, product.sizes) || '-' }}
+                                    </span>
+                                </div>
+                            </td>
                             <td>${{ order.total }}</td>
                             <td>{{ order.created_at }}</td>
                             <td>
@@ -82,6 +118,20 @@
     
     //define the store
     const authStore = useAuthStore()
+
+    // ✅ ADDED: Helper function to get color name from color_id
+    const getColorName = (colorId, colors) => {
+        if (!colorId || !colors || !Array.isArray(colors)) return '#ccc'
+        const color = colors.find(c => c.id === colorId)
+        return color ? color.name : '#ccc'
+    }
+
+    // ✅ ADDED: Helper function to get size name from size_id
+    const getSizeName = (sizeId, sizes) => {
+        if (!sizeId || !sizes || !Array.isArray(sizes)) return null
+        const size = sizes.find(s => s.id === sizeId)
+        return size ? size.name : null
+    }
 
     //define the function to load more orders
     const loadMoreOrders = () => {
