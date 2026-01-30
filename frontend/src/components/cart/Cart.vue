@@ -95,15 +95,25 @@
 <script setup>
     import { useCartStore } from '../../stores/useCartStore'
     import { useRouter } from 'vue-router'
-    import { computed } from 'vue'
+    import { computed, onMounted } from 'vue'
 
     const cartStore = useCartStore()
+    const router = useRouter()
+    
     // define the computed properties
     const cartItems = computed(() => cartStore.cartItems)
     const cartTotalItems = computed(() => cartItems.value.length)
     const cartTotalPrice = computed(() => cartItems.value.reduce((total, item) => total + (item.product.price * item.qty), 0))
 
-    const router = useRouter()
+    // Load cart from backend on component mount
+    onMounted(async () => {
+        try {
+            await cartStore.fetchCart()
+        } catch (error) {
+            // Error handling is done in the store
+            console.error('Failed to load cart:', error)
+        }
+    })
 
 </script>
 

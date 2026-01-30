@@ -94,6 +94,9 @@ const cartItemsCount = computed(() => cartStore.cartItems.length)
 const handleLogout = async () => {
   try {
       await authStore.logout()
+      // Clear cart from localStorage to prevent user data leakage
+      // This ensures User 2 doesn't see User 1's cart items when logging in on the same computer
+      cartStore.clearCart(false) // Don't show toast on logout
       router.push('/login')
   } catch (error) {
       console.error('Logout error:', error)

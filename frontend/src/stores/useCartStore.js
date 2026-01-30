@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
+import axios from 'axios'
 // define toast
 const toast = useToast()
 
@@ -24,55 +25,258 @@ export const useCartStore = defineStore('cart', {
         getErrorMessage: (state) => state.errorMessage,      // Returns error message string
     },
     actions: {
-        // add selected by user product with size and color as an item to the cart
-        addToCart(item) {
-            // check if the item already exists in the cartItems array
-            const existingItem = this.cartItems.find(cartItem => cartItem.product.id === item.product.id && cartItem.color.id === item.color.id && cartItem.size.id === item.size.id)
-            if(existingItem) {
-                toast.error("Item already in cart")
-                return
+        // Transform backend cart item to frontend format
+        transformCartItem(backendItem) {
+            return {
+                id: backendItem.id, // Store backend cart ID for API calls
+                reference: backendItem.reference,
+                product: backendItem.product,
+                qty: backendItem.quantity, // Map quantity to qty
+                color: backendItem.color,
+                size: backendItem.size,
             }
-            // add the item to the cart
-            this.cartItems.push(item)
-
-            toast.success("Item added to cart")
-            console.log('Cart Items', this.cartItems);
+        },
+        // Fetch cart items from backend API
+        async fetchCart() {
+            this.isLoading = true
+            this.errorMessage = ''
             
+            try {
+                const response = await axios.get('/api/cart')
+                
+                if (response.data.status === 200 && response.data.data?.cart_items) {
+                    // Transform backend response to frontend format
+                    this.cartItems = response.data.data.cart_items.map(item => this.transformCartItem(item))
+                    console.log('Cart Items loaded from backend:', this.cartItems)
+                } else {
+                    this.cartItems = []
+                }
+                
+                this.isLoading = false
+                return response.data
+            } catch (error) {
+                this.isLoading = false
+                
+                // Handle 401 Unauthorized - redirect to login
+                if (error.response?.status === 401) {
+                    window.location.href = '/login'
+                    toast.error('Please login to view your cart')
+                    return
+                }
+                
+                // Handle other errors
+                const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to load cart items'
+                this.errorMessage = errorMessage
+                toast.error(errorMessage)
+                console.error('Error fetching cart:', error)
+                throw error
+            }
+        },
+        // add selected by user product with size and color as an item to the cart
+        async addToCart(item) {
+            this.isLoading = true
+            this.errorMessage = ''
+            
+            // Prepare request data
+            const requestData = {
+                product_id: item.product.id,
+                color_id: item.color.id,
+                size_id: item.size.id,
+                quantity: item.qty,
+            }
+            
+            console.log('Adding to cart - Request data:', requestData)
+            console.log('Item object:', item)
+            
+            try {
+                const response = await axios.post('/api/cart', requestData)
+                
+                console.log('Add to cart response:', response.data)
+                
+                if (response.data.status === 201 || response.data.status === 200) {
+                    // Refresh cart from backend to get updated data
+                    await this.fetchCart()
+                    const message = response.data.message || 'Item added to cart'
+                    toast.success(message)
+                }
+                
+                this.isLoading = false
+                return response.data
+            } catch (error) {
+                this.isLoading = false
+                
+                console.error('Error adding to cart - Full error:', error)
+                console.error('Error response:', error.response)
+                console.error('Error response data:', error.response?.data)
+                
+                // Handle 401 Unauthorized
+                if (error.response?.status === 401) {
+                    window.location.href = '/login'
+                    toast.error('Please login to add items to cart')
+                    return
+                }
+                
+                // Handle validation errors (422)
+                if (error.response?.status === 422) {
+                    const validationErrors = error.response?.data?.errors || {}
+                    const errorMessage = error.response?.data?.message || 'Validation error'
+                    console.error('Validation errors:', validationErrors)
+                    this.errorMessage = errorMessage
+                    toast.error(errorMessage)
+                    throw error
+                }
+                
+                // Handle other errors
+                const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to add item to cart'
+                this.errorMessage = errorMessage
+                toast.error(errorMessage)
+                console.error('Error adding to cart:', error)
+                throw error
+            }
         },
         // increase the quantity of the selected item in the cart
-        increaseQuantity(item) {
-            console.log('Maximum Quentity', item.product.qty);
-            console.log('Current Quentity', item.qty);
-            if(item.qty >= item.product.qty) {
+        async increaseQuantity(item) {
+            // Check if item has backend ID
+            if (!item.id) {
+                toast.error('Cart item not found. Please refresh the page.')
+                return
+            }
+            
+            // Check maximum quantity before API call
+            if (item.qty >= item.product.qty) {
                 toast.info("Maximum quantity of " + item.product.qty + " reached")
                 return
             }
-            item.qty++
-            console.log('Cart Items', this.cartItems);
+            
+            this.isLoading = true
+            this.errorMessage = ''
+            
+            try {
+                const newQuantity = item.qty + 1
+                const response = await axios.put(`/api/cart/${item.id}`, {
+                    quantity: newQuantity,
+                })
+                
+                if (response.data.status === 200) {
+                    // Refresh cart from backend
+                    await this.fetchCart()
+                }
+                
+                this.isLoading = false
+                return response.data
+            } catch (error) {
+                this.isLoading = false
+                
+                // Handle 401 Unauthorized
+                if (error.response?.status === 401) {
+                    window.location.href = '/login'
+                    toast.error('Please login to update cart')
+                    return
+                }
+                
+                // Handle errors (out of stock, max quantity, etc.)
+                const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to update quantity'
+                this.errorMessage = errorMessage
+                toast.error(errorMessage)
+                console.error('Error increasing quantity:', error)
+                throw error
+            }
         },
         // decrease the quantity of the selected item in the cart
-        decreaseQuantity(item) {
-            console.log('Current Quentity', item.qty);
-            if(item.qty <= 1) {
-                toast.info("Minimum quantity reached")
-                this.removeItem(item)
+        async decreaseQuantity(item) {
+            // Check if item has backend ID
+            if (!item.id) {
+                toast.error('Cart item not found. Please refresh the page.')
                 return
             }
-            item.qty--
-            console.log('Cart Items', this.cartItems);
+            
+            // If quantity is 1, remove the item instead
+            if (item.qty <= 1) {
+                await this.removeItem(item)
+                return
+            }
+            
+            this.isLoading = true
+            this.errorMessage = ''
+            
+            try {
+                const newQuantity = item.qty - 1
+                const response = await axios.put(`/api/cart/${item.id}`, {
+                    quantity: newQuantity,
+                })
+                
+                if (response.data.status === 200) {
+                    // Refresh cart from backend
+                    await this.fetchCart()
+                }
+                
+                this.isLoading = false
+                return response.data
+            } catch (error) {
+                this.isLoading = false
+                
+                // Handle 401 Unauthorized
+                if (error.response?.status === 401) {
+                    window.location.href = '/login'
+                    toast.error('Please login to update cart')
+                    return
+                }
+                
+                // Handle errors
+                const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to update quantity'
+                this.errorMessage = errorMessage
+                toast.error(errorMessage)
+                console.error('Error decreasing quantity:', error)
+                throw error
+            }
         },
         // remove the selected item from the cart
-        removeItem(item) {
-            // remove passed item from cartItems array - overwrite cartItems array with the new array
-            this.cartItems = this.cartItems.filter(cartItem => cartItem.reference !== item.reference)
+        async removeItem(item) {
+            // Check if item has backend ID
+            if (!item.id) {
+                toast.error('Cart item not found. Please refresh the page.')
+                return
+            }
             
-            toast.success("Item removed from cart")
-            console.log('Cart Items', this.cartItems);
+            this.isLoading = true
+            this.errorMessage = ''
+            
+            try {
+                const response = await axios.delete(`/api/cart/${item.id}`)
+                
+                if (response.data.status === 200) {
+                    // Refresh cart from backend
+                    await this.fetchCart()
+                    const message = response.data.message || 'Item removed from cart'
+                    toast.success(message)
+                }
+                
+                this.isLoading = false
+                return response.data
+            } catch (error) {
+                this.isLoading = false
+                
+                // Handle 401 Unauthorized
+                if (error.response?.status === 401) {
+                    window.location.href = '/login'
+                    toast.error('Please login to remove items from cart')
+                    return
+                }
+                
+                // Handle errors
+                const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to remove item'
+                this.errorMessage = errorMessage
+                toast.error(errorMessage)
+                console.error('Error removing item:', error)
+                throw error
+            }
         },
         // clear the cart from the items in the cartItems array
-        clearCart() {
+        clearCart(showToast = true) {
             this.cartItems = [] // override state cartItems array with an empty array
-            toast.success("Cart cleared")
+            if (showToast) {
+                toast.success("Cart cleared")
+            }
             console.log('Cart Items', this.cartItems);
         },
         // set the valid coupon

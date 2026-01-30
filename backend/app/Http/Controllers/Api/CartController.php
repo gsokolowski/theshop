@@ -9,6 +9,7 @@ use App\Http\Resources\CartResource;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -20,6 +21,16 @@ class CartController extends Controller
     {
         try {
             $user = $request->user();
+            
+            // Ensure user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'message' => null,
+                    'error' => 'User not authenticated',
+                    'data' => null,
+                    'status' => 401,
+                ], 401);
+            }
             
             // Get all cart items for authenticated user with relationships
             $cartItems = Cart::with('product', 'color', 'size')
@@ -54,6 +65,16 @@ class CartController extends Controller
         try {
             $validated = $request->validated();
             $user = $request->user();
+            
+            // Ensure user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'message' => null,
+                    'error' => 'User not authenticated',
+                    'data' => null,
+                    'status' => 401,
+                ], 401);
+            }
             
             // Check if product exists and is in stock
             $product = Product::find($validated['product_id']);
@@ -119,6 +140,14 @@ class CartController extends Controller
             }
             
             // Create new cart item
+            Log::info('Creating cart item', [
+                'user_id' => $user->id,
+                'product_id' => $validated['product_id'],
+                'color_id' => $validated['color_id'],
+                'size_id' => $validated['size_id'],
+                'quantity' => $validated['quantity'],
+            ]);
+            
             $cartItem = Cart::create([
                 'user_id' => $user->id,
                 'product_id' => $validated['product_id'],
@@ -126,6 +155,8 @@ class CartController extends Controller
                 'size_id' => $validated['size_id'],
                 'quantity' => $validated['quantity'],
             ]);
+            
+            Log::info('Cart item created successfully', ['cart_id' => $cartItem->id]);
             
             $cartItem->load('product', 'color', 'size');
             
@@ -138,6 +169,11 @@ class CartController extends Controller
             ], 201);
             
         } catch (\Exception $e) {
+            Log::error('Failed to add item to cart', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
             return response()->json([
                 'message' => null,
                 'error' => 'Failed to add item to cart: ' . $e->getMessage(),
@@ -155,6 +191,16 @@ class CartController extends Controller
     {
         try {
             $user = $request->user();
+            
+            // Ensure user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'message' => null,
+                    'error' => 'User not authenticated',
+                    'data' => null,
+                    'status' => 401,
+                ], 401);
+            }
             
             // Check if cart item belongs to authenticated user
             if ($cart->user_id !== $user->id) {
@@ -231,6 +277,16 @@ class CartController extends Controller
     {
         try {
             $user = $request->user();
+            
+            // Ensure user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'message' => null,
+                    'error' => 'User not authenticated',
+                    'data' => null,
+                    'status' => 401,
+                ], 401);
+            }
             
             // Check if cart item belongs to authenticated user
             if ($cart->user_id !== $user->id) {

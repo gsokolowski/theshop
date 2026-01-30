@@ -74,10 +74,12 @@
 <script setup>
 import { onMounted, reactive } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
+import { useCartStore } from '../../stores/useCartStore'
 import { useRouter } from 'vue-router'
 import ValidationErrors from '../common/ValidationErrors.vue' 
 
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 const router = useRouter()
 
 const formData = reactive({
@@ -95,6 +97,13 @@ const handleSubmit = async () => {
             password: formData.password
         })
         
+        // Clear any previous cart data from localStorage to ensure user sees their own cart
+        // This prevents User 2 from seeing User 1's cart items when logging in on the same computer
+        cartStore.clearCart(false) // Don't show toast on login
+        
+        // Load user's cart from backend immediately after login
+        await cartStore.fetchCart()
+
         // Redirect to home page after successful login
         router.push('/')
     } catch (error) {
