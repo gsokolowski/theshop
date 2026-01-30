@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 use Stripe\Exception\ApiErrorException;
+use App\Models\Cart;
 
 class OrderController extends Controller
 {
@@ -21,15 +22,16 @@ class OrderController extends Controller
     public function storeUserCartItemsOrders(OrderStoreRequest $request)
     {
         try {
-            DB::beginTransaction(); // ✅ ADDED: Missing transaction
+            DB::beginTransaction();
             
             $validated = $request->validated();
-            $createdOrders = []; // ✅ ADDED: Store created orders
+            $createdOrders = [];
+            $user = $request->user();
             
             foreach ($validated['cartItems'] as $item) {
                 $order = Order::create([
                     'qty' => $item['qty'],
-                    'user_id' => $request->user()->id,
+                    'user_id' => $user->id,
                     'coupon_id' => $item['coupon_id'] ?? null,
                     'total' => $this->calculateEachOrderTotal(
                         $item['qty'], 
@@ -38,27 +40,29 @@ class OrderController extends Controller
                     ),
                 ]);
                 $order->products()->attach($item['product_id']);
-                $createdOrders[] = $order->load('products', 'user', 'coupon'); // ✅ ADDED: Load relationships
+                $createdOrders[] = $order->load('products', 'user', 'coupon');
             }
             
-            DB::commit(); // ✅ ADDED: Commit transaction
-
-            // ✅ CHANGED: Follow PREFERENCES.md format
+            // Delete all cart items for the user after orders are created
+            Cart::where('user_id', $user->id)->delete();
+            
+            DB::commit();
+    
             return response()->json([
                 'message' => 'Orders stored successfully',
                 'data' => [
-                    'user' => UserResource::make($request->user()->fresh()), // ✅ CHANGED: Put user inside data
-                    'orders' => $createdOrders // ✅ ADDED: Return created orders
+                    'user' => UserResource::make($user->fresh()),
+                    'orders' => $createdOrders
                 ]
             ], 201);
-
+    
         } catch (\Exception $e) {
-            DB::rollBack(); // ✅ ADDED: Rollback on error
+            DB::rollBack();
             
             return response()->json([
                 'message' => 'Failed to create orders',
                 'data' => null,
-                'error' => $e->getMessage() // ✅ ADDED: Include error message
+                'error' => $e->getMessage()
             ], 500);
         }
     }

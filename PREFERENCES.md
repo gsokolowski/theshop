@@ -83,6 +83,7 @@
 - Controllers should type-hint Form Requests in method parameters (e.g., `public function update(OrderUpdateRequest $request, Order $order)`
 
 ## Backend / Laravel Controllers
+- Always mark code changes with `✅ ADDED`, `✅ CHANGED`, `✅ REMOVED` indicators
 - Always separate database calls from view calls in Controller methods
   - First, execute the database query and store the result in a variable
   - Then, pass that variable to the view
