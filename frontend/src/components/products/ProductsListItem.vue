@@ -26,7 +26,16 @@
         </div>
         <div class="card-footer d-flex justify-content-between bg-light">
             <button class="btn btn-danger btn-sm"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-heart"></i></button>
+            <button 
+                class="btn btn-outline-secondary btn-sm"
+                @click.stop="handleToggleWishlist"
+                :disabled="wishlistStore.isLoading"
+            >
+                <i 
+                    :class="isInWishlist ? 'bi bi-heart-fill' : 'bi bi-heart'"
+                    :style="isInWishlist ? { color: 'red' } : {}"
+                ></i>
+            </button>
         </div>
     </div>
 </div>
@@ -35,8 +44,11 @@
 <script setup>
 import StarRating from 'vue-star-rating' // Import StarRating component
 import { useProductsStore } from '../../stores/useProductsStore.js'
-import { computed } from 'vue'
+import { useWishlistStore } from '../../stores/useWishlistStore.js'
+import { computed, onMounted } from 'vue'
+
 const productsStore = useProductsStore()
+const wishlistStore = useWishlistStore()
 
 // Use the getter from store instead of local computed to get the average rating
 // Calculate average rating for this specific product
@@ -48,11 +60,38 @@ const averageRating = computed(() => {
     return Math.round(average * 2) / 2 // round to nearest 0.5
 })
 
+// Check if product is in wishlist
+const isInWishlist = computed(() => {
+    if (!props.product?.id) return false
+    return wishlistStore.isProductInWishlist(props.product.id)
+})
+
 // define the props for the component  it is passed from the ProductsList component
 const props = defineProps({
     product: {
         type: Object,        // Prop must be an Object
         required: true       // Prop is required (must be passed)
+    }
+})
+
+// Handle wishlist toggle
+const handleToggleWishlist = async () => {
+    if (!props.product?.id) return
+    
+    try {
+        await wishlistStore.toggleWishlist(props.product.id)
+    } catch (error) {
+        console.error('Error toggling wishlist:', error)
+    }
+}
+
+// Fetch wishlist on mount to check if products are in wishlist
+onMounted(async () => {
+    try {
+        await wishlistStore.fetchWishlist()
+    } catch (error) {
+        // Silently fail - user might not be logged in
+        console.log('Could not fetch wishlist:', error)
     }
 })
 

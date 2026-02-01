@@ -84,6 +84,7 @@
 
 ## Backend / Laravel Controllers
 - Always mark code changes with `✅ ADDED`, `✅ CHANGED`, `✅ REMOVED` indicators
+  - **Exception:** Do NOT add `✅ ADDED` labels when generating a new file from scratch (e.g., using `php artisan make:controller`, `php artisan make:model`, etc.). Only mark changes when editing existing files.
 - Always separate database calls from view calls in Controller methods
   - First, execute the database query and store the result in a variable
   - Then, pass that variable to the view

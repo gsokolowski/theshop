@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\WishlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cart/{cart}', [CartController::class, 'update'])->name('cart.update');
     // url: http://127.0.0.1:8000/api/cart/{cart}
     Route::delete('/cart/{cart}', [CartController::class, 'destroy'])->name('cart.destroy');
+    // url: http://127.0.0.1:8000/api/wishlist
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    // url: http://127.0.0.1:8000/api/wishlist
+    Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
+    // url: http://127.0.0.1:8000/api/wishlist/{wishlist}
+    Route::delete('/wishlist/{wishlist}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
 });
 
 // url: http://127.0.0.1:8000/api/user/register

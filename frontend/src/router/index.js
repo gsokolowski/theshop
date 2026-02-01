@@ -11,6 +11,7 @@ import Profile from '../components/profile/Profile.vue'
 import Checkout from '../components/checkout/Checkout.vue'
 import SuccessPayment from '../components/payment/SuccessPayment.vue'
 import UserOrders from '../components/profile/UserOrders.vue'
+import UserWishlist from '../components/profile/UserWishlist.vue'
 
 function checkIfUserIsLoggedIn() {
   const authStore = useAuthStore()
@@ -33,6 +34,7 @@ const routes = [
   { path: '/checkout', name: 'checkout', component: Checkout, beforeEnter: checkIfUserIsLoggedIn },
   { path: '/success/payment/:hash', name: 'successPayment', component: SuccessPayment, beforeEnter: checkIfUserIsLoggedIn },
   { path: '/user/orders', name: 'userOrders', component: UserOrders, beforeEnter: checkIfUserIsLoggedIn },
+  { path: '/user/wishlist', name: 'userWishlist', component: UserWishlist, beforeEnter: checkIfUserIsLoggedIn },
 ]
 
 export default createRouter({

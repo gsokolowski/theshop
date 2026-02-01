@@ -117,7 +117,16 @@
                         >
                             <i class="bi bi-cart-plus"></i> Add to Cart
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-heart"></i></button>
+                        <button 
+                            class="btn btn-outline-secondary btn-sm"
+                            @click="handleToggleWishlist"
+                            :disabled="wishlistStore.isLoading"
+                        >
+                            <i 
+                                :class="isInWishlist ? 'bi bi-heart-fill' : 'bi bi-heart'"
+                                :style="isInWishlist ? { color: 'red' } : {}"
+                            ></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -133,6 +142,7 @@
 <script setup>
     import { useProductDetailsStore } from '../../stores/useProductDetailsStore'
     import { useCartStore } from '../../stores/useCartStore'
+    import { useWishlistStore } from '../../stores/useWishlistStore'
     import { onMounted, computed, watch, reactive, ref, nextTick } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
@@ -148,6 +158,7 @@
 
     const productDetailsStore = useProductDetailsStore()
     const cartStore = useCartStore()
+    const wishlistStore = useWishlistStore()
 
     // Use computed to make it reactive
     const product = computed(() => productDetailsStore.getProduct)
@@ -165,6 +176,12 @@
 
     // Use the getter from store instead of local computed to get the average rating
     const averageRating = computed(() => productDetailsStore.getAverageRating)
+    
+    // Check if current product is in wishlist
+    const isInWishlist = computed(() => {
+        if (!product.value?.id) return false
+        return wishlistStore.isProductInWishlist(product.value.id)
+    })
 
     // Watch for edit mode and scroll to form
     watch(isEditingReview, async (isEditing) => {
@@ -189,8 +206,15 @@
         imagesReady.value = true
     }
 
-    onMounted(() => {
+    onMounted(async () => {
         fetchProduct() // fetch the product from the API on mount
+        // Fetch wishlist to check if product is in wishlist
+        try {
+            await wishlistStore.fetchWishlist()
+        } catch (error) {
+            // Silently fail - user might not be logged in
+            console.log('Could not fetch wishlist:', error)
+        }
     })
 
     // Watches route.params.slug for changes. When the slug changes, it calls fetchProduct() to load the new product.
@@ -238,6 +262,17 @@
 
         // send the item to the cartStore.addToCart(item)
         cartStore.addToCart(item)
+    }
+    
+    // Handle wishlist toggle
+    const handleToggleWishlist = async () => {
+        if (!product.value?.id) return
+        
+        try {
+            await wishlistStore.toggleWishlist(product.value.id)
+        } catch (error) {
+            console.error('Error toggling wishlist:', error)
+        }
     }
     
 </script>

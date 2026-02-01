@@ -59,6 +59,11 @@
                             <i class="bi bi-bag-check-fill"></i> Orders
                         </router-link>
                         </li>
+                        <li class="list-group-item">
+                        <router-link to="/user/wishlist" class="text-decoration-none text-dark">
+                            <i class="bi bi-heart-fill"></i> Wishlist
+                        </router-link>
+                        </li>
                     </ul>
                 </div>
             </div>
