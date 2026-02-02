@@ -34,10 +34,14 @@
                                     <td>{{ $key += 1 }}</td>
                                     <td>#{{ $order->id }}</td>
                                     <td>
-                                        <div>
-                                            <strong>{{ $order->user->name }}</strong><br>
-                                            <small class="text-muted">{{ $order->user->email }}</small>
-                                        </div>
+                                        @if ($order->user)
+                                            <div>
+                                                <strong>{{ $order->user->name }}</strong><br>
+                                                <small class="text-muted">{{ $order->user->email }}</small>
+                                            </div>
+                                        @else
+                                            <span class="text-muted">Deleted User</span>
+                                        @endif
                                     </td>
                                     <td width="200px">
                                         @foreach ($order->products as $product)

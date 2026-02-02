@@ -46,18 +46,26 @@
                                         <td>{{ $key += 1 }}</td>
                                         <td>#{{ $review->id }}</td>
                                         <td width="150px">
-                                            <div>
-                                                <strong>{{ $review->user->name }}</strong><br>
-                                                <small class="text-muted">{{ $review->user->email }}</small>
-                                            </div>
+                                            @if ($review->user)
+                                                <div>
+                                                    <strong>{{ $review->user->name }}</strong><br>
+                                                    <small class="text-muted">{{ $review->user->email }}</small>
+                                                </div>
+                                            @else
+                                                <span class="text-muted">Deleted User</span>
+                                            @endif
                                         </td>
                                         <td width="150px">
-                                            <div class="d-flex align-items-center">
-                                                @if ($review->product->thumbnail)
-                                                    <img src="{{ asset('storage/'.$review->product->thumbnail) }}" alt="{{ $review->product->name }}" width="60" height="60" class="img-fluid rounded me-2" style="object-fit: cover;">
-                                                @endif
-                                                <span class="badge bg-light text-dark">{{ Str::limit($review->product->name, 15) }}</span>
-                                            </div>
+                                            @if ($review->product)
+                                                <div class="d-flex align-items-center">
+                                                    @if ($review->product->thumbnail)
+                                                        <img src="{{ asset('storage/'.$review->product->thumbnail) }}" alt="{{ $review->product->name }}" width="60" height="60" class="img-fluid rounded me-2" style="object-fit: cover;">
+                                                    @endif
+                                                    <span class="badge bg-light text-dark">{{ Str::limit($review->product->name, 15) }}</span>
+                                                </div>
+                                            @else
+                                                <span class="text-muted">Deleted Product</span>
+                                            @endif
                                         </td>
                                         <td width="120px">
                                             <div style="max-width: 120px; word-wrap: break-word; white-space: normal;">
@@ -123,8 +131,8 @@
                                                                 <span class="ms-2">({{ $review->rating }})</span>
                                                             </div>
                                                             <small class="text-muted">
-                                                                By: {{ $review->user->name }} | 
-                                                                Product: {{ $review->product->name }} | 
+                                                                By: {{ $review->user ? $review->user->name : 'Deleted User' }} | 
+                                                                Product: {{ $review->product ? $review->product->name : 'Deleted Product' }} | 
                                                                 Date: {{ $review->created_at }}
                                                             </small>
                                                         </div>
