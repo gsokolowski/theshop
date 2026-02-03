@@ -11,6 +11,7 @@
     import { useProductsStore } from '../stores/useProductsStore'
     import { onMounted } from 'vue'
 
+    // define the products store
     const productsStore = useProductsStore()
 
     onMounted(() => {
