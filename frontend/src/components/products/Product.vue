@@ -11,15 +11,22 @@
     <div v-if="isLoading">
         <h1>Loading...</h1>
     </div>
-    <div v-else-if="product && product.thumbnail && imagesReady">       
+    <div v-else-if="product && imagesReady">       
         <div class="row">
             <div class="col-6 mb-3">
                 <!-- Thumbnail image -->
                 <div class="mb-3 rounded">
                     <VueImageZoomer 
-                        v-if="product.thumbnail && imagesReady" 
+                        v-if="imagesReady && product.thumbnail" 
                         :key="product.slug"
                         :regular="product.thumbnail" 
+                    />
+                    <img 
+                        v-else-if="imagesReady && !product.thumbnail"
+                        :src="placeholderImage"
+                        alt="No Image"
+                        class="img-fluid rounded"
+                        style="width: 100%; height: auto; background-color: #e0e0e0;"
                     />
                 </div>
                 <!-- Other images below thumbnail -->
@@ -164,6 +171,9 @@
     const product = computed(() => productDetailsStore.getProduct)
     const productImages = computed(() => productDetailsStore.getProductImages)
     const isLoading = computed(() => productDetailsStore.getIsLoading)
+    
+    // Placeholder image as data URI (base64 encoded SVG)
+    const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTBlMGUwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='
     
     // Check if user is editing a review
     const isEditingReview = computed(() => {

@@ -76,6 +76,7 @@ export const useProductDetailsStore = defineStore('product', {
                         src: response.data.data.third_image,
                     })
                 }
+                console.log('Product fetched successfully:', this.product)
             } catch (error) {
                 console.error('Error fetching product:', error)
                 this.errorMessage = error.response?.data?.message || 'Error fetching product'

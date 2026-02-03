@@ -2,7 +2,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <div class="col-md-6">
     <div class="card mb-2" style="max-width: 320px">
-        <img :src="product.thumbnail" class="card-img-top" alt="Product Image">
+        <img 
+            :src="product.thumbnail || placeholderImage" 
+            class="card-img-top" 
+            alt="Product Image"
+            style="object-fit: cover; height: 200px; background-color: #e0e0e0;"
+        >
         <div class="card-body">
             <router-link :to="{ name: 'product', params: { slug: product.slug } }">
                 <h5 class="card-title">{{ product.name }}</h5>
@@ -96,6 +101,9 @@ onMounted(async () => {
 })
 
 console.log(props.product) // log the product to the console
+
+// Placeholder image as data URI (base64 encoded SVG) - smaller size for list items
+const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTBlMGUwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='
 
 </script>
 
