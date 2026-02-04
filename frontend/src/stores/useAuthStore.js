@@ -35,6 +35,11 @@ export const useAuthStore = defineStore('auth', {
         setAccessToken(accessToken) {
             this.accessToken = accessToken
         },
+        // setToken - helper method for OAuth flow (sets token and initializes headers)
+        setToken(token) {
+            this.accessToken = token
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        },
         // set validationErrors state to the validation errors object
         setValidationErrors(validationErrors) {
             this.validationErrors = validationErrors

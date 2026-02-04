@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WishlistController;
+use App\Http\Controllers\Api\Auth\GoogleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,14 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/user/register', [UserController::class, 'register'])->name('user.register');
 // url: http://127.0.0.1:8000/api/user/login
 Route::post('/user/login', [UserController::class, 'login'])->name('user.login');
+
+// Google OAuth routes (no auth middleware needed, but session middleware required for Socialite)
+// url: http://127.0.0.1:8000/api/auth/google
+Route::middleware('web')->group(function () {
+    Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
+    // url: http://127.0.0.1:8000/api/auth/google/callback
+    Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
+});
 
 
 // Product routes  use Api\ProductController.php to handle the requests and are opened to all users.

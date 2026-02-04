@@ -58,6 +58,30 @@
                       </button>
                   </div>
                   
+                  <!-- Divider -->
+                  <div class="text-center mb-3">
+                      <hr>
+                      <span class="text-muted">OR</span>
+                      <hr>
+                  </div>
+                  
+                  <!-- Google Sign-In button -->
+                  <div class="form-group d-grid mb-3">
+                      <a 
+                          :href="googleAuthUrl" 
+                          class="btn btn-outline-danger"
+                          style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;"
+                      >
+                          <svg width="18" height="18" viewBox="0 0 18 18">
+                              <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+                              <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.965-2.184l-2.908-2.258c-.806.54-1.837.86-3.057.86-2.35 0-4.34-1.587-5.053-3.716H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                              <path fill="#FBBC05" d="M3.954 10.712c-.18-.54-.282-1.117-.282-1.712s.102-1.172.282-1.712V4.956H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.044l2.997-2.332z"/>
+                              <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.956L3.954 7.288C4.667 5.163 6.657 3.58 9 3.58z"/>
+                          </svg>
+                          Sign in with Google
+                      </a>
+                  </div>
+                  
                   <!-- Link to register -->
                   <div class="text-center">
                       <p class="mb-0">
@@ -72,7 +96,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, computed } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useCartStore } from '../../stores/useCartStore'
 import { useRouter } from 'vue-router'
@@ -85,6 +109,11 @@ const router = useRouter()
 const formData = reactive({
     email: '',
     password: ''
+})
+
+// Google OAuth URL
+const googleAuthUrl = computed(() => {
+    return 'http://127.0.0.1:8000/api/auth/google'
 })
 
 const handleSubmit = async () => {
