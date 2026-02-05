@@ -116,12 +116,12 @@ export const useAuthStore = defineStore('auth', {
                 })
                 
                 // Registration successful - set user data (but don't log in yet, no token returned)
-                this.setUser(response.data.user)
+                this.setUser(response.data.data || response.data.user)
                 this.setValidationErrors({})
                 this.setIsLoading(false)
                 
                 // Show success toast
-                toast.success(response.data.message + ' Please login to continue.')
+                toast.success(response.data.message || 'Registration successful! Please check your email to verify your account.')
                 
                 return response
                 

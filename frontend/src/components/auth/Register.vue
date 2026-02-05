@@ -87,6 +87,21 @@
                      :visible="true" 
                   />
                   
+                  <!-- Success message after registration -->
+                  <div v-if="showSuccessMessage" class="alert alert-success mt-3" role="alert">
+                    <h5 class="alert-heading">
+                      <i class="bi bi-envelope-check me-2"></i>Registration Successful!
+                    </h5>
+                    <p class="mb-2">We've sent a verification email to <strong>{{ formData.email }}</strong></p>
+                    <p class="mb-0">Please check your inbox and click the verification link to activate your account.</p>
+                    <hr>
+                    <p class="mb-0">
+                      <small>Didn't receive the email? 
+                        <a href="#" @click.prevent="handleResendVerification" class="alert-link">Resend verification email</a>
+                      </small>
+                    </p>
+                  </div>
+                  
                   <!-- Submit button -->
                   <div class="form-group d-grid mb-3">
                     <button 
@@ -115,6 +130,7 @@ const router = useRouter()
 // ✅ ADDED: Password visibility state
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
+const showSuccessMessage = ref(false)
 
 const formData = reactive({
   name: '',
@@ -124,9 +140,10 @@ const formData = reactive({
 })
 
 const handleSubmit = async () => {
-  // Clear any previous errors
+  // Clear any previous errors and success message
   authStore.setValidationErrors({})
   authStore.setValidationMessage('')
+  showSuccessMessage.value = false
   
   console.log('=== FORM COMPONENT DEBUG ===')
   console.log('All form data:', formData.value)
@@ -140,14 +157,27 @@ const handleSubmit = async () => {
           confirm_password: formData.confirm_password
       })
       
-      // Redirect to login page after successful registration
-      router.push('/login')
+      // ✅ ADDED: Show success message instead of redirecting immediately
+      showSuccessMessage.value = true
+      
+      // Clear form after successful registration
+      formData.name = ''
+      formData.email = ''
+      formData.password = ''
+      formData.confirm_password = ''
 
   } catch (error) {
       // Backend validation errors are handled in the store authStore.errorMessage and shown in the component Registration.vue above
       // So you don't need to show a toast here
       console.error('Registration error:', error)
   }
+}
+
+// ✅ ADDED: Handle resend verification email
+const handleResendVerification = async () => {
+  // This would require the user to be logged in, so we'll redirect to login
+  // In a real scenario, you might want to store the email temporarily or use a different approach
+  router.push('/login')
 }
 
 onMounted(() => {

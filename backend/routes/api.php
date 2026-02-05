@@ -52,12 +52,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
     // url: http://127.0.0.1:8000/api/wishlist/{wishlist}
     Route::delete('/wishlist/{wishlist}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+    // url: http://127.0.0.1:8000/api/email/verification/resend - Resend verification email
+    Route::post('/email/verification/resend', [UserController::class, 'resendVerificationEmail'])->name('email.verification.resend');
 });
 
 // url: http://127.0.0.1:8000/api/user/register
 Route::post('/user/register', [UserController::class, 'register'])->name('user.register');
 // url: http://127.0.0.1:8000/api/user/login
 Route::post('/user/login', [UserController::class, 'login'])->name('user.login');
+// url: http://127.0.0.1:8000/api/email/verify - Email verification (public route, uses signed URL)
+Route::get('/email/verify', [UserController::class, 'verifyEmail'])->name('email.verify');
 
 // Google OAuth routes (no auth middleware needed, but session middleware required for Socialite)
 // url: http://127.0.0.1:8000/api/auth/google

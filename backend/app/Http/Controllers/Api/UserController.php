@@ -8,10 +8,12 @@ use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdatePasswordRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Jobs\SendVerificationEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class UserController extends Controller
 {
@@ -29,11 +31,17 @@ class UserController extends Controller
         // Hash password before creating user
         $validated['password'] = Hash::make($validated['password']);
         
+        // ✅ CHANGED: Set email_verified_at to null for new registrations
+        $validated['email_verified_at'] = null;
+        
         $user = User::create($validated);
     
+        // ✅ ADDED: Dispatch verification email job to queue
+        SendVerificationEmail::dispatch($user);
+    
         return response()->json([
-            'message' => 'User created successfully',
-            'user' => new UserResource($user), // formats the user data according to your UserResource definition.
+            'message' => 'User created successfully. Please check your email to verify your account.',
+            'data' => new UserResource($user), // formats the user data according to your UserResource definition.
         ], 201);
     }
 
@@ -197,5 +205,118 @@ class UserController extends Controller
         return response()->json([
             'message' => 'User deleted successfully',
         ], 200); // 200 OK status code
+    }
+
+    /**
+     * Verify user's email address
+     * url: http://127.0.0.1:8000/api/email/verify
+     */
+    public function verifyEmail(Request $request)
+    {
+        // Get query parameters
+        $userId = $request->query('id');
+        $signature = $request->query('signature');
+        $expires = $request->query('expires');
+
+        // Check if required parameters are present
+        if (!$userId || !$signature || !$expires) {
+            return response()->json([
+                'message' => null,
+                'error' => 'Invalid verification link. Missing required parameters.',
+                'data' => null,
+                'status' => 400,
+            ], 400);
+        }
+
+        // Check if the link has expired (using UTC timestamp - timezone independent)
+        if ((int) $expires < now()->timestamp) {
+            return response()->json([
+                'message' => null,
+                'error' => 'Verification link has expired',
+                'data' => null,
+                'status' => 400,
+            ], 400);
+        }
+
+        // Reconstruct the exact URL that Laravel signed
+        // Laravel's temporarySignedRoute uses APP_URL from config, not the request URL
+        // This ensures we validate against the same URL structure that was signed
+        $baseUrl = config('app.url', 'http://localhost');
+        $routePath = '/api/email/verify';
+        $routeUrl = rtrim($baseUrl, '/') . $routePath;
+        
+        // Build query string in the exact order Laravel uses (expires first, then id)
+        $queryString = 'expires=' . urlencode($expires) . '&id=' . urlencode($userId);
+        
+        // Build the complete signed URL (with signature)
+        $signedUrl = $routeUrl . '?' . $queryString . '&signature=' . $signature;
+        
+        // Create a new request with the signed URL and use Laravel's built-in validation
+        $validationRequest = Request::create($signedUrl, 'GET');
+        
+        if (!URL::hasValidSignature($validationRequest)) {
+            return response()->json([
+                'message' => null,
+                'error' => 'Invalid or expired verification link',
+                'data' => null,
+                'status' => 400,
+            ], 400);
+        }
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json([
+                'message' => null,
+                'error' => 'User not found',
+                'data' => null,
+                'status' => 404,
+            ], 404);
+        }
+
+        // Check if email is already verified
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Email is already verified',
+                'data' => new UserResource($user),
+                'status' => 200,
+            ], 200);
+        }
+
+        // Mark email as verified
+        $user->markEmailAsVerified();
+
+        return response()->json([
+            'message' => 'Email verified successfully',
+            'data' => new UserResource($user->fresh()),
+            'status' => 200,
+        ], 200);
+    }
+
+    /**
+     * Resend verification email
+     * url: http://127.0.0.1:8000/api/email/verification/resend
+     */
+    public function resendVerificationEmail(Request $request)
+    {
+        $user = $request->user();
+
+        // Check if email is already verified
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Email is already verified',
+                'data' => new UserResource($user),
+                'status' => 200,
+            ], 200);
+        }
+
+        // Dispatch verification email job to queue
+        SendVerificationEmail::dispatch($user);
+
+        return response()->json([
+            'message' => 'Verification email has been sent. Please check your inbox.',
+            'data' => null,
+            'status' => 200,
+        ], 200);
     }
 }

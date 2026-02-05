@@ -31,6 +31,7 @@ class User extends Authenticatable
         'phone_number',
         'profile_image',
         'profile_completed',
+        'email_verified_at',
     ];
 
     /**
@@ -84,5 +85,23 @@ class User extends Authenticatable
         }
         // If no profile image, return default avatar
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=ffffff&background=111827';
+    }
+
+    /**
+     * Check if user's email is verified
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the user's email as verified
+     */
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+        ])->save();
     }
 }

@@ -13,6 +13,7 @@ import SuccessPayment from '../components/payment/SuccessPayment.vue'
 import UserOrders from '../components/profile/UserOrders.vue'
 import UserWishlist from '../components/profile/UserWishlist.vue'
 import GoogleCallback from '../components/auth/GoogleCallback.vue'
+import VerifyEmail from '../components/auth/VerifyEmail.vue'
 import NotFound from '../components/common/NotFound.vue'
 
 function checkIfUserIsLoggedIn() {
@@ -30,6 +31,7 @@ const routes = [
   { path: '/login', name: 'login', component: Login, beforeEnter: checkIfUserIsLoggedOut },
   { path: '/register', name: 'register', component: Register, beforeEnter: checkIfUserIsLoggedOut },
   { path: '/auth/google/callback', name: 'googleCallback', component: GoogleCallback },
+  { path: '/email/verify', name: 'verifyEmail', component: VerifyEmail },
   { path: '/profile', name: 'profile', component: Profile, beforeEnter: checkIfUserIsLoggedIn },
   { path: '/about', name: 'about', component: About },
   { path: '/product/:slug', name: 'product', component: Product },

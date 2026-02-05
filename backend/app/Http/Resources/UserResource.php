@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'phone_number' => $this->phone_number,
             'profile_image' => $this->profile_image_url, //get the profile image url from the user model
             'profile_completed' => $this->profile_completed,
+            'email_verified_at' => $this->email_verified_at,
             'orders' => $this->orders,
             'reviews' => $this->reviews,
             'created_at' => $this->created_at,
