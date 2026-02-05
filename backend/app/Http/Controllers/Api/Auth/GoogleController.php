@@ -79,7 +79,8 @@ class GoogleController extends Controller
             $imageName = ($userId ?? time()) . '_google_avatar.jpg';
             $path = 'images/profiles/' . $imageName;
             
-            Storage::disk('public')->put($path, $imageData);
+            // create the directory if it doesn't exist using the Storage facade
+            Storage::disk('public')->put($path, $imageData); 
             
             return $path;
         } catch (\Exception $e) {
