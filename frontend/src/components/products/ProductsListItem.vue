@@ -30,7 +30,6 @@
             </div>
         </div>
         <div class="card-footer d-flex justify-content-between bg-light">
-            <button class="btn btn-danger btn-sm"><i class="bi bi-cart-plus"></i> Add to Cart</button>
             <button 
                 class="btn btn-outline-secondary btn-sm"
                 @click.stop="handleToggleWishlist"
