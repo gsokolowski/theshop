@@ -99,7 +99,7 @@
                                                 <div class="modal-body">
                                                     <div class="mb-3">
                                                         <label for="deliverd_at{{ $order->id }}" class="form-label">Delivery Date & Time</label>
-                                                        <input type="datetime-local" class="form-control" id="deliverd_at{{ $order->id }}" name="deliverd_at" value="{{ $order->deliverd_at ? \Carbon\Carbon::parse($order->deliverd_at)->format('Y-m-d\TH:i') : '' }}">
+                                                        <input type="datetime-local" class="form-control" id="deliverd_at{{ $order->id }}" name="deliverd_at" value="{{ $order->getRawOriginal('deliverd_at') ? \Carbon\Carbon::parse($order->getRawOriginal('deliverd_at'))->format('Y-m-d\TH:i') : '' }}">
                                                         <small class="text-muted">Leave empty to mark as pending</small>
                                                     </div>
                                                 </div>
