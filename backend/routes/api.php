@@ -27,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // url: http://127.0.0.1:8000/api/coupon/{name} and pass the coupon name as route  parameter
     Route::get('/coupon/{name}', [CouponController::class, 'getCouponByName'])->name('coupon.get');
     // url: http://127.0.0.1:8000/api/orders
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    // url: http://127.0.0.1:8000/api/orders
     Route::post('/orders', [OrderController::class, 'storeUserCartItemsOrders'])->name('orders.store');
     // url: http://127.0.0.1:8000/api/orders/pay
     Route::post('/orders/pay', [OrderController::class, 'payOrdersByStripe'])->name('orders.pay');

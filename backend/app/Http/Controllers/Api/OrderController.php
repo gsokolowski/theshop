@@ -7,6 +7,7 @@ use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\StripePaymentRequest;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Http\Resources\OrderResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,26 @@ use App\Models\Cart;
 
 class OrderController extends Controller
 {
+    /**
+     * Display a listing of the authenticated user's orders.
+     * api: http://127.0.0.1:8000/api/orders
+     */
+    public function index(Request $request)
+    {
+        $orders = $request->user()
+            ->orders()
+            ->with(['products.colors', 'products.sizes', 'coupon'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json([
+            'message' => 'Orders retrieved successfully',
+            'data' => [
+                'orders' => OrderResource::collection($orders),
+            ],
+        ], 200);
+    }
+
     // create store method to store the order
     // api: http://127.0.0.1:8000/api/orders
     public function storeUserCartItemsOrders(OrderStoreRequest $request)
