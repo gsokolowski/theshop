@@ -7,8 +7,8 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Product Name</th>
-                            <th>Product Price</th>
+                            <th>Name</th>
+                            <th>Price</th>
                             <th>Qty</th>
                             <th>Color</th>
                             <th>Size</th>
