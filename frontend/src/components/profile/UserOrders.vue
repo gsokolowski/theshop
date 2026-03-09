@@ -2,7 +2,7 @@
     <div class="row my-5">
         <ProfileSidebar />
         <div class="col-md-8">
-            <div class="card-body" v-if="authStore.user?.orders.length">
+            <div class="card-body" v-if="orders.length">
                 <table class="table">
                     <thead>
                         <tr>
@@ -19,8 +19,8 @@
                     </thead>
                     <tbody>
                         <tr 
-                            v-for="(order,index) in authStore.user.orders.slice(0,data.ordersToShow)"
-                            :key="index"
+                            v-for="(order,index) in orders.slice(0,data.ordersToShow)"
+                            :key="order.id"
                         >
                             <td>{{ index += 1 }}</td>
                             <td>
@@ -92,10 +92,15 @@
                     </tbody>
                 </table>
             </div>
-            <Alert v-else content="No orders yet!" bgColor="primary" />
+            <Alert v-else-if="!data.isLoading" content="No orders yet!" bgColor="primary" />
+            <div class="d-flex justify-content-center" v-if="data.isLoading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
             <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-sm btn-dark mt-3"
-                    v-if="data.ordersToShow < authStore.user?.orders?.length"
+                <button type="button" class="btn btn-sm btn-dark mt-3"
+                    v-if="data.ordersToShow < orders.length"
                     @click="loadMoreOrders"
                 >
                     <i class="bi bi-arrow-clockwise"></i> Load more
@@ -109,48 +114,48 @@
     import { useAuthStore } from "../../stores/useAuthStore"
     import ProfileSidebar from "./ProfileSidebar.vue"
     import Alert from "../layouts/Alert.vue"
-    import { reactive, onMounted } from "vue"
+    import { ref, reactive, onMounted } from "vue"
+    import axios from "axios"
 
-    //define how many orders to show on the user orders page
-    const data = reactive({
-        ordersToShow: 4
-    })
-    
-    //define the store
     const authStore = useAuthStore()
 
-    // ✅ ADDED: Helper function to get color name from color_id
+    const orders = ref([])
+
+    const data = reactive({
+        ordersToShow: 4,
+        isLoading: false
+    })
+
     const getColorName = (colorId, colors) => {
         if (!colorId || !colors || !Array.isArray(colors)) return '#ccc'
         const color = colors.find(c => c.id === colorId)
         return color ? color.name : '#ccc'
     }
 
-    // ✅ ADDED: Helper function to get size name from size_id
     const getSizeName = (sizeId, sizes) => {
         if (!sizeId || !sizes || !Array.isArray(sizes)) return null
         const size = sizes.find(s => s.id === sizeId)
         return size ? size.name : null
     }
 
-    //define the function to load more orders
     const loadMoreOrders = () => {
-        if(data.ordersToShow < authStore.user.orders.length) {
+        if (data.ordersToShow < orders.value.length) {
             data.ordersToShow = data.ordersToShow + 4
-        }else {
-            return 
         }
     }
-    
-    // Refresh user data (including orders) when component mounts to sync with backend changes
+
     onMounted(async () => {
+        data.isLoading = true
         try {
-            await authStore.getLoggedInUser()
+            const response = await axios.get('/api/orders')
+            orders.value = response.data.data?.orders ?? []
         } catch (error) {
-            console.error('Error refreshing user orders:', error)
+            console.error('Error fetching orders:', error)
+            orders.value = []
+        } finally {
+            data.isLoading = false
         }
     })
-
 </script>
 
 <style scoped>
