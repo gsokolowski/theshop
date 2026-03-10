@@ -26,6 +26,7 @@ class OrderResource extends JsonResource
                     'name' => $product->name,
                     'slug' => $product->slug,
                     'price' => $product->price,
+                    'description' => $product->description,
                     'thumbnail' => $product->thumbnail ? asset('storage/' . $product->thumbnail) : null,
                     'pivot' => [
                         'color_id' => $product->pivot->color_id ?? null,

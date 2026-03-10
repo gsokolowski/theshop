@@ -15,6 +15,7 @@
                             <th>Total</th>
                             <th>Order Date</th>
                             <th>Delivered at</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,6 +89,16 @@
                                 </span>
                                 <i v-else class="text-muted">Pending...</i>
                             </td>
+                            <td>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    @click="viewOrder(order.id)"
+                                    :disabled="data.isLoadingOrder"
+                                >
+                                    View
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -107,23 +118,34 @@
                 </button>
             </div>
         </div>
+        <OrderDetailModal
+            :show="showOrderModal"
+            :order="selectedOrder"
+            @close="closeOrderModal"
+        />
     </div>
 </template>
 
 <script setup>
     import { useAuthStore } from "../../stores/useAuthStore"
     import ProfileSidebar from "./ProfileSidebar.vue"
+    import OrderDetailModal from "./OrderDetailModal.vue"
     import Alert from "../layouts/Alert.vue"
     import { ref, reactive, onMounted } from "vue"
     import axios from "axios"
+    import { useToast } from "vue-toastification"
 
     const authStore = useAuthStore()
+    const toast = useToast()
 
     const orders = ref([])
+    const showOrderModal = ref(false)
+    const selectedOrder = ref(null)
 
     const data = reactive({
         ordersToShow: 4,
-        isLoading: false
+        isLoading: false,
+        isLoadingOrder: false
     })
 
     const getColorName = (colorId, colors) => {
@@ -142,6 +164,25 @@
         if (data.ordersToShow < orders.value.length) {
             data.ordersToShow = data.ordersToShow + 4
         }
+    }
+
+    const viewOrder = async (orderId) => {
+        data.isLoadingOrder = true
+        try {
+            const response = await axios.get(`/api/orders/${orderId}`)
+            selectedOrder.value = response.data.data?.order ?? null
+            showOrderModal.value = true
+        } catch (error) {
+            console.error('Error fetching order:', error)
+            toast.error('Failed to load order details')
+        } finally {
+            data.isLoadingOrder = false
+        }
+    }
+
+    const closeOrderModal = () => {
+        showOrderModal.value = false
+        selectedOrder.value = null
     }
 
     onMounted(async () => {
