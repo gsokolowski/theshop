@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders', [OrderController::class, 'storeUserCartItemsOrders'])->name('orders.store');
     // url: http://127.0.0.1:8000/api/orders/pay
     Route::post('/orders/pay', [OrderController::class, 'payOrdersByStripe'])->name('orders.pay');
+    // url: http://127.0.0.1:8000/api/orders/{order}
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     // url: http://127.0.0.1:8000/api/reviews
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     // url: http://127.0.0.1:8000/api/reviews/{review}

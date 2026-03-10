@@ -38,6 +38,28 @@ class OrderController extends Controller
         ], 200);
     }
 
+    /**
+     * Display the specified order.
+     * api: http://127.0.0.1:8000/api/orders/{order}
+     */
+    public function show(Request $request, Order $order)
+    {
+        if ($order->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'Forbidden',
+            ], 403);
+        }
+
+        $order->load(['products.colors', 'products.sizes', 'coupon']);
+
+        return response()->json([
+            'message' => 'Order retrieved successfully',
+            'data' => [
+                'order' => OrderResource::make($order),
+            ],
+        ], 200);
+    }
+
     // create store method to store the order
     // api: http://127.0.0.1:8000/api/orders
     public function storeUserCartItemsOrders(OrderStoreRequest $request)
