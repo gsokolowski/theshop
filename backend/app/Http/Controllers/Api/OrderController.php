@@ -44,12 +44,14 @@ class OrderController extends Controller
      */
     public function show(Request $request, Order $order)
     {
-        if ($order->user_id !== $request->user()->id) {
-            return response()->json([
-                'message' => 'Forbidden',
-            ], 403);
-        }
+        // Calls Laravel’s authorization.
+        // Uses OrderPolicy::view() under the hood.
+        // Policy logic: $order->user_id === $user->id (only the order owner can view it).
+        $this->authorize('view', $order);
 
+        // with and load are both eager loading relatioshihip 
+        // with is used on the query  load on existing model instance e.g route model binding 
+        // You already have $order (from route model binding) this is why use load instead of with
         $order->load(['products.colors', 'products.sizes', 'coupon']);
 
         return response()->json([
