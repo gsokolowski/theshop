@@ -15,6 +15,7 @@ use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 use Stripe\Exception\ApiErrorException;
 use App\Models\Cart;
+use App\Jobs\SendOrderConfirmationEmail;
 
 class OrderController extends Controller
 {
@@ -96,7 +97,9 @@ class OrderController extends Controller
             Cart::where('user_id', $user->id)->delete();
             
             DB::commit();
-    
+
+            SendOrderConfirmationEmail::dispatch($user, collect($createdOrders)->pluck('id')->toArray());
+
             return response()->json([
                 'message' => 'Orders stored successfully',
                 'data' => [
