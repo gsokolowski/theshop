@@ -76,7 +76,7 @@ Route::middleware('web')->group(function () {
 });
 
 
-// Product routes  use Api\ProductController.php to handle the requests and are opened to all users.
+// Product routes use Api\ProductController.php to handle the requests and are opened to all users.
 // url: http://127.0.0.1:8000/api/products
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 // url: http://127.0.0.1:8000/api/products/search/{searchTerm}

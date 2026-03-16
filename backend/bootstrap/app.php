@@ -13,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Enable throttle middleware on API routes (uses 'api' limiter from AppServiceProvider)
+        $middleware->throttleApi();
+
         // add/register Admin middleware to admin routes
         $middleware->alias([
             'admin' => AdminMiddleware::class,
