@@ -10,4 +10,9 @@ export default defineConfig({
     vueDevTools(),
     createHtmlPlugin()
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/**/*.{test,spec}.{js,ts,vue}'],
+  },
 })
