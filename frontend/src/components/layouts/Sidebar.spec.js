@@ -26,6 +26,7 @@ function mountSidebar(stubs = defaultStubs) {
 describe('Sidebar', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.spyOn(console, 'log').mockImplementation(() => {})
   })
 
   it('renders the sidebar', () => {

@@ -48,6 +48,7 @@ function mountNavbar(options = {}) {
 describe('Navbar', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.spyOn(console, 'log').mockImplementation(() => {})
   })
 
   it('renders the navbar with brand link', () => {
