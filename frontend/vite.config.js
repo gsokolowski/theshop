@@ -14,5 +14,6 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,ts,vue}'],
+    setupFiles: ['src/test/setup.js'],
   },
 })

@@ -1,0 +1,36 @@
+---
+description: Require docblock comments in front of test methods
+globs: **/tests/**/*Test.php
+alwaysApply: false
+---
+
+# Test Method Comments
+
+Always add docblock comments in front of every test method (and helper methods used by tests).
+
+## Format
+
+Use PHPDoc-style docblocks that explain:
+- **What** the test verifies
+- **Why** it matters (security, validation, edge case)
+- **How** when relevant (e.g. slug-based routing, validation rules)
+
+## Example
+
+```php
+/**
+ * Verifies that an authenticated admin can access the brands index page. We create 3 brands
+ * to ensure the view receives data and displays them in latest-first order. Asserts the
+ * correct view is rendered and the brands collection is passed with the expected count.
+ */
+public function test_index_returns_200_with_brands_list_for_authenticated_admin(): void
+{
+    // ...
+}
+```
+
+## Scope
+
+- Apply to all `public function test_*` methods
+- Apply to protected/private helper methods (e.g. `asAdmin()`)
+- Add a class-level docblock describing the test file's purpose
