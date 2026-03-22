@@ -77,7 +77,7 @@ const applyCoupon = async () => {
     try {
         cartStore.isLoading = true
         console.log('Coupon Name', data.coupon.name)
-        const response = await axios.get(`/api/coupon/${data.coupon.name}`,
+        const response = await axios.get(`/coupon/${data.coupon.name}`,
             {
                 // you don't need to set the headers here because it is already set in the main.js file
                 // authStore.initializeAxiosHeaders()

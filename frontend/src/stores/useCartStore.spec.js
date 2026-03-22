@@ -103,7 +103,7 @@ describe('useCartStore', () => {
 
       const result = await store.fetchCart()
 
-      expect(axios.get).toHaveBeenCalledWith('/api/cart')
+      expect(axios.get).toHaveBeenCalledWith('/cart')
       expect(store.cartItems).toHaveLength(1)
       expect(store.cartItems[0].id).toBe(1)
       expect(store.cartItems[0].qty).toBe(2)
@@ -148,7 +148,7 @@ describe('useCartStore', () => {
 
       const result = await store.addToCart(item)
 
-      expect(axios.post).toHaveBeenCalledWith('/api/cart', {
+      expect(axios.post).toHaveBeenCalledWith('/cart', {
         product_id: 1,
         color_id: 1,
         size_id: 1,
@@ -182,7 +182,7 @@ describe('useCartStore', () => {
 
       const result = await store.increaseQuantity(item)
 
-      expect(axios.put).toHaveBeenCalledWith('/api/cart/1', { quantity: 3 })
+      expect(axios.put).toHaveBeenCalledWith('/cart/1', { quantity: 3 })
       expect(store.fetchCart).toHaveBeenCalled()
       expect(result.status).toBe(200)
     })
@@ -223,7 +223,7 @@ describe('useCartStore', () => {
 
       await store.decreaseQuantity(item)
 
-      expect(axios.put).toHaveBeenCalledWith('/api/cart/1', { quantity: 2 })
+      expect(axios.put).toHaveBeenCalledWith('/cart/1', { quantity: 2 })
     })
 
     it('calls removeItem when qty is 1', async () => {
@@ -249,7 +249,7 @@ describe('useCartStore', () => {
 
       const result = await store.removeItem(item)
 
-      expect(axios.delete).toHaveBeenCalledWith('/api/cart/1')
+      expect(axios.delete).toHaveBeenCalledWith('/cart/1')
       expect(store.fetchCart).toHaveBeenCalled()
       expect(result.status).toBe(200)
     })

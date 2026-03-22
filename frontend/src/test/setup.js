@@ -5,22 +5,22 @@ import { vi } from 'vitest'
 vi.mock('axios', () => ({
   default: {
     get: vi.fn().mockImplementation((url) => {
-      if (typeof url === 'string' && url.includes('/api/cart')) {
+      if (typeof url === 'string' && url.includes('/cart')) {
         return Promise.resolve({ data: { status: 200, data: { cart_items: [] } } })
       }
-      if (typeof url === 'string' && url.includes('/api/products')) {
+      if (typeof url === 'string' && url.includes('/products')) {
         return Promise.resolve({ data: { status: 200, data: { products: [] } } })
       }
-      if (typeof url === 'string' && url.includes('/api/wishlist')) {
+      if (typeof url === 'string' && url.includes('/wishlist')) {
         return Promise.resolve({ data: { status: 200, data: { wishlist_items: [] } } })
       }
-      if (typeof url === 'string' && url.includes('/api/user')) {
+      if (typeof url === 'string' && url.includes('/user')) {
         return Promise.resolve({ data: { status: 200, data: null } })
       }
-      if (typeof url === 'string' && url.includes('/api/orders')) {
+      if (typeof url === 'string' && url.includes('/orders')) {
         return Promise.resolve({ data: { status: 200, data: { orders: [] } } })
       }
-      if (typeof url === 'string' && url.includes('/api/coupon')) {
+      if (typeof url === 'string' && url.includes('/coupon')) {
         return Promise.resolve({ data: { status: 404 } })
       }
       return Promise.resolve({ data: { status: 200, data: {} } })

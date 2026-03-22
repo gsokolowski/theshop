@@ -114,7 +114,7 @@ const handleImageUpdate = async () => {
     try {
         authStore.setIsLoading(true)
         
-        const response = await axios.put('/api/user/profile/update', uploadData, {
+        const response = await axios.put('/user/profile/update', uploadData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${authStore.getAccessToken}`

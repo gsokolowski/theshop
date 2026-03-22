@@ -42,7 +42,7 @@ export const useCartStore = defineStore('cart', {
             this.errorMessage = ''
             
             try {
-                const response = await axios.get('/api/cart')
+                const response = await axios.get('/cart')
                 
                 if (response.data.status === 200 && response.data.data?.cart_items) {
                     // Transform backend response to frontend format
@@ -89,7 +89,7 @@ export const useCartStore = defineStore('cart', {
             console.log('Item object:', item)
             
             try {
-                const response = await axios.post('/api/cart', requestData)
+                const response = await axios.post('/cart', requestData)
                 
                 console.log('Add to cart response:', response.data)
                 
@@ -153,7 +153,7 @@ export const useCartStore = defineStore('cart', {
             
             try {
                 const newQuantity = item.qty + 1
-                const response = await axios.put(`/api/cart/${item.id}`, {
+                const response = await axios.put(`/cart/${item.id}`, {
                     quantity: newQuantity,
                 })
                 
@@ -201,7 +201,7 @@ export const useCartStore = defineStore('cart', {
             
             try {
                 const newQuantity = item.qty - 1
-                const response = await axios.put(`/api/cart/${item.id}`, {
+                const response = await axios.put(`/cart/${item.id}`, {
                     quantity: newQuantity,
                 })
                 
@@ -242,7 +242,7 @@ export const useCartStore = defineStore('cart', {
             this.errorMessage = ''
             
             try {
-                const response = await axios.delete(`/api/cart/${item.id}`)
+                const response = await axios.delete(`/cart/${item.id}`)
                 
                 if (response.data.status === 200) {
                     // Refresh cart from backend

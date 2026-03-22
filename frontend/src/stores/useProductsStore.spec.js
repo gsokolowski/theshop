@@ -122,7 +122,7 @@ describe('useProductsStore', () => {
 
       await store.fetchAllProducts()
 
-      expect(axios.get).toHaveBeenCalledWith('/api/products')
+      expect(axios.get).toHaveBeenCalledWith('/products')
       expect(store.products).toEqual(products)
       expect(store.categories).toEqual(categories)
       expect(store.brands).toEqual(brands)
@@ -144,7 +144,7 @@ describe('useProductsStore', () => {
 
       await store.filterProductsByCategory('shirts')
 
-      expect(axios.get).toHaveBeenCalledWith('/api/products/category/shirts')
+      expect(axios.get).toHaveBeenCalledWith('/products/category/shirts')
       expect(store.products).toEqual(products)
       expect(store.productCount).toBe(1)
       expect(store.productsPerPage).toBe(4)
@@ -161,7 +161,7 @@ describe('useProductsStore', () => {
 
       await store.filterProductsByBrand('nike')
 
-      expect(axios.get).toHaveBeenCalledWith('/api/products/brand/nike')
+      expect(axios.get).toHaveBeenCalledWith('/products/brand/nike')
       expect(store.products).toEqual(products)
     })
   })
@@ -176,7 +176,7 @@ describe('useProductsStore', () => {
 
       await store.filterProductsBySize(2)
 
-      expect(axios.get).toHaveBeenCalledWith('/api/products/size/2')
+      expect(axios.get).toHaveBeenCalledWith('/products/size/2')
       expect(store.products).toEqual(products)
     })
   })
@@ -191,7 +191,7 @@ describe('useProductsStore', () => {
 
       await store.filterProductsByColor(3)
 
-      expect(axios.get).toHaveBeenCalledWith('/api/products/color/3')
+      expect(axios.get).toHaveBeenCalledWith('/products/color/3')
       expect(store.products).toEqual(products)
     })
   })
@@ -207,7 +207,7 @@ describe('useProductsStore', () => {
 
       await store.filterProductsBySearchTerm()
 
-      expect(axios.get).toHaveBeenCalledWith('/api/products/search/shoes')
+      expect(axios.get).toHaveBeenCalledWith('/products/search/shoes')
       expect(store.products).toEqual(products)
     })
   })
@@ -233,7 +233,7 @@ describe('useProductsStore', () => {
 
       expect(store.filter).toBe(null)
       expect(store.productsPerPage).toBe(4)
-      expect(axios.get).toHaveBeenCalledWith('/api/products')
+      expect(axios.get).toHaveBeenCalledWith('/products')
       expect(store.products).toEqual(products)
     })
   })

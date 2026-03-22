@@ -52,7 +52,7 @@ export const useProductDetailsStore = defineStore('product', {
             this.errorMessage = ''
 
             try {
-                const response = await axios.get(`/api/products/${slug}`)
+                const response = await axios.get(`/products/${slug}`)
                 this.product = response.data.data
                 this.productThumbnail = response.data.data.thumbnail || ''
 
@@ -87,7 +87,7 @@ export const useProductDetailsStore = defineStore('product', {
         async addReview(reviewData) {
             try {
                 // Make API call to create review
-                const response = await axios.post('/api/reviews', {
+                const response = await axios.post('/reviews', {
                     title: reviewData.title,
                     body: reviewData.body,
                     rating: reviewData.rating,
@@ -104,7 +104,7 @@ export const useProductDetailsStore = defineStore('product', {
         async removeReview(review) {
             try {
                 // Make API call to delete review
-                const response = await axios.delete(`/api/reviews/${review.id}`)
+                const response = await axios.delete(`/reviews/${review.id}`)
                 
                 // ✅ CHANGED: If we reach here, the API call succeeded (no exception thrown)
                 // Update local state - remove the review from the array
@@ -143,7 +143,7 @@ export const useProductDetailsStore = defineStore('product', {
         async updateReview(review) {
             try {
                 // Make API call to update review
-                const response = await axios.put(`/api/reviews/${review.id}`, {
+                const response = await axios.put(`/reviews/${review.id}`, {
                     title: review.title,
                     body: review.body,
                     rating: review.rating,

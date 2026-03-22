@@ -169,7 +169,7 @@
     const viewOrder = async (orderId) => {
         data.isLoadingOrder = true
         try {
-            const response = await axios.get(`/api/orders/${orderId}`)
+            const response = await axios.get(`/orders/${orderId}`)
             selectedOrder.value = response.data.data?.order ?? null
             showOrderModal.value = true
         } catch (error) {
@@ -188,7 +188,7 @@
     onMounted(async () => {
         data.isLoading = true
         try {
-            const response = await axios.get('/api/orders')
+            const response = await axios.get('/orders')
             orders.value = response.data.data?.orders ?? []
         } catch (error) {
             console.error('Error fetching orders:', error)

@@ -166,7 +166,7 @@ describe('useAuthStore', () => {
 
       const result = await store.login({ email: 'test@example.com', password: 'password' })
 
-      expect(axios.post).toHaveBeenCalledWith('/api/user/login', {
+      expect(axios.post).toHaveBeenCalledWith('/user/login', {
         email: 'test@example.com',
         password: 'password',
       })
@@ -210,7 +210,7 @@ describe('useAuthStore', () => {
         confirm_password: 'password',
       })
 
-      expect(axios.post).toHaveBeenCalledWith('/api/user/register', {
+      expect(axios.post).toHaveBeenCalledWith('/user/register', {
         name: 'Test',
         email: 'test@example.com',
         password: 'password',
@@ -255,7 +255,7 @@ describe('useAuthStore', () => {
       await store.logout()
 
       expect(axios.post).toHaveBeenCalledWith(
-        '/api/user/logout',
+        '/user/logout',
         {},
         { headers: { Authorization: 'Bearer token123' } }
       )
@@ -301,7 +301,7 @@ describe('useAuthStore', () => {
 
       const result = await store.getLoggedInUser()
 
-      expect(axios.get).toHaveBeenCalledWith('/api/user')
+      expect(axios.get).toHaveBeenCalledWith('/user')
       expect(store.user).toEqual(mockUser)
       expect(store.accessToken).toBe('token123')
       expect(store.isUserLoggedIn).toBe(true)

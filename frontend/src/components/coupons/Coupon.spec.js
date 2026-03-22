@@ -53,7 +53,7 @@ describe('Coupon', () => {
     await wrapper.find('input').setValue('SAVE10')
     await wrapper.find('button.btn-primary').trigger('click')
     expect(axios.get).toHaveBeenCalledWith(
-      '/api/coupon/SAVE10',
+      '/coupon/SAVE10',
       expect.objectContaining({
         headers: expect.objectContaining({
           Authorization: 'Bearer test-token',

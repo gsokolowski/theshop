@@ -139,7 +139,7 @@
 
             console.log('Form Data 1:', formData)
             console.log('Access Token 1:', authStore.getAccessToken)
-            const response = await axios.put('/api/user/profile/update', formData, {
+            const response = await axios.put('/user/profile/update', formData, {
                 headers: {
                     'Authorization': `Bearer ${authStore.getAccessToken}`
                 }

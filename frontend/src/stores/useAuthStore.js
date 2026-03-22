@@ -65,7 +65,7 @@ export const useAuthStore = defineStore('auth', {
             this.setValidationMessage('')
             
             try {
-                const response = await axios.post('/api/user/login', {
+                const response = await axios.post('/user/login', {
                     email: credentials.email,
                     password: credentials.password
                 })
@@ -108,7 +108,7 @@ export const useAuthStore = defineStore('auth', {
             console.log('Credentials received:', credentials)
 
             try {
-                const response = await axios.post('/api/user/register', {
+                const response = await axios.post('/user/register', {
                     name: credentials.name,
                     email: credentials.email,
                     password: credentials.password,
@@ -145,7 +145,7 @@ export const useAuthStore = defineStore('auth', {
             try {
                 // Call logout endpoint if token exists
                 if (this.accessToken) {
-                    await axios.post('/api/user/logout', {}, {
+                    await axios.post('/user/logout', {}, {
                         headers: {
                             'Authorization': `Bearer ${this.accessToken}`
                         }
@@ -173,7 +173,7 @@ export const useAuthStore = defineStore('auth', {
             this.setValidationErrors({})
             
             try {
-                const response = await axios.get('/api/user')
+                const response = await axios.get('/user')
                 
                 // Update user data and access token
                 this.setUser(response.data.user)

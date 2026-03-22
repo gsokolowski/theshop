@@ -47,7 +47,7 @@ describe('Stripe', () => {
     })
     await wrapper.find('button').trigger('click')
     expect(postSpy).toHaveBeenCalledWith(
-      '/api/orders/pay',
+      '/orders/pay',
       expect.objectContaining({
         cartItems: expect.any(Array),
         success_url: expect.any(String),

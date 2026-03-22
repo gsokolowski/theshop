@@ -44,7 +44,7 @@ describe('UserOrders', () => {
     vi.mocked(axios.get).mockResolvedValue({ data: { data: { orders: [] } } })
     mountUserOrders()
     await vi.waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('/api/orders')
+      expect(axios.get).toHaveBeenCalledWith('/orders')
     }, { timeout: 2000 })
   })
 })

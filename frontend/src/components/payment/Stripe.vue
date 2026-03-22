@@ -54,7 +54,7 @@
             }))
             console.log('Cart Items Data', cartItemsData)
             // call the api/orders/pay endpoint to get the payment link payOrdersByStripe()
-            const response = await axios.post('/api/orders/pay', {
+            const response = await axios.post('/orders/pay', {
                 cartItems: cartItemsData,
                 success_url: successUrl.value,
                 cancel_url: cancelUrl.value

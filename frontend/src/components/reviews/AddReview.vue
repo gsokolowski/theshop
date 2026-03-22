@@ -108,7 +108,7 @@
         
         try {
             // ✅ CHANGED: Make proper API call to check if user has a review
-            const response = await axios.get(`/api/reviews/check/${product.value.id}`)
+            const response = await axios.get(`/reviews/check/${product.value.id}`)
             
             if (response.data?.data?.has_review) {
                 hasExistingReview.value = true

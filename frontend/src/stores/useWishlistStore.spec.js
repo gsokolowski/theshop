@@ -76,7 +76,7 @@ describe('useWishlistStore', () => {
 
       const result = await store.fetchWishlist()
 
-      expect(axios.get).toHaveBeenCalledWith('/api/wishlist')
+      expect(axios.get).toHaveBeenCalledWith('/wishlist')
       expect(store.wishlistItems).toEqual(items)
       expect(store.isLoading).toBe(false)
       expect(result.status).toBe(200)
@@ -125,7 +125,7 @@ describe('useWishlistStore', () => {
 
       const result = await store.addToWishlist(5)
 
-      expect(axios.post).toHaveBeenCalledWith('/api/wishlist', { product_id: 5 })
+      expect(axios.post).toHaveBeenCalledWith('/wishlist', { product_id: 5 })
       expect(store.fetchWishlist).toHaveBeenCalled()
       expect(result.status).toBe(201)
     })
@@ -162,7 +162,7 @@ describe('useWishlistStore', () => {
 
       const result = await store.removeFromWishlist(3)
 
-      expect(axios.delete).toHaveBeenCalledWith('/api/wishlist/3')
+      expect(axios.delete).toHaveBeenCalledWith('/wishlist/3')
       expect(store.fetchWishlist).toHaveBeenCalled()
       expect(result.status).toBe(200)
     })

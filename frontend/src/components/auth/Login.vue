@@ -113,7 +113,7 @@ const formData = reactive({
 
 // Google OAuth URL
 const googleAuthUrl = computed(() => {
-    return 'http://127.0.0.1:8000/api/auth/google'
+    return 'http://127.0.0.1:8000/api/v1/auth/google'
 })
 
 const handleSubmit = async () => {

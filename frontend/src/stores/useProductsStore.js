@@ -59,7 +59,7 @@ export const useProductsStore = defineStore('products', {
         // try to fetch the products from the API
         try {
           // fetch the products from the API
-          const response = await axios.get('/api/products') // use axios.defaults.baseURL to get the products
+          const response = await axios.get('/products') // use axios.defaults.baseURL to get the products
           //console.log('Response:', response)
           this.products = response.data.data //Access nested data property
           this.categories = response.data.categories // access the categories property
@@ -83,7 +83,7 @@ export const useProductsStore = defineStore('products', {
         // try to fetch the products from the API
         try {
           // fetch the products from the API
-          const response = await axios.get(`/api/products/category/${categorySlug}`) // use axios.defaults.baseURL to get the products
+          const response = await axios.get(`/products/category/${categorySlug}`) // use axios.defaults.baseURL to get the products
           this.products = response.data.data //Access nested data property
           this.productCount = response.data.data.length
           console.log('Product count:', this.productCount)
@@ -103,7 +103,7 @@ export const useProductsStore = defineStore('products', {
         // try to fetch the products from the API
         try {
           // fetch the products from the API
-          const response = await axios.get(`/api/products/brand/${brandSlug}`) // use axios.defaults.baseURL to get the products
+          const response = await axios.get(`/products/brand/${brandSlug}`) // use axios.defaults.baseURL to get the products
           this.products = response.data.data //Access nested data property
           this.productCount = response.data.data.length
           console.log('Product count:', this.productCount)
@@ -123,7 +123,7 @@ export const useProductsStore = defineStore('products', {
         // try to fetch the products from the API
         try {
           // fetch the products from the API
-          const response = await axios.get(`/api/products/size/${sizeId}`) // use axios.defaults.baseURL to get the products
+          const response = await axios.get(`/products/size/${sizeId}`) // use axios.defaults.baseURL to get the products
           this.products = response.data.data //Access nested data property
           this.productCount = response.data.data.length
           console.log('Product count:', this.productCount)
@@ -143,7 +143,7 @@ export const useProductsStore = defineStore('products', {
         // try to fetch the products from the API
         try {
           // fetch the products from the API
-          const response = await axios.get(`/api/products/color/${colorId}`) // use axios.defaults.baseURL to get the products
+          const response = await axios.get(`/products/color/${colorId}`) // use axios.defaults.baseURL to get the products
           this.products = response.data.data //Access nested data property
           this.productCount = response.data.data.length
           console.log('Product count:', this.productCount)
@@ -163,7 +163,7 @@ export const useProductsStore = defineStore('products', {
         // try to fetch the products from the API
         try {
           // fetch the products from the API
-          const response = await axios.get(`/api/products/search/${this.searchTerm}`) // use axios.defaults.baseURL to get the products
+          const response = await axios.get(`/products/search/${this.searchTerm}`) // use axios.defaults.baseURL to get the products
           this.products = response.data.data //Access nested data property
           this.productCount = response.data.data.length
           console.log('Product count:', this.productCount)

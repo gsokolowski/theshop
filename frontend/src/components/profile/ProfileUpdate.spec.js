@@ -77,7 +77,7 @@ describe('ProfileUpdate', () => {
     await wrapper.find('#phone_number').setValue('555-5678')
     await wrapper.find('form').trigger('submit.prevent')
     expect(axios.put).toHaveBeenCalledWith(
-      '/api/user/profile/update',
+      '/user/profile/update',
       expect.objectContaining({
         name: 'Jane',
         address: '456 Oak St',

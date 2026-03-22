@@ -70,7 +70,7 @@ describe('SuccessPayment', () => {
     })
     await new Promise(resolve => setTimeout(resolve, 100))
     expect(postSpy).toHaveBeenCalledWith(
-      '/api/orders',
+      '/orders',
       expect.objectContaining({
         cartItems: expect.any(Array),
       }),

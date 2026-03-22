@@ -25,7 +25,7 @@ export const useWishlistStore = defineStore('wishlist', {
             this.errorMessage = ''
             
             try {
-                const response = await axios.get('/api/wishlist')
+                const response = await axios.get('/wishlist')
                 
                 if (response.data.status === 200 && response.data.data?.wishlist_items) {
                     this.wishlistItems = response.data.data.wishlist_items
@@ -61,7 +61,7 @@ export const useWishlistStore = defineStore('wishlist', {
             this.errorMessage = ''
             
             try {
-                const response = await axios.post('/api/wishlist', {
+                const response = await axios.post('/wishlist', {
                     product_id: productId,
                 })
                 
@@ -117,7 +117,7 @@ export const useWishlistStore = defineStore('wishlist', {
             this.errorMessage = ''
             
             try {
-                const response = await axios.delete(`/api/wishlist/${wishlistId}`)
+                const response = await axios.delete(`/wishlist/${wishlistId}`)
                 
                 if (response.data.status === 200) {
                     // Refresh wishlist from backend

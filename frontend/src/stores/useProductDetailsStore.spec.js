@@ -125,7 +125,7 @@ describe('useProductDetailsStore', () => {
 
       await store.fetchProduct('product-slug')
 
-      expect(axios.get).toHaveBeenCalledWith('/api/products/product-slug')
+      expect(axios.get).toHaveBeenCalledWith('/products/product-slug')
       expect(store.product).toEqual(productData)
       expect(store.productThumbnail).toBe('/thumb.jpg')
       expect(store.productImages).toHaveLength(2)
@@ -162,7 +162,7 @@ describe('useProductDetailsStore', () => {
       }
       const result = await store.addReview(reviewData)
 
-      expect(axios.post).toHaveBeenCalledWith('/api/reviews', {
+      expect(axios.post).toHaveBeenCalledWith('/reviews', {
         title: 'Great',
         body: 'Nice product',
         rating: 5,
@@ -204,7 +204,7 @@ describe('useProductDetailsStore', () => {
 
       await store.removeReview(reviewToRemove)
 
-      expect(axios.delete).toHaveBeenCalledWith('/api/reviews/5')
+      expect(axios.delete).toHaveBeenCalledWith('/reviews/5')
       expect(store.product.reviews).toHaveLength(1)
       expect(store.product.reviews[0].id).toBe(1)
     })
@@ -275,7 +275,7 @@ describe('useProductDetailsStore', () => {
 
       const result = await store.updateReview(review)
 
-      expect(axios.put).toHaveBeenCalledWith('/api/reviews/3', {
+      expect(axios.put).toHaveBeenCalledWith('/reviews/3', {
         title: 'Updated',
         body: 'New',
         rating: 5,
