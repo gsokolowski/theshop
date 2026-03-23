@@ -10,21 +10,18 @@
             <div class="text-left mb-4" v-else>
                 <h5>No products found</h5>
             </div>
-            <!-- ✅ Use store's productsPerPage directly -->
-            <ProductsListItem 
-            v-for="product in productsStore.products.slice(0, productsStore.productsPerPage)" 
-            :key="product.id" 
-            :product="product"/> <!-- pass the product props to the ProductsListItem component -->
+            <ProductsListItem
+            v-for="product in productsStore.products"
+            :key="product.id"
+            :product="product"/>
 
-            <!-- load more products button -->
+            <!-- load more products button - server-side pagination -->
             <div class="text-center mt-4">
-                <!-- if no more products to load hide the button -->
-                <!-- ✅ Use store's productsPerPage directly -->
-                    <button 
-                    name="loadMore" 
-                    class="btn btn-outline-dark" 
-                    @click="productsStore.loadMoreProducts()" 
-                    v-if="productsStore.productsPerPage < productsStore.getProductCount">
+                    <button
+                    name="loadMore"
+                    class="btn btn-outline-dark"
+                    @click="productsStore.loadMoreProducts()"
+                    v-if="productsStore.products.length < productsStore.getProductCount">
                     <i class="bi bi-arrow-down"></i> Load More
                 </button>
             </div>

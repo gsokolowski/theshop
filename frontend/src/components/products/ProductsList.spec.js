@@ -62,9 +62,8 @@ describe('ProductsList', () => {
   it('shows Load More button when more products available', async () => {
     const wrapper = mountProductsList()
     const store = useProductsStore()
-    store.products = Array(10).fill({ id: 1 })
-    store.productCount = 10
-    store.productsPerPage = 4
+    store.products = Array(4).fill({ id: 1 }) // 4 loaded
+    store.productCount = 10 // 10 total - more to load
     await wrapper.vm.$nextTick()
     expect(wrapper.find('button[name="loadMore"]').exists()).toBe(true)
     expect(wrapper.text()).toContain('Load More')
@@ -73,9 +72,8 @@ describe('ProductsList', () => {
   it('calls loadMoreProducts when Load More clicked', async () => {
     const wrapper = mountProductsList()
     const store = useProductsStore()
-    store.products = Array(10).fill({ id: 1 })
+    store.products = Array(4).fill({ id: 1 })
     store.productCount = 10
-    store.productsPerPage = 4
     await wrapper.vm.$nextTick()
     const loadMoreSpy = vi.spyOn(store, 'loadMoreProducts')
     await wrapper.find('button[name="loadMore"]').trigger('click')
