@@ -1,0 +1,9 @@
+---
+description: Project-wide principles for AI-assisted changes
+alwaysApply: true
+---
+
+# Core Principles
+
+- Prefer simple, minimal solutions; avoid scope creep and drive-by refactors.
+- Follow the focused rules under `.cursor/rules/` for the stack area you are editing (see root `PREFERENCES.md` for the index).

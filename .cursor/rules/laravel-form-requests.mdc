@@ -1,0 +1,21 @@
+---
+description: Laravel Form Request naming and structure
+globs:
+  - backend/app/Http/Requests/**/*.php
+  - backend/app/Http/Controllers/**/*.php
+alwaysApply: false
+---
+
+# Laravel Form Requests
+
+- For controller actions that validate input, use dedicated Form Request classes—avoid ad-hoc `$request->validate()` in controllers when a Form Request is appropriate.
+- Naming: `ModelActionRequest.php` (e.g. `OrderUpdateRequest`, `ProductStoreRequest`, `CategoryUpdateRequest`).
+- Location: `app/Http/Requests/`.
+
+Each Form Request should include:
+
+- **`authorize()`**: returns `bool` (often `true` when middleware enforces auth; document exceptions).
+- **`rules()`**: returns the validation rules array.
+- **`messages()`**: custom validation messages (optional but recommended).
+
+Controllers should type-hint the Form Request on the action (e.g. `public function update(OrderUpdateRequest $request, Order $order)`).

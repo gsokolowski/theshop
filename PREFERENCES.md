@@ -1,120 +1,19 @@
 # Development Preferences
 
-> **For AI Assistants:** Please read this file before suggesting any code changes. These preferences are mandatory and should guide all code implementations. Always reference these patterns when writing code.
+> **For AI assistants:** These preferences are mandatory. Cursor loads the detailed rules from [`.cursor/rules/`](.cursor/rules/) automatically based on the files you edit. This page is the human-facing index; keep it in sync when you add or rename rule files.
 
+## Rule files (authoritative detail)
 
-## Vue.js / Frontend
-- Use `reactive` instead of `ref` for objects/arrays wherever possible
-- Use `ref` only for primitives (booleans, strings, numbers) when needed
-- Always mark code changes with `✅ ADDED`, `✅ CHANGED`, `✅ REMOVED` indicators
-- Use `computed` for reactive store access (e.g., `const user = computed(() => authStore.getUser)`)
-- Use `ref` for DOM element references (e.g., `const fileInput = ref(null)`)
+| Area | File |
+|------|------|
+| Core (always applied) | `.cursor/rules/core-principles.mdc` |
+| Vue / Pinia / frontend JS | `.cursor/rules/frontend.mdc` |
+| Laravel API JSON shape | `.cursor/rules/laravel-api-responses.mdc` |
+| Laravel controllers (admin + API) | `.cursor/rules/laravel-controllers.mdc` |
+| Form requests | `.cursor/rules/laravel-form-requests.mdc` |
+| PHP test docblocks | `.cursor/rules/test-method-comments.mdc` |
 
-## API Calls & Error Handling
-- Use `async/await` for API calls
-- Always use `try/catch/finally` blocks for error handling
-- Use `console.error()` for debugging errors
-- Update store state after successful API calls
-- Clear form data after successful submission
-- Use `router.push()` for navigation after successful actions
+## Quick summary
 
-## Loading States
-- Use `setIsLoading(true/false)` in store for loading state
-- Use `<Spinner :store="storeName" />` component for loading indicators
-- Disable buttons during loading: `:disabled="store.isLoading"`
-
-## Toast Notifications
-- Use `toast.success()` for successful actions
-- Use `toast.error()` for errors
-- Use `toast.info()` for informational messages
-- Show toast messages after API calls (success or error)
-
-## File Uploads
-- Use `FormData` for file uploads
-- Set `enctype="multipart/form-data"` on form element
-- Set `'Content-Type': 'multipart/form-data'` in axios headers
-- Clear file input after successful upload
-
-## Form Handling
-- Use `@submit.prevent` for form submission
-- Use `novalidate` attribute on forms to disable HTML5 validation
-- Clear validation errors on component mount (`onMounted`)
-- Use `v-model` for two-way data binding
-
-## Component Structure
-- Use `<Spinner :store="storeName" />` for loading states
-- Use `<ValidationErrors :errors="errors" :visible="true/false" />` for error display
-- Clear validation errors and messages in `onMounted` hook
-
-## Validation
-- Keep all validation logic on Laravel backend (single source of truth)
-- Frontend should only display backend validation errors
-- Use `novalidate` attribute on forms to disable HTML5 validation
-
-## Code Style
-- Prefer simple, minimal solutions
-- Mark all changes clearly when working on files
-- Use Bootstrap classes for styling (mb-3, mt-2, d-flex, etc.)
-- Use Bootstrap Icons for icons (`<i class="bi bi-icon-name"></i>`)
-- Use `object-fit: cover` for images
-- Use `rounded-circle` class for profile images
-
-## API Code
-- All API responses must be JSON with the following structure:
-  - `message`: string (success/error message, null on error) - **Required**
-  - `data`: mixed|null (response data, null on error) - **Required**
-  - `error`: string|null (error message if any, null on success) - **Optional**
-  - `status`: integer (HTTP status code: 200, 201, 400, 401, 404, etc.) - **Optional**
-- Use a standardized response helper method in the base Controller class
-- Example success response: `{ "message": "Operation successful", "data": {...} }`
-- Example success response with all fields: `{ "message": "Operation successful", "error": null, "data": {...}, "status": 200 }`
-- Example error response: `{ "message": "Error description", "data": null }`
-- Example error response with all fields: `{ "message": null, "error": "Error description", "data": null, "status": 400 }`
-
-## Form Requests / Validation
-- For every new Controller, create corresponding Form Request classes following the naming convention: `ModelActionRequest.php`
-  - Examples: `OrderUpdateRequest.php`, `ProductStoreRequest.php`, `CategoryUpdateRequest.php`
-- Form Requests should be placed in `app/Http/Requests/` directory
-- Use Form Requests instead of inline validation in Controllers
-- Form Requests must include:
-  - `authorize()` method returning `bool` (typically `true` for admin routes, middleware handles authorization)
-  - `rules()` method returning validation rules array
-  - `messages()` method returning custom validation messages array (optional but recommended)
-- Controllers should type-hint Form Requests in method parameters (e.g., `public function update(OrderUpdateRequest $request, Order $order)`
-
-## Backend / Laravel Controllers
-- Always mark code changes with `✅ ADDED`, `✅ CHANGED`, `✅ REMOVED` indicators
-  - **Exception:** Do NOT add `✅ ADDED` labels when generating a new file from scratch (e.g., using `php artisan make:controller`, `php artisan make:model`, etc.). Only mark changes when editing existing files.
-- Always separate database calls from view calls in Controller methods
-  - First, execute the database query and store the result in a variable
-  - Then, pass that variable to the view
-  - Example:
-    // ✅ CORRECT: Separate DB call from view
-    public function index()
-    {
-        $orders = Order::with('user', 'products')->latest()->get();
-        return view('admin.orders.index', ['orders' => $orders]);
-    }
-    
-    // ❌ INCORRECT: DB call inline with view
-    public function index()
-    {
-        return view('admin.orders.index', [
-            'orders' => Order::with('user', 'products')->latest()->get()
-        ]);
-    }
-- When you have an authorized user (via `auth:sanctum` middleware), always use `$request->user()->id` to get the authenticated user's ID
-  - Never accept `user_id` from the request body or validated data - always get it from the authenticated user
-  - This prevents users from tampering with the `user_id` field
-  - Example:
-    // ✅ CORRECT: Get user_id from authenticated user
-    $review = Review::create([
-        'title' => $validated['title'],
-        'user_id' => $request->user()->id, // Get from authenticated user
-    ]);
-    
-    // ❌ INCORRECT: Accept user_id from request
-    $review = Review::create([
-        'title' => $validated['title'],
-        'user_id' => $validated['user_id'], // ❌ Can be tampered with
-    ]);    
+- **Frontend:** `reactive` for objects/arrays; `ref` for primitives and DOM refs; `computed` for store-derived state; async API calls with try/catch/finally; Spinner, toasts, Bootstrap; backend owns validation—UI shows API errors only.
+- **Backend:** Form requests for validation; separate DB queries from view/response assembly; never take `user_id` from the client when the user is authenticated; JSON API responses follow the shared `{ message, data, error?, status? }` shape.

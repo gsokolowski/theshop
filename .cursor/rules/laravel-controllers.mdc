@@ -1,0 +1,57 @@
+---
+description: Laravel controller patterns (admin views, API, security)
+globs: backend/app/Http/Controllers/**/*.php
+alwaysApply: false
+---
+
+# Laravel controllers
+
+## Change markers (when editing existing files)
+
+- Mark changes with `✅ ADDED`, `✅ CHANGED`, `✅ REMOVED`.
+- **Exception:** Do not add `✅ ADDED` when generating a brand-new file from scratch (e.g. `php artisan make:controller`). Only mark changes when editing existing files.
+
+## Separate data loading from views / responses
+
+- Run the database query first, store the result in a variable, then pass it to the view or JSON response.
+- Avoid inline query execution inside the `view()` array argument.
+
+```php
+// Correct: separate query from view
+public function index()
+{
+    $orders = Order::with('user', 'products')->latest()->get();
+    return view('admin.orders.index', ['orders' => $orders]);
+}
+
+// Incorrect: query inline inside view()
+public function index()
+{
+    return view('admin.orders.index', [
+        'orders' => Order::with('user', 'products')->latest()->get(),
+    ]);
+}
+```
+
+## Authenticated user ID
+
+- When the route uses `auth:sanctum` (or otherwise has an authenticated user), always use `$request->user()->id` for the acting user’s ID.
+- Never accept `user_id` from the request body or validated input for ownership or attribution—clients can tamper with it.
+
+```php
+// Correct
+$review = Review::create([
+    'title' => $validated['title'],
+    'user_id' => $request->user()->id,
+]);
+
+// Incorrect
+$review = Review::create([
+    'title' => $validated['title'],
+    'user_id' => $validated['user_id'],
+]);
+```
+
+## Validation
+
+- Use Form Request classes instead of inline validation (see `.cursor/rules/laravel-form-requests.mdc`). Type-hint the Form Request on the controller action.

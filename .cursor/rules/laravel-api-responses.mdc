@@ -1,0 +1,25 @@
+---
+description: Standard JSON envelope for API controllers
+globs:
+  - backend/app/Http/Controllers/Api/**/*.php
+  - backend/routes/api.php
+alwaysApply: false
+---
+
+# Laravel API JSON responses
+
+All API responses must be JSON with this structure:
+
+- **`message`**: string (success or error message; may be `null` on error) — **required**
+- **`data`**: mixed|null (payload; `null` on error) — **required**
+- **`error`**: string|null (error message when applicable; `null` on success) — **optional**
+- **`status`**: integer (HTTP-style code: 200, 201, 400, 401, 404, etc.) — **optional**
+
+Use the standardized response helper on the base Controller class (or equivalent project helper).
+
+Examples:
+
+- Success: `{ "message": "Operation successful", "data": {...} }`
+- Success (all fields): `{ "message": "Operation successful", "error": null, "data": {...}, "status": 200 }`
+- Error: `{ "message": "Error description", "data": null }`
+- Error (all fields): `{ "message": null, "error": "Error description", "data": null, "status": 400 }`
