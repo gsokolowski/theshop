@@ -13,6 +13,10 @@
 | Form requests | `.cursor/rules/laravel-form-requests.mdc` |
 | PHP test docblocks | `.cursor/rules/test-method-comments.mdc` |
 
+## Release & deployment
+
+- **Branching and tag-based releases:** [docs/RELEASE_WORKFLOW.md](docs/RELEASE_WORKFLOW.md) (`develop` → `stage` → `main` → tag → production).
+
 ## Quick summary
 
 - **Frontend:** `reactive` for objects/arrays; `ref` for primitives and DOM refs; `computed` for store-derived state; async API calls with try/catch/finally; Spinner, toasts, Bootstrap; backend owns validation—UI shows API errors only.
