@@ -12,8 +12,9 @@ use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
-// General route to acction login 
-Route::get('/',[AdminController::class,"login"])->name("admin.login");
+// ✅ CHANGED: login at /admin so site / can serve the Vue SPA in production (Nginx + same host)
+// General route to action login
+Route::get('/admin', [AdminController::class, 'login'])->name('admin.login');
 Route::post('/admin/auth',[AdminController::class,"auth"])->name("admin.auth");
 
 // Admin routes with middleware admin  Url, Controller, Name of the route
