@@ -19,10 +19,10 @@ class ReviewFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->sentence(rand(3, 6)),
-            'body' => fake()->paragraph(rand(2, 4)),
-            'rating' => fake()->randomFloat(1, 3.5, 5.0), // 3-5 stars
-            'approved' => fake()->boolean(70), // 70% approved
+            'title' => \fake()->sentence(rand(3, 6)),
+            'body' => \fake()->paragraph(rand(2, 4)),
+            'rating' => \fake()->randomFloat(1, 3.5, 5.0), // 3-5 stars
+            'approved' => \fake()->boolean(70), // 70% approved
             'user_id' => User::factory(),
             'product_id' => Product::factory(),
         ];
@@ -33,7 +33,7 @@ class ReviewFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'approved' => true,
-            'rating' => fake()->randomFloat(1, 4.5, 5.0), // Approved reviews tend to be higher rated
+            'rating' => \fake()->randomFloat(1, 4.5, 5.0), // Approved reviews tend to be higher rated
         ]);
     }
 

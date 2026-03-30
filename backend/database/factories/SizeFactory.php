@@ -19,7 +19,7 @@ class SizeFactory extends Factory
         $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
         
         return [
-            'name' => fake()->unique()->randomElement($sizes),
+            'name' => \fake()->unique()->randomElement($sizes),
         ];
     }
 }

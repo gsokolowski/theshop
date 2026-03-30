@@ -24,19 +24,19 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => \fake()->name(),
+            'email' => \fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             // ✅ ADDED: Additional user fields
-            'address' => fake()->streetAddress(),
-            'city' => fake()->city(),
-            'country' => fake()->country(),
-            'zip_code' => fake()->postcode(),
-            'phone_number' => fake()->phoneNumber(),
+            'address' => \fake()->streetAddress(),
+            'city' => \fake()->city(),
+            'country' => \fake()->country(),
+            'zip_code' => \fake()->postcode(),
+            'phone_number' => \fake()->phoneNumber(),
             'profile_image' => null,
-            'profile_completed' => fake()->boolean(70), // 70% chance of completed profile
+            'profile_completed' => \fake()->boolean(70), // 70% chance of completed profile
         ];
     }
 
@@ -55,11 +55,11 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'profile_completed' => true,
-            'address' => fake()->streetAddress(),
-            'city' => fake()->city(),
-            'country' => fake()->country(),
-            'zip_code' => fake()->postcode(),
-            'phone_number' => fake()->phoneNumber(),
+            'address' => \fake()->streetAddress(),
+            'city' => \fake()->city(),
+            'country' => \fake()->country(),
+            'zip_code' => \fake()->postcode(),
+            'phone_number' => \fake()->phoneNumber(),
         ]);
     }
 }

@@ -25,11 +25,11 @@ class OrderSeeder extends Seeder
         for ($i = 0; $i < 20; $i++) {
             $user = $users->random();
             $product = $products->random();
-            $qty = fake()->numberBetween(1, 5);
+            $qty = \fake()->numberBetween(1, 5);
             $price = $product->price;
             
             // 30% chance of using a coupon
-            $coupon = fake()->boolean(30) ? $coupons->random() : null;
+            $coupon = \fake()->boolean(30) ? $coupons->random() : null;
 
             // Calculate total with coupon discount
             $total = $qty * $price;
@@ -43,14 +43,14 @@ class OrderSeeder extends Seeder
                 'total' => round($total, 2),
                 'user_id' => $user->id,
                 'coupon_id' => $coupon ? $coupon->id : null,
-                'deliverd_at' => fake()->boolean(60) ? fake()->dateTimeBetween('-30 days', 'now') : null,
+                'deliverd_at' => \fake()->boolean(60) ? \fake()->dateTimeBetween('-30 days', 'now') : null,
             ]);
 
             // Attach product(s) to order
             $order->products()->attach($product->id);
             
             // 20% chance of multiple products in one order
-            if (fake()->boolean(20) && $products->count() > 1) {
+            if (\fake()->boolean(20) && $products->count() > 1) {
                 $additionalProduct = $products->where('id', '!=', $product->id)->random();
                 $order->products()->attach($additionalProduct->id);
             }

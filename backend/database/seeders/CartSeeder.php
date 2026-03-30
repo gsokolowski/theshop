@@ -27,7 +27,7 @@ class CartSeeder extends Seeder
 
         foreach ($selectedUsers as $user) {
             // Each user will have 1 to 3 items in their cart
-            $cartItemsCount = fake()->numberBetween(1, 3);
+            $cartItemsCount = \fake()->numberBetween(1, 3);
 
             for ($i = 0; $i < $cartItemsCount; $i++) {
                 // Get a random product
@@ -64,7 +64,7 @@ class CartSeeder extends Seeder
                     'product_id' => $product->id,
                     'color_id' => $color->id,
                     'size_id' => $size->id,
-                    'quantity' => fake()->numberBetween(1, 5),
+                    'quantity' => \fake()->numberBetween(1, 5),
                 ]);
             }
         }

@@ -25,7 +25,7 @@ class WishlistSeeder extends Seeder
 
         foreach ($selectedUsers as $user) {
             // Each user will have 1 to 3 products in their wishlist
-            $wishlistItemsCount = fake()->numberBetween(1, 3);
+            $wishlistItemsCount = \fake()->numberBetween(1, 3);
 
             for ($i = 0; $i < $wishlistItemsCount; $i++) {
                 // Get a random product

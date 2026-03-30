@@ -19,7 +19,7 @@ class ColorFactory extends Factory
         $colors = ['Black', 'White', 'Red', 'Blue', 'Green'];
         
         return [
-            'name' => fake()->unique()->randomElement($colors),
+            'name' => \fake()->unique()->randomElement($colors),
         ];
     }
 }

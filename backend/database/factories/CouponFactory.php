@@ -18,9 +18,9 @@ class CouponFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => strtoupper(fake()->unique()->bothify('???###')), // e.g., ABC123
-            'discount' => fake()->numberBetween(5, 50),
-            'valid_until' => Carbon::now()->addDays(fake()->numberBetween(30, 365)),
+            'name' => strtoupper(\fake()->unique()->bothify('???###')), // e.g., ABC123
+            'discount' => \fake()->numberBetween(5, 50),
+            'valid_until' => Carbon::now()->addDays(\fake()->numberBetween(30, 365)),
         ];
     }
 
@@ -28,7 +28,7 @@ class CouponFactory extends Factory
     public function valid(): static
     {
         return $this->state(fn (array $attributes) => [
-            'valid_until' => Carbon::now()->addDays(fake()->numberBetween(30, 365)),
+            'valid_until' => Carbon::now()->addDays(\fake()->numberBetween(30, 365)),
         ]);
     }
 
@@ -36,7 +36,7 @@ class CouponFactory extends Factory
     public function expired(): static
     {
         return $this->state(fn (array $attributes) => [
-            'valid_until' => Carbon::now()->subDays(fake()->numberBetween(1, 30)),
+            'valid_until' => Carbon::now()->subDays(\fake()->numberBetween(1, 30)),
         ]);
     }
 }

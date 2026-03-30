@@ -25,7 +25,7 @@ class CartFactory extends Factory
             'product_id' => Product::factory(),
             'color_id' => Color::factory(),
             'size_id' => Size::factory(),
-            'quantity' => fake()->numberBetween(1, 5),
+            'quantity' => \fake()->numberBetween(1, 5),
         ];
     }
 }

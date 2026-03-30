@@ -18,14 +18,14 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $qty = fake()->numberBetween(1, 5);
-        $price = fake()->randomFloat(2, 10, 200);
+        $qty = \fake()->numberBetween(1, 5);
+        $price = \fake()->randomFloat(2, 10, 200);
         $total = $qty * $price;
 
         return [
             'qty' => $qty,
             'total' => round($total, 2),
-            'deliverd_at' => fake()->boolean(60) ? fake()->dateTimeBetween('-30 days', 'now') : null, // 60% delivered
+            'deliverd_at' => \fake()->boolean(60) ? \fake()->dateTimeBetween('-30 days', 'now') : null, // 60% delivered
             'user_id' => User::factory(),
             'coupon_id' => null, // Will be set in seeder if needed
         ];
@@ -35,7 +35,7 @@ class OrderFactory extends Factory
     public function delivered(): static
     {
         return $this->state(fn (array $attributes) => [
-            'deliverd_at' => fake()->dateTimeBetween('-30 days', 'now'),
+            'deliverd_at' => \fake()->dateTimeBetween('-30 days', 'now'),
         ]);
     }
 
