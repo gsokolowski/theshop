@@ -34,11 +34,11 @@ class AppServiceProvider extends ServiceProvider
 
             // More relaxed for product browsing (120/min)
             if ($request->is('api/products') || $request->is('api/products/*')) {
-                return Limit::perMinute(120)->by($key);
+                return Limit::perMinute(100)->by($key);
             }
 
             // Default: 60 requests per minute for all other API routes
-            return Limit::perMinute(60)->by($key);
+            return Limit::perMinute(100)->by($key);
         });
 
         // Force URL scheme for signed URLs to match the request

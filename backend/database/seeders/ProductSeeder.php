@@ -84,7 +84,7 @@ class ProductSeeder extends Seeder
         }
 
         // ✅ CHANGED: Create products using factory but override category_id and brand_id to use existing ones
-        $randomProducts = Product::factory(15)->inStock()->create([
+        $randomProducts = Product::factory(50)->inStock()->create([
             'category_id' => fn() => $categories->random()->id,
             'brand_id' => fn() => $brands->random()->id,
         ]);
