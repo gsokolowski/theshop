@@ -52,6 +52,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import { apiBaseUrl } from '../../config/api.js'
 
 const route = useRoute()
 const isLoading = ref(true)
@@ -65,7 +66,7 @@ onMounted(async () => {
     const originalQuery = window.location.search // Gets "?id=1&expires=xxx&signature=xxx"
     
     // Build the verification URL using the exact query string from the email link
-    const verificationUrl = `http://127.0.0.1:8000/api/v1/email/verify${originalQuery}`
+    const verificationUrl = `${apiBaseUrl}/email/verify${originalQuery}`
     
     // Call the verification API
     const response = await axios.get(verificationUrl)

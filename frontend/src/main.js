@@ -18,9 +18,10 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 const pinia = createPinia() // create pinia instance
 pinia.use(piniaPluginPersistedstate) // use pinia plugin persisted state
 
-// Configure axios (if needed)
 import axios from 'axios'
-axios.defaults.baseURL = 'http://127.0.0.1:8000/api/v1'
+import { apiBaseUrl } from './config/api.js'
+
+axios.defaults.baseURL = apiBaseUrl
 axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 

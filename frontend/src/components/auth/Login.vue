@@ -100,7 +100,8 @@ import { onMounted, reactive, computed } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useCartStore } from '../../stores/useCartStore'
 import { useRouter } from 'vue-router'
-import ValidationErrors from '../common/ValidationErrors.vue' 
+import ValidationErrors from '../common/ValidationErrors.vue'
+import { apiBaseUrl } from '../../config/api.js'
 
 const authStore = useAuthStore()
 const cartStore = useCartStore()
@@ -111,10 +112,7 @@ const formData = reactive({
     password: ''
 })
 
-// Google OAuth URL
-const googleAuthUrl = computed(() => {
-    return 'http://127.0.0.1:8000/api/v1/auth/google'
-})
+const googleAuthUrl = computed(() => `${apiBaseUrl}/auth/google`)
 
 const handleSubmit = async () => {
     // Clear any previous errors
