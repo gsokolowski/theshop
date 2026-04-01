@@ -36,7 +36,7 @@
     import Spinner from '../common/Spinner.vue'
     import { onMounted } from 'vue'
 
-    console.log('ProductsList component mounted')
+    // console.log('ProductsList component mounted')
     // define the store variable and import the useProductsStore
     const productsStore = useProductsStore()
     

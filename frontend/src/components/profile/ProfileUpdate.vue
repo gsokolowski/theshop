@@ -133,12 +133,12 @@
     
     // handle submit
     const handleProfileUpdateSubmit = async () => {
-        console.log('handleProfileUpdateSubmit called')
+        // console.log('handleProfileUpdateSubmit called')
         try {
             authStore.setIsLoading(true)
 
-            console.log('Form Data 1:', formData)
-            console.log('Access Token 1:', authStore.getAccessToken)
+            // console.log('Form Data 1:', formData)
+            // console.log('Access Token 1:', authStore.getAccessToken)
             const response = await axios.put('/user/profile/update', formData, {
                 headers: {
                     'Authorization': `Bearer ${authStore.getAccessToken}`
@@ -162,7 +162,7 @@
         }
     }
     
-    console.log('Current User:', authStore.user)
+    // console.log('Current User:', authStore.user)
 
     onMounted(() => {
         authStore.setIsLoading(false)

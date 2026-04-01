@@ -29,7 +29,7 @@ export const useWishlistStore = defineStore('wishlist', {
                 
                 if (response.data.status === 200 && response.data.data?.wishlist_items) {
                     this.wishlistItems = response.data.data.wishlist_items
-                    console.log('Wishlist items loaded from backend:', this.wishlistItems)
+                    // console.log('Wishlist items loaded from backend:', this.wishlistItems)
                 } else {
                     this.wishlistItems = []
                 }

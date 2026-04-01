@@ -223,7 +223,7 @@
             await wishlistStore.fetchWishlist()
         } catch (error) {
             // Silently fail - user might not be logged in
-            console.log('Could not fetch wishlist:', error)
+            // console.log('Could not fetch wishlist:', error)
         }
     })
 
@@ -244,13 +244,13 @@
     //set the chosen color by user
     const setChosenColor = (color) => {
         data.chosenColor = color
-        console.log('Data', data)
+        // console.log('Data', data)
     }
 
     //set the chosen size by user
     const setChosenSize = (size) => {
         data.chosenSize = size
-        console.log('Data', data)
+        // console.log('Data', data)
     }
 
     // Button calls Add to cart handler when clicked

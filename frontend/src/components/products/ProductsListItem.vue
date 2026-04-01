@@ -95,11 +95,11 @@ onMounted(async () => {
         await wishlistStore.fetchWishlist()
     } catch (error) {
         // Silently fail - user might not be logged in
-        console.log('Could not fetch wishlist:', error)
+        // console.log('Could not fetch wishlist:', error)
     }
 })
 
-console.log(props.product) // log the product to the console
+// console.log(props.product) // log the product to the console
 
 // Placeholder image as data URI (base64 encoded SVG) - smaller size for list items
 const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTBlMGUwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='

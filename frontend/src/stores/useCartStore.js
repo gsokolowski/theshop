@@ -47,7 +47,7 @@ export const useCartStore = defineStore('cart', {
                 if (response.data.status === 200 && response.data.data?.cart_items) {
                     // Transform backend response to frontend format
                     this.cartItems = response.data.data.cart_items.map(item => this.transformCartItem(item))
-                    console.log('Cart Items loaded from backend:', this.cartItems)
+                    // console.log('Cart Items loaded from backend:', this.cartItems)
                 } else {
                     this.cartItems = []
                 }
@@ -85,13 +85,13 @@ export const useCartStore = defineStore('cart', {
                 quantity: item.qty,
             }
             
-            console.log('Adding to cart - Request data:', requestData)
-            console.log('Item object:', item)
+            // console.log('Adding to cart - Request data:', requestData)
+            // console.log('Item object:', item)
             
             try {
                 const response = await axios.post('/cart', requestData)
                 
-                console.log('Add to cart response:', response.data)
+                // console.log('Add to cart response:', response.data)
                 
                 if (response.data.status === 201 || response.data.status === 200) {
                     // Refresh cart from backend to get updated data
@@ -277,7 +277,7 @@ export const useCartStore = defineStore('cart', {
             if (showToast) {
                 toast.success("Cart cleared")
             }
-            console.log('Cart Items', this.cartItems);
+            // console.log('Cart Items', this.cartItems);
         },
         // set the valid coupon
         setValidCoupon(coupon) {
@@ -288,7 +288,7 @@ export const useCartStore = defineStore('cart', {
             this.cartItems = this.cartItems.map(cartItem => {
                 return {...cartItem, coupon_id: coupon_id}
             })
-            console.log('Cart Items with coupon', this.cartItems);
+            // console.log('Cart Items with coupon', this.cartItems);
         },
         // remove the coupon from the cart cartItems array
         removeCouponFromAllItems() {
@@ -302,7 +302,7 @@ export const useCartStore = defineStore('cart', {
                 discount: null,
                 valid_until: null,
             }
-            console.log('Cart Items without coupon', this.cartItems);
+            // console.log('Cart Items without coupon', this.cartItems);
         },
         // set the unique hash
         setUniqueHash(hash) {

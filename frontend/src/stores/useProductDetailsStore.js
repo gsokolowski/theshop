@@ -42,7 +42,7 @@ export const useProductDetailsStore = defineStore('product', {
     },
     actions: {
         async fetchProduct(slug) {
-            console.log('Fetching product:', slug)
+            // console.log('Fetching product:', slug)
             this.isLoading = true
             
             // Reset all state before fetching new product
@@ -76,7 +76,7 @@ export const useProductDetailsStore = defineStore('product', {
                         src: response.data.data.third_image,
                     })
                 }
-                console.log('Product fetched successfully:', this.product)
+                // console.log('Product fetched successfully:', this.product)
             } catch (error) {
                 console.error('Error fetching product:', error)
                 this.errorMessage = error.response?.data?.message || 'Error fetching product'

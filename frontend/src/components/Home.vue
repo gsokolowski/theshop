@@ -17,6 +17,6 @@
     onMounted(() => {
         // clear filters when the component mounts when user clicks on the shop navbar link
         productsStore.clearFilters()
-        console.log('Filters cleared')
+        // console.log('Filters cleared')
     })
 </script>

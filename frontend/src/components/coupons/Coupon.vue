@@ -68,7 +68,7 @@ const toast = useToast()
 
 // define the method to apply the coupon
 const applyCoupon = async () => {
-    console.log('applyCoupon called')
+    // console.log('applyCoupon called')
     // check if the coupon name is empty
     if (!data.coupon.name || data.coupon.name.trim() === '') {
         toast.error('Please enter a coupon name')
@@ -76,7 +76,7 @@ const applyCoupon = async () => {
     }
     try {
         cartStore.isLoading = true
-        console.log('Coupon Name', data.coupon.name)
+        // console.log('Coupon Name', data.coupon.name)
         const response = await axios.get(`/coupon/${data.coupon.name}`,
             {
                 // you don't need to set the headers here because it is already set in the main.js file
@@ -90,7 +90,7 @@ const applyCoupon = async () => {
             }
         )
 
-        console.log('coupon response', response)
+        // console.log('coupon response', response)
         if (response.status == 404) {
             toast.error(response.data.error)
             data.coupon.name = null

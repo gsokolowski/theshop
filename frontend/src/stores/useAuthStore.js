@@ -70,7 +70,7 @@ export const useAuthStore = defineStore('auth', {
                     password: credentials.password
                 })
                 // response.data returns data with access_token and user object
-                console.log('Login successful response:', response.data)
+                // console.log('Login successful response:', response.data)
                 
                 // set the user object and isLoggedIn state to true and the access token state to the access token string
                 this.setUser(response.data.user)
@@ -95,7 +95,7 @@ export const useAuthStore = defineStore('auth', {
                 this.setValidationErrors(validationErrors)
                 this.setValidationMessage(validationMessage)
                 this.setIsLoading(false)
-                console.log('Validation message:', validationMessage)
+                // console.log('Validation message:', validationMessage)
                 throw error // Re-throw so component can handle it
             }
         },
@@ -104,8 +104,8 @@ export const useAuthStore = defineStore('auth', {
             this.setIsLoading(true)
             this.setValidationErrors({})
             
-            console.log('=== STORE DEBUG ===')
-            console.log('Credentials received:', credentials)
+            // console.log('=== STORE DEBUG ===')
+            // console.log('Credentials received:', credentials)
 
             try {
                 const response = await axios.post('/user/register', {

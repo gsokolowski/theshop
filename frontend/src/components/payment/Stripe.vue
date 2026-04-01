@@ -35,7 +35,7 @@
     
     // define hash
     const hash = makeUniqueId(24)
-    console.log('Hash', hash)
+    // console.log('Hash', hash)
     
     // define the success and cancel urls hash as a route parameter
     const successUrl = computed(() => `${window.location.origin}/success/payment/${hash}`)
@@ -52,7 +52,7 @@
                 price: item.product.price,  // Backend needs price for calculation
                 coupon_id: item.coupon_id || null
             }))
-            console.log('Cart Items Data', cartItemsData)
+            // console.log('Cart Items Data', cartItemsData)
             // call the api/orders/pay endpoint to get the payment link payOrdersByStripe()
             const response = await axios.post('/orders/pay', {
                 cartItems: cartItemsData,

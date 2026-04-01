@@ -105,7 +105,7 @@ const handleImageUpdate = async () => {
         toast.error('Please select an image')
         return
     }
-    console.log('handleImageUpdate called')
+    // console.log('handleImageUpdate called')
 
     // Create FormData for file upload
     const uploadData = new FormData()

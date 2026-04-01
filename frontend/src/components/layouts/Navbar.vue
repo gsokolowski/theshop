@@ -86,7 +86,7 @@ const router = useRouter()
 const handleShopClick = () => {
     // clear filters when user clicks on the shop navbar link
     productsStore.clearFilters()
-    console.log('Filters cleared - shop clicked')
+    // console.log('Filters cleared - shop clicked')
 }
 
 const cartItemsCount = computed(() => cartStore.cartItems.length)

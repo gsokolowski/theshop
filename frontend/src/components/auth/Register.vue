@@ -145,8 +145,8 @@ const handleSubmit = async () => {
   authStore.setValidationMessage('')
   showSuccessMessage.value = false
   
-  console.log('=== FORM COMPONENT DEBUG ===')
-  console.log('All form data:', formData.value)
+  // console.log('=== FORM COMPONENT DEBUG ===')
+  // console.log('All form data:', formData.value)
   
   try {
       // make actual API call to register the user

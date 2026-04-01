@@ -92,9 +92,9 @@
     
     // define the mounted hook
     onMounted(() => {
-        console.log('Cart Items', cartItems.value)
-        console.log('User', user.value)
-        console.log('Is User Logged In', isUserLoggedIn.value)
+        // console.log('Cart Items', cartItems.value)
+        // console.log('User', user.value)
+        // console.log('Is User Logged In', isUserLoggedIn.value)
         
         // redirect user to home page if cartTotalItems is 0
         if (cartTotalItems.value <= 0) {
