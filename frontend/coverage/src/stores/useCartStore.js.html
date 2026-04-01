@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72.29% </span>
+                <span class="strong">70.92% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>107/148</span>
+                <span class='fraction'>100/141</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72.1% </span>
+                <span class="strong">70.71% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>106/147</span>
+                <span class='fraction'>99/140</span>
             </div>
         
             
@@ -423,7 +423,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -461,13 +461,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -653,7 +653,7 @@
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -664,7 +664,7 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -678,7 +678,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -734,7 +734,7 @@ export const useCartStore = defineStore('cart', {
                 if (response.data.status === 200 &amp;&amp; response.data.data?.cart_items) {
                     // Transform backend response to frontend format
                     this.cartItems = response.data.data.cart_items.map(item =&gt; this.transformCartItem(item))
-                    console.log('Cart Items loaded from backend:', this.cartItems)
+                    // console.log('Cart Items loaded from backend:', this.cartItems)
                 } else {
                     this.cartItems = []
                 }
@@ -772,13 +772,13 @@ export const useCartStore = defineStore('cart', {
                 quantity: item.qty,
             }
             
-            console.log('Adding to cart - Request data:', requestData)
-            console.log('Item object:', item)
+            // console.log('Adding to cart - Request data:', requestData)
+            // console.log('Item object:', item)
             
             try {
                 const response = await axios.post('/cart', requestData)
                 
-                console.log('Add to cart response:', response.data)
+                // console.log('Add to cart response:', response.data)
                 
                 <span class="missing-if-branch" title="else path not taken" >E</span>if (response.data.status === 201 || <span class="branch-1 cbranch-no" title="branch not covered" >response.data.status === 200)</span> {
                     // Refresh cart from backend to get updated data
@@ -964,7 +964,7 @@ export const useCartStore = defineStore('cart', {
             if (showToast) {
                 toast.success("Cart cleared")
             }
-            console.log('Cart Items', this.cartItems);
+            // console.log('Cart Items', this.cartItems);
         },
         // set the valid coupon
         setValidCoupon(coupon) {
@@ -975,7 +975,7 @@ export const useCartStore = defineStore('cart', {
             this.cartItems = this.cartItems.map(cartItem =&gt; {
                 return {...cartItem, coupon_id: coupon_id}
             })
-            console.log('Cart Items with coupon', this.cartItems);
+            // console.log('Cart Items with coupon', this.cartItems);
         },
         // remove the coupon from the cart cartItems array
         removeCouponFromAllItems() {
@@ -989,7 +989,7 @@ export const useCartStore = defineStore('cart', {
                 discount: null,
                 valid_until: null,
             }
-            console.log('Cart Items without coupon', this.cartItems);
+            // console.log('Cart Items without coupon', this.cartItems);
         },
         // set the unique hash
         setUniqueHash(hash) {
@@ -1003,7 +1003,7 @@ export const useCartStore = defineStore('cart', {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-23T21:32:41.319Z
+                at 2026-04-01T17:09:56.333Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
