@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    # Level 5 = moderate (PHPStan): solid type coverage without requiring every return type / generic.
+    # Raise to 6+ when the baseline is small enough, or delete phpstan-baseline.neon and fix issues.
+    level: 5
+
+    paths:
+        - app/
