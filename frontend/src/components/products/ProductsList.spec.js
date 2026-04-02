@@ -54,7 +54,7 @@ describe('ProductsList', () => {
   })
 
   it('calls fetchAllProducts on mount', () => {
-    const wrapper = mountProductsList()
+    mountProductsList()
     const store = useProductsStore()
     expect(store.fetchAllProducts).toHaveBeenCalled()
   })

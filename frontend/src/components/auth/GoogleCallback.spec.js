@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createRouter, createMemoryHistory } from 'vue-router'
-import { useAuthStore } from '../../stores/useAuthStore'
-import { useCartStore } from '../../stores/useCartStore'
 import GoogleCallback from './GoogleCallback.vue'
 
 const routes = [

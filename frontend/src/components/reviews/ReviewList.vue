@@ -89,7 +89,6 @@
     const toast = useToast() //  Initialize toast
 
     const reviews = computed(() => productDetailsStore.getReviews)
-    const user = computed(() => authStore.getUser)
 
     // Handle remove review with success/error handling
     const handleRemoveReview = async (review) => {

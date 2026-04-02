@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { useToast } from 'vue-toastification'
-// define toast
-const toast = useToast()
 // define the store and name it 'products'
 export const useProductDetailsStore = defineStore('product', {
     state: () => ({ 

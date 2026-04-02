@@ -27,7 +27,6 @@
 
     // define the computed properties
     const cartItems = computed(() => cartStore.cartItems)
-    const user = computed(() => authStore.getUser)
 
     //define the toast
     const toast = useToast()

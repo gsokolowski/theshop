@@ -221,9 +221,8 @@
         // Fetch wishlist to check if product is in wishlist
         try {
             await wishlistStore.fetchWishlist()
-        } catch (error) {
+        } catch {
             // Silently fail - user might not be logged in
-            // console.log('Could not fetch wishlist:', error)
         }
     })
 

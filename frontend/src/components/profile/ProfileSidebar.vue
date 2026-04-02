@@ -76,7 +76,6 @@ import { onMounted, computed, reactive, ref } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'    
 import Spinner from '../common/Spinner.vue'
 import { useToast } from 'vue-toastification'
-import ValidationErrors from '../../components/common/ValidationErrors.vue' 
 import axios from 'axios'
 
 const authStore = useAuthStore()

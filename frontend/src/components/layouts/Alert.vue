@@ -12,8 +12,7 @@
   </template>
   
   <script setup>
-      //define the props
-      const props = defineProps({
+      defineProps({
           bgColor: {
               type: String,
               required: true

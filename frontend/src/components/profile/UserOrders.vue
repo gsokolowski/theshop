@@ -127,7 +127,6 @@
 </template>
 
 <script setup>
-    import { useAuthStore } from "../../stores/useAuthStore"
     import ProfileSidebar from "./ProfileSidebar.vue"
     import OrderDetailModal from "./OrderDetailModal.vue"
     import Alert from "../layouts/Alert.vue"
@@ -135,7 +134,6 @@
     import axios from "axios"
     import { useToast } from "vue-toastification"
 
-    const authStore = useAuthStore()
     const toast = useToast()
 
     const orders = ref([])

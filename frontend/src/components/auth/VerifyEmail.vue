@@ -50,11 +50,9 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { apiBaseUrl } from '../../config/api.js'
 
-const route = useRoute()
 const isLoading = ref(true)
 const verificationStatus = ref(null)
 const errorMessage = ref('')

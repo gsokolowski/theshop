@@ -118,8 +118,7 @@
         phone_number: '',
     })
 
-    // define the props
-    const props = defineProps({
+    defineProps({
         updateProfile: {
             type: Boolean,
             required: false,

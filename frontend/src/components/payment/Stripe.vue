@@ -27,7 +27,6 @@
 
     // define the computed properties
     const cartItems = computed(() => cartStore.cartItems)
-    const user = computed(() => authStore.getUser)
 
     // once user paid for his orders we will redirect him to the success page and store orders in db
     // we will use the hash to identify the order and redirect him to the success page

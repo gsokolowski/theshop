@@ -47,11 +47,9 @@
 
 <script setup>
 import StarRating from 'vue-star-rating' // Import StarRating component
-import { useProductsStore } from '../../stores/useProductsStore.js'
 import { useWishlistStore } from '../../stores/useWishlistStore.js'
 import { computed, onMounted } from 'vue'
 
-const productsStore = useProductsStore()
 const wishlistStore = useWishlistStore()
 
 // Use the getter from store instead of local computed to get the average rating
@@ -93,9 +91,8 @@ const handleToggleWishlist = async () => {
 onMounted(async () => {
     try {
         await wishlistStore.fetchWishlist()
-    } catch (error) {
+    } catch {
         // Silently fail - user might not be logged in
-        // console.log('Could not fetch wishlist:', error)
     }
 })
 

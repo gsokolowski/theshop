@@ -47,7 +47,7 @@ describe('UserWishlist', () => {
   })
 
   it('calls fetchWishlist on mount', () => {
-    const wrapper = mountUserWishlist()
+    mountUserWishlist()
     const wishlistStore = useWishlistStore()
     expect(wishlistStore.fetchWishlist).toHaveBeenCalled()
   })
