@@ -3,7 +3,12 @@
 # Repo layout: this file lives at <repo>/scripts/deploy-frontend.sh
 # On server: bash /var/www/the-shop/repo/scripts/deploy-frontend.sh
 # Pairs with scripts/deploy-backend.sh (same REPO discovery).
+#
+# Requires Node.js 20+ on the server (Vite 7 / @vitejs/plugin-vue 6). Ubuntu's default nodejs
+# package may be too old; use NodeSource or another install that puts `node` on PATH.
 set -euo pipefail
+
+export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "${SCRIPT_DIR}/.." && pwd)"
@@ -23,6 +28,13 @@ fi
 
 command -v npm >/dev/null 2>&1 || { echo "ERROR: npm is not in PATH."; exit 1; }
 command -v node >/dev/null 2>&1 || { echo "ERROR: node is not in PATH."; exit 1; }
+
+NODE_MAJOR="$(node -p "parseInt(process.versions.node.split('.')[0], 10)" 2>/dev/null || echo 0)"
+if [[ "${NODE_MAJOR}" -lt 20 ]]; then
+  echo "ERROR: Node.js 20 or newer is required (Vite 7). Found: $(node -v 2>/dev/null || echo unknown)."
+  echo "On Ubuntu, e.g.: curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs"
+  exit 1
+fi
 
 echo "==> git sync to origin/main (no local drift)"
 cd "${REPO}"
