@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Deploy Laravel backend from /var/www/the-shop/repo (main) into /var/www/the-shop/backend
+# Deploy Laravel backend from repo (main) into /var/www/the-shop/backend.
+# Repo layout: this file lives at <repo>/deploy-scripts/deploy-backend.sh
+# On server: bash /var/www/the-shop/repo/deploy-scripts/deploy-backend.sh
 set -euo pipefail
 
-REPO="/var/www/the-shop/repo"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="$(cd "${SCRIPT_DIR}/.." && pwd)"
 DEST="/var/www/the-shop/backend"
 PHP_BIN="${PHP_BIN:-php8.4}"
 
