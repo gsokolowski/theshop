@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Deploy Laravel backend from repo (main) into /var/www/the-shop/backend.
-# Repo layout: this file lives at <repo>/deploy-scripts/deploy-backend.sh
-# On server: bash /var/www/the-shop/repo/deploy-scripts/deploy-backend.sh
+# Repo layout: this file lives at <repo>/scripts/deploy-backend.sh
+# On server: bash /var/www/the-shop/repo/scripts/deploy-backend.sh
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

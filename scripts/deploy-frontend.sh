@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Deploy Vite frontend: sync repo to origin/main, build from repo/frontend, publish dist/ to server web root.
-# Repo layout: this file lives at <repo>/deploy-scripts/deploy-frontend.sh
-# On server: bash /var/www/the-shop/repo/deploy-scripts/deploy-frontend.sh
-# Pairs with deploy-scripts/deploy-backend.sh (same REPO discovery).
+# Repo layout: this file lives at <repo>/scripts/deploy-frontend.sh
+# On server: bash /var/www/the-shop/repo/scripts/deploy-frontend.sh
+# Pairs with scripts/deploy-backend.sh (same REPO discovery).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
