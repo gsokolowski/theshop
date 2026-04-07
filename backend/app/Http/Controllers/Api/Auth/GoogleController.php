@@ -56,11 +56,11 @@ class GoogleController extends Controller
             $token = $user->createToken('access_token')->plainTextToken;
             
             // Redirect to frontend with token
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            $frontendUrl = rtrim(config('app.frontend_url'), '/');
             return redirect($frontendUrl . '/auth/google/callback?token=' . $token . '&user=' . base64_encode(json_encode(new UserResource($user))));
             
         } catch (\Exception $e) {
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            $frontendUrl = rtrim(config('app.frontend_url'), '/');
             return redirect($frontendUrl . '/login?error=' . urlencode('Failed to authenticate with Google: ' . $e->getMessage()));
         }
     }

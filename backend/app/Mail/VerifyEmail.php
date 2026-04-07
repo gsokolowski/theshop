@@ -66,7 +66,7 @@ class VerifyEmail extends Mailable
      */
     private function generateVerificationUrl(User $user): string
     {
-        $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+        $frontendUrl = rtrim(config('app.frontend_url'), '/');
         
         // Generate signed URL for the backend API route
         $signedUrl = URL::temporarySignedRoute(
