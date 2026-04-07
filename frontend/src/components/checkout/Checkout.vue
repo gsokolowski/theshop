@@ -1,7 +1,8 @@
 <template>
     <div>
         <div class="row">
-            <ProfileUpdate :updateProfile="false" />
+            <!-- ✅ ADDED: checkout — show save billing button + notice when profile incomplete -->
+            <ProfileUpdate :updateProfile="false" :checkout="true" />
             <div class="col-md-4 bg-light p-4">
             <ul class="list-group">
                 <li class="list-group-item d-flex"
@@ -49,11 +50,14 @@
                     <span class="fw-bold">Total</span>
                     <span class="fw-bold text-normal">${{ cartTotalPrice.toFixed(2) }}</span>
                 </li>
+                <!-- ✅ CHANGED: keep payment CTA inside list-group; truthy check — API may send 1/0 not true/false -->
+                <li
+                    v-if="user?.profile_completed && cartTotalItems > 0"
+                    class="list-group-item"
+                >
+                    <Stripe />
+                </li>
             </ul>
-            <!-- Stripe component button with link to stripe payment page -->
-            <Stripe 
-                v-if="user.profile_completed == true && cartTotalItems > 0"
-                />
             </div>
         </div>        
     </div>

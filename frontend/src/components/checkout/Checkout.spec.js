@@ -108,6 +108,12 @@ describe('Checkout', () => {
     expect(stripeBtn.exists()).toBe(false)
   })
 
+  it('hides Stripe when user is null without throwing', async () => {
+    const wrapper = mountCheckout({ user: null, cartItems: [mockCartItem] })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('[data-test="stripe-btn"]').exists()).toBe(false)
+  })
+
   it('redirects to home when cart is empty on mount', async () => {
     const pinia = createPinia()
     setActivePinia(pinia)

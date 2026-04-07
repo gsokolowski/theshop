@@ -9,6 +9,14 @@
                         </h5>
                     </div>
                     <div class="card-body">
+                        <!-- ✅ ADDED: billing notice on checkout when profile incomplete -->
+                        <div
+                            v-if="checkout && !user?.profile_completed"
+                            class="alert alert-info"
+                            role="alert"
+                        >
+                            Provide Your billing address information.
+                        </div>
                         <Spinner :store="authStore" />
                         <ValidationErrors :errors="authStore.validationErrors" />
                         <form name="profileUpdateForm" @submit.prevent="handleProfileUpdateSubmit" novalidate>
@@ -57,7 +65,8 @@
                                 />
                             </div>
                             <div class="mb-3">
-                                <label for="zip_code" class="form-label">Zip Code</label>
+                                <!-- ✅ CHANGED: label wording -->
+                                <label for="zip_code" class="form-label">Post Code</label>
                                 <input 
                                     type="text" 
                                     class="form-control" 
@@ -79,14 +88,19 @@
                                 />
                             </div>
                             <div class="d-flex justify-content-end">
+                                <!-- ✅ CHANGED: show submit on profile page or checkout -->
                                 <button
-                                v-if="updateProfile"
+                                v-if="updateProfile || checkout"
                                 type="submit" 
                                 class="btn btn-primary"
                                 :disabled="authStore.isLoading"
                                 >
                                     <span v-if="authStore.isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                                    {{ authStore.isLoading ? 'Updating...' : 'Update Profile' }}
+                                    {{
+                                        authStore.isLoading
+                                            ? (updateProfile ? 'Updating...' : 'Saving...')
+                                            : (updateProfile ? 'Update Profile' : 'Save billing address')
+                                    }}
                                 </button>
                             </div>
                         </form>
@@ -118,8 +132,14 @@
         phone_number: '',
     })
 
+    // ✅ ADDED: checkout mode — show save button + billing notice without changing card title
     defineProps({
         updateProfile: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+        checkout: {
             type: Boolean,
             required: false,
             default: false
@@ -155,8 +175,8 @@
             authStore.setIsLoading(false)
         } catch (error) {
             console.error('Error updating profile:', error)
-            authStore.setValidationErrors(error.response.data.errors)
-            authStore.setValidationMessage(error.response.data.message)
+            authStore.setValidationErrors(error.response?.data?.errors ?? {})
+            authStore.setValidationMessage(error.response?.data?.message ?? '')
             authStore.setIsLoading(false)
         }
     }
