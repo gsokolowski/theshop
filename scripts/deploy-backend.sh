@@ -2,6 +2,12 @@
 # Deploy Laravel backend from repo (main) into /var/www/the-shop/backend.
 # Repo layout: this file lives at <repo>/scripts/deploy-backend.sh
 # On server: bash /var/www/the-shop/repo/scripts/deploy-backend.sh
+#
+# Creates public/storage -> storage/app/public so uploaded files (e.g. profile images) are
+# reachable at /storage/... . Without this, PUT /user/profile/update may succeed but images 404.
+#
+# chmod 775 on storage + bootstrap/cache matches Laravel deploy docs so www-data can write
+# uploads (storage/app/public), logs, framework views cache, etc.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -48,16 +54,28 @@ if [[ -n "${ENV_BACKUP}" && -f "${ENV_BACKUP}" ]]; then
   echo "==> restored .env"
 fi
 
-echo "==> permissions"
-chown -R www-data:www-data "${DEST}/storage" "${DEST}/bootstrap/cache"
-
 echo "==> composer + artisan"
 cd "${DEST}"
 export COMPOSER_ALLOW_SUPERUSER=1
 "${PHP_BIN}" /usr/local/bin/composer install --no-dev --no-interaction --optimize-autoloader
 "${PHP_BIN}" artisan migrate --force
+
+echo "==> storage link (public/storage -> storage/app/public for uploads)"
+mkdir -p "${DEST}/storage/app/public"
+"${PHP_BIN}" artisan storage:link --force
+
 "${PHP_BIN}" artisan config:cache
 "${PHP_BIN}" artisan route:cache
 "${PHP_BIN}" artisan view:cache
+
+echo "==> permissions (775 + www-data: uploads, logs, framework cache)"
+mkdir -p \
+  "${DEST}/storage/app/public" \
+  "${DEST}/storage/framework/cache/data" \
+  "${DEST}/storage/framework/sessions" \
+  "${DEST}/storage/framework/views" \
+  "${DEST}/storage/logs"
+chmod -R 775 "${DEST}/storage" "${DEST}/bootstrap/cache"
+chown -R www-data:www-data "${DEST}/storage" "${DEST}/bootstrap/cache"
 
 echo "==> deploy-backend.sh finished OK"

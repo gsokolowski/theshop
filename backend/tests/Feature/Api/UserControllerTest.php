@@ -276,4 +276,36 @@ class UserControllerTest extends TestCase
         $this->assertNotNull($user->profile_image);
         Storage::disk('public')->assertExists($user->profile_image);
     }
+
+    /**
+     * Profile image-only PUT must not clear address / billing fields. The client sends only
+     * profile_image in FormData; omitted keys must not be written as null (regression fix).
+     */
+    public function test_update_profile_with_image_only_preserves_billing_fields(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create([
+            'address' => '100 Billing St',
+            'city' => 'London',
+            'country' => 'UK',
+            'zip_code' => 'SW1A 1AA',
+            'phone_number' => '+44 20 0000 0000',
+        ]);
+        Sanctum::actingAs($user);
+
+        $file = UploadedFile::fake()->image('avatar.jpg', 100, 100);
+
+        $response = $this->put(route('user.profile.update'), [
+            'profile_image' => $file,
+        ], ['Accept' => 'application/json']);
+
+        $response->assertStatus(200);
+        $user->refresh();
+        $this->assertSame('100 Billing St', $user->address);
+        $this->assertSame('London', $user->city);
+        $this->assertSame('UK', $user->country);
+        $this->assertSame('SW1A 1AA', $user->zip_code);
+        $this->assertSame('+44 20 0000 0000', $user->phone_number);
+        $this->assertNotNull($user->profile_image);
+    }
 }

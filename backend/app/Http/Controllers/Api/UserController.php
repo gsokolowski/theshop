@@ -123,31 +123,33 @@ class UserController extends Controller
         $validated = $request->validated();
         
         // if user is updating also image profile you need to use this code to store the image in the public/images/profiles folder
-        if($request->hasFile('profile_image')) {
+        $user = $request->user();
+
+        if ($request->hasFile('profile_image')) {
 
             // delete existing image if it exists
-            if($request->user()->profile_image) {
-                Storage::disk('public')->delete($request->user()->profile_image);
+            if ($user->profile_image) {
+                Storage::disk('public')->delete($user->profile_image);
             }
 
             // generate a unique name for the image
-            $image_name = time().'_profile_image'.$request->user()->id;
+            $image_name = time().'_profile_image'.$user->id;
             $image_extension = $request->file('profile_image')->getClientOriginalExtension();
             // upload image to the public/images/profiles folder and get the path
             $profile_image_path = $request->file('profile_image')->storeAs('images/profiles', $image_name.'.'.$image_extension, 'public');
             // set the profile image to the validated data to be used in the update query
             $validated['profile_image'] = $profile_image_path;
         }
-        
-        // Update the user - Added profile_image to update array
+
+        // ✅ CHANGED: Partial updates (e.g. profile image only) must not null out fields omitted from the request.
         $request->user()->update([
-            'name' => $validated['name'] ?? $request->user()->name, // if name is not provided, use the current name
-            'address' => $validated['address'] ?? null,
-            'city' => $validated['city'] ?? null,
-            'country' => $validated['country'] ?? null,
-            'zip_code' => $validated['zip_code'] ?? null,
-            'phone_number' => $validated['phone_number'] ?? null,
-            'profile_image' => $validated['profile_image'] ?? $request->user()->profile_image, 
+            'name' => array_key_exists('name', $validated) ? $validated['name'] : $user->name,
+            'address' => array_key_exists('address', $validated) ? $validated['address'] : $user->address,
+            'city' => array_key_exists('city', $validated) ? $validated['city'] : $user->city,
+            'country' => array_key_exists('country', $validated) ? $validated['country'] : $user->country,
+            'zip_code' => array_key_exists('zip_code', $validated) ? $validated['zip_code'] : $user->zip_code,
+            'phone_number' => array_key_exists('phone_number', $validated) ? $validated['phone_number'] : $user->phone_number,
+            'profile_image' => $validated['profile_image'] ?? $user->profile_image,
             'profile_completed' => 1, // as user has completed their profile
         ]);
         
