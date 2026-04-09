@@ -17,34 +17,39 @@
                 <!-- Thumbnail image -->
                 <div class="mb-3 rounded product-image-slot">
                     <VueImageZoomer 
-                        v-if="imagesReady && product.thumbnail" 
-                        :key="product.slug"
-                        :regular="product.thumbnail"
+                        v-if="imagesReady && selectedMainImageUrl" 
+                        :key="selectedMainImageUrl"
+                        :regular="selectedMainImageUrl"
                         img-class="img-fluid rounded w-100"
                     />
                     <img 
-                        v-else-if="imagesReady && !product.thumbnail"
+                        v-else-if="imagesReady && !selectedMainImageUrl"
                         :src="placeholderImage"
                         alt="No Image"
                         class="img-fluid rounded"
                         style="width: 100%; height: auto; background-color: #e0e0e0;"
                     />
                 </div>
-                <!-- Other images below thumbnail -->
-                <div v-if="productImages && productImages.length > 0" class="row g-2 rounded">
+                <!-- Other images below main: click swaps main with this slot (previous main moves here) -->
+                <div v-if="gallerySlots.length > 0" class="row g-2 rounded">
                     <div 
-                        v-for="productImage in productImages"
-                        :key="productImage.id"
+                        v-for="(slot, index) in gallerySlots"
+                        :key="slot.id"
                         class="col-6 product-gallery-column"
                     >
-                    <div class="product-image-slot">
-                    <VueImageZoomer 
-                        v-if="productImage.src && imagesReady"
-                        img-class="img-fluid rounded w-100"   
-                        :regular="productImage.src" 
-                        :key="productImage.id"
+                    <button
+                        type="button"
+                        class="product-gallery-thumb p-0 border-0 bg-transparent w-100 rounded product-image-slot"
+                        :class="{ 'product-gallery-thumb--active': selectedMainImageUrl === slot.src }"
+                        @click="selectGalleryImage(index)"
+                    >
+                    <img 
+                        v-if="slot.src && imagesReady"
+                        :src="slot.src" 
+                        :alt="`Product image ${slot.id}`"
+                        class="img-fluid rounded w-100 d-block"
                     />
-                    </div>
+                    </button>
                     </div>
                 </div>
             </div>
@@ -208,6 +213,53 @@
     // Track when images are ready
     const imagesReady = ref(false)
 
+    /** Large image URL; starts as product thumbnail, swaps with gallery slot on click */
+    const selectedMainImageUrl = ref('')
+
+    /** Local copy of extra images; URLs swap with main when user clicks a thumb */
+    const gallerySlots = reactive([])
+
+    function initGallerySlots() {
+        gallerySlots.splice(0, gallerySlots.length)
+        for (const img of productImages.value) {
+            gallerySlots.push({ id: img.id, src: img.src })
+        }
+    }
+
+    function syncMainImageFromProduct() {
+        const p = product.value
+        if (!p || typeof p !== 'object' || Array.isArray(p)) {
+            selectedMainImageUrl.value = ''
+            return
+        }
+        if (p.thumbnail) {
+            selectedMainImageUrl.value = p.thumbnail
+        } else if (productImages.value.length > 0) {
+            selectedMainImageUrl.value = productImages.value[0].src
+        } else {
+            selectedMainImageUrl.value = ''
+        }
+    }
+
+    function selectGalleryImage(index) {
+        const slot = gallerySlots[index]
+        if (!slot?.src) {
+            return
+        }
+        const previousMain = selectedMainImageUrl.value
+        selectedMainImageUrl.value = slot.src
+        gallerySlots[index].src = previousMain
+    }
+
+    watch(
+        () => product.value?.id,
+        () => {
+            syncMainImageFromProduct()
+            initGallerySlots()
+        },
+        { immediate: true }
+    )
+
     // Function to fetch product and track when images are ready
     const fetchProduct = async () => {
         imagesReady.value = false
@@ -301,5 +353,16 @@
 .product-gallery-column :deep(img) {
     max-width: 100%;
     height: auto;
+}
+.product-gallery-thumb {
+    cursor: pointer;
+}
+.product-gallery-thumb:focus-visible {
+    outline: 2px solid var(--bs-primary, #0d6efd);
+    outline-offset: 2px;
+}
+.product-gallery-thumb--active {
+    box-shadow: 0 0 0 2px var(--bs-primary, #0d6efd);
+    border-radius: 0.375rem;
 }
 </style>
