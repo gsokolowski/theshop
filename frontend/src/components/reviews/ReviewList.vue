@@ -1,5 +1,5 @@
 <template>
-    <div class="card mb-2 col-md-8 offset-md-1">
+    <div class="card mb-2 col-md-9">
         <Spinner :store="productDetailsStore" />
         <div class="card-header bg-white">
             <h5 class="text-center mt-2">
