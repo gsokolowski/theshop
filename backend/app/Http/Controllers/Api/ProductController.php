@@ -19,9 +19,11 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $perPage = min((int) $request->get('per_page', 4), 50);
+        // ✅ CHANGED: tie-break on id so pagination is stable when created_at matches (avoids duplicate rows across pages on MySQL)
         $products = ProductResource::collection(
             Product::with('category', 'brand', 'colors', 'sizes')
                 ->latest()
+                ->orderByDesc('id')
                 ->paginate($perPage)
         )->additional([
             'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
@@ -57,6 +59,7 @@ class ProductController extends Controller
             Product::with('category', 'brand', 'colors', 'sizes')
                 ->where('category_id', $category->id)
                 ->latest()
+                ->orderByDesc('id')
                 ->paginate($perPage)
         )->additional([
             'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
@@ -77,6 +80,7 @@ class ProductController extends Controller
             Product::with('category', 'brand', 'colors', 'sizes')
                 ->where('brand_id', $brand->id)
                 ->latest()
+                ->orderByDesc('id')
                 ->paginate($perPage)
         )->additional([
             'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
@@ -99,6 +103,7 @@ class ProductController extends Controller
                     $query->where('colors.id', $color->id);
                 })
                 ->latest()
+                ->orderByDesc('id')
                 ->paginate($perPage)
         )->additional([
             'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
@@ -121,6 +126,7 @@ class ProductController extends Controller
                     $query->where('sizes.id', $size->id);
                 })
                 ->latest()
+                ->orderByDesc('id')
                 ->paginate($perPage)
         )->additional([
             'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
@@ -146,6 +152,7 @@ class ProductController extends Controller
                 ->where('name', 'like', '%' . $searchTerm . '%')
                 ->orWhere('description', 'like', '%' . $searchTerm . '%')
                 ->latest()
+                ->orderByDesc('id')
                 ->paginate($perPage)
         )->additional([
             'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
