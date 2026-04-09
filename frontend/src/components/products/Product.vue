@@ -13,13 +13,14 @@
     </div>
     <div v-else-if="product && imagesReady">       
         <div class="row">
-            <div class="col-6 mb-3">
+            <div class="col-6 mb-3 product-gallery-column">
                 <!-- Thumbnail image -->
-                <div class="mb-3 rounded">
+                <div class="mb-3 rounded product-image-slot">
                     <VueImageZoomer 
                         v-if="imagesReady && product.thumbnail" 
                         :key="product.slug"
-                        :regular="product.thumbnail" 
+                        :regular="product.thumbnail"
+                        img-class="img-fluid rounded w-100"
                     />
                     <img 
                         v-else-if="imagesReady && !product.thumbnail"
@@ -34,14 +35,16 @@
                     <div 
                         v-for="productImage in productImages"
                         :key="productImage.id"
-                        class="col-6"
+                        class="col-6 product-gallery-column"
                     >
+                    <div class="product-image-slot">
                     <VueImageZoomer 
                         v-if="productImage.src && imagesReady"
-                        img-class="img-fluid rounded"   
+                        img-class="img-fluid rounded w-100"   
                         :regular="productImage.src" 
                         :key="productImage.id"
                     />
+                    </div>
                     </div>
                 </div>
             </div>
@@ -287,5 +290,16 @@
 </script>
 
 <style scoped>
-
+/* Flex row children default to min-width:auto; wide images would expand col-6 past layout */
+.product-gallery-column {
+    min-width: 0;
+}
+/* vue-image-zoomer wraps the img; keep media inside column bounds */
+.product-image-slot {
+    max-width: 100%;
+}
+.product-gallery-column :deep(img) {
+    max-width: 100%;
+    height: auto;
+}
 </style>
