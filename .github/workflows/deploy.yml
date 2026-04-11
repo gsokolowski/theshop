@@ -92,6 +92,10 @@ jobs:
           path.chmod(0o600)
           PY
           test -s ~/.ssh/deploy_key
+          if ! ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null 2>&1; then
+            echo "::error::SSH_PRIVATE_KEY is not a valid private key (ssh-keygen could not read it). Paste the full key, including -----BEGIN ...----- and -----END ...----- lines."
+            exit 1
+          fi
 
           host=$(echo "$SSH_HOST" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
           user=$(echo "$SSH_USER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
