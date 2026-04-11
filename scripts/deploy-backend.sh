@@ -28,6 +28,17 @@ else
   exit 1
 fi
 
+if [[ -n "${COMPOSER_BIN:-}" ]]; then
+  :
+elif [[ -x /usr/local/bin/composer ]]; then
+  COMPOSER_BIN="/usr/local/bin/composer"
+elif command -v composer >/dev/null 2>&1; then
+  COMPOSER_BIN="$(command -v composer)"
+else
+  echo "ERROR: composer not found (tried /usr/local/bin/composer and PATH)"
+  exit 1
+fi
+
 if [[ ! -d "${REPO}/.git" ]]; then
   echo "ERROR: ${REPO} is not a git repository."
   echo "Create it with: git clone https://github.com/gsokolowski/theshop.git ${REPO}"
@@ -70,7 +81,7 @@ fi
 echo "==> composer + artisan"
 cd "${DEST}"
 export COMPOSER_ALLOW_SUPERUSER=1
-"${PHP_BIN}" /usr/local/bin/composer install --no-dev --no-interaction --optimize-autoloader
+"${PHP_BIN}" "${COMPOSER_BIN}" install --no-dev --no-interaction --optimize-autoloader
 "${PHP_BIN}" artisan migrate --force
 
 echo "==> storage link (public/storage -> storage/app/public for uploads)"
