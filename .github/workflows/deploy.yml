@@ -1,11 +1,6 @@
 # CI on every PR / push to main. Deploy only on push to main (after CI passes).
 # Secrets: SSH_PRIVATE_KEY, SSH_HOST, SSH_USER
-# In test
 name: CI and deploy
-
-env:
-  # Use Node 24 for JS-based actions (checkout, etc.); see GitHub Actions changelog 2025-09.
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
   push:
@@ -25,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -44,7 +39,7 @@ jobs:
           php artisan test
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm
