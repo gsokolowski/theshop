@@ -60,6 +60,20 @@ jobs:
     timeout-minutes: 30
 
     steps:
+      # Secrets are never printed in logs (masked). This step only confirms they exist.
+      - name: Require SSH secrets (repository Actions secrets)
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          set -e
+          missing=0
+          if [ -z "$SSH_PRIVATE_KEY" ]; then echo "::error::SSH_PRIVATE_KEY is missing. Add it under Settings → Secrets and variables → Actions → Repository secrets."; missing=1; fi
+          if [ -z "$SSH_HOST" ]; then echo "::error::SSH_HOST is missing. Same place — name must be exactly SSH_HOST."; missing=1; fi
+          if [ -z "$SSH_USER" ]; then echo "::error::SSH_USER is missing. Same place — name must be exactly SSH_USER."; missing=1; fi
+          exit "$missing"
+
       # Use $GITHUB_ENV for host/user — more reliable than step outputs with secrets.
       - name: Setup SSH (key, known_hosts, deploy env)
         env:
