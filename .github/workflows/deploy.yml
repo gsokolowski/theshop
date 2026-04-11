@@ -60,10 +60,14 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - name: Install SSH key
+      # Use $GITHUB_ENV for host/user — more reliable than step outputs with secrets.
+      - name: Setup SSH (key, known_hosts, deploy env)
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
         run: |
+          set -euo pipefail
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           python3 << 'PY'
@@ -75,36 +79,52 @@ jobs:
           PY
           test -s ~/.ssh/deploy_key
 
-      - name: Resolve SSH target (trim host / user)
-        id: target
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-        run: |
           host=$(echo "$SSH_HOST" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
           user=$(echo "$SSH_USER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-          echo "host=$host" >> "$GITHUB_OUTPUT"
-          echo "user=$user" >> "$GITHUB_OUTPUT"
+          if [ -z "$host" ] || [ -z "$user" ]; then
+            echo "::error::SSH_HOST or SSH_USER is empty after trim — check repository secrets."
+            exit 1
+          fi
+
           ssh-keyscan -H "$host" >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
+          echo "SSH_DEPLOY_HOST=$host" >> "$GITHUB_ENV"
+          echo "SSH_DEPLOY_USER=$user" >> "$GITHUB_ENV"
+
       - name: Verify SSH connection
         run: |
-          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            -o ConnectTimeout=30 -o BatchMode=yes \
-            "${{ steps.target.outputs.user }}@${{ steps.target.outputs.host }}" \
+          set -euo pipefail
+          ssh -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=30 \
+            -o BatchMode=yes \
+            "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
             "echo SSH_OK"
 
       - name: Deploy backend
         run: |
-          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            -o ConnectTimeout=30 -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
-            "${{ steps.target.outputs.user }}@${{ steps.target.outputs.host }}" \
+          set -euo pipefail
+          ssh -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=30 \
+            -o BatchMode=yes \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=10 \
+            "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
             'bash /var/www/the-shop/repo/scripts/deploy-backend.sh'
 
       - name: Deploy frontend
         run: |
-          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            -o ConnectTimeout=30 -o ServerAliveInterval=30 -o ServerAliveCountMax=30 \
-            "${{ steps.target.outputs.user }}@${{ steps.target.outputs.host }}" \
+          set -euo pipefail
+          ssh -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=30 \
+            -o BatchMode=yes \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=40 \
+            "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
             'bash /var/www/the-shop/repo/scripts/deploy-frontend.sh'
