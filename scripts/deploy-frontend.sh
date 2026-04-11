@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Deploy Vite frontend: sync repo to origin/main, build from repo/frontend, publish dist/ to server web root.
+# Optional manual deploy: git sync + npm ci + vite build on the server, then rsync dist → web root.
+# Default production deploy: GitHub Actions builds in CI and rsyncs frontend-dist/ (see .github/workflows/deploy.yml).
 # Repo layout: this file lives at <repo>/scripts/deploy-frontend.sh
 # On server: bash /var/www/the-shop/repo/scripts/deploy-frontend.sh
 # Pairs with scripts/deploy-backend.sh (same REPO discovery).

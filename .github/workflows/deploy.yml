@@ -1,6 +1,5 @@
 # CI on every PR / push to main. Deploy only on push to main (after CI passes).
 # Secrets: SSH_PRIVATE_KEY, SSH_HOST, SSH_USER
-# Test sss
 name: CI and deploy
 
 on:
@@ -17,7 +16,7 @@ jobs:
   ci:
     name: CI (backend + frontend)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -46,21 +45,38 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Frontend — install, lint, tests
+      - name: Frontend — install, lint, tests, production build
         working-directory: frontend
         run: |
           npm ci
           npm run lint
           npm run test:run
+          npm run build
+
+      # Deploy job rsyncs this folder to the droplet (no npm/vite on the server).
+      - name: Upload frontend dist (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          if-no-files-found: error
 
   deploy:
     name: Deploy to droplet
     needs: ci
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Backend SSH + rsync of prebuilt dist (no npm on droplet).
+    timeout-minutes: 45
 
     steps:
+      - name: Download frontend dist
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend-dist
+
       # Secrets are never printed in logs (masked). This step only confirms they exist.
       - name: Require SSH secrets (repository Actions secrets)
         env:
@@ -135,7 +151,6 @@ jobs:
             "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
             'set -e; echo "== remote user=$(whoami) host=$(hostname) =="; \
              test -f /var/www/the-shop/repo/scripts/deploy-backend.sh; \
-             test -f /var/www/the-shop/repo/scripts/deploy-frontend.sh; \
              command -v git; command -v rsync; command -v bash; \
              command -v php8.4 || command -v php; \
              test -x /usr/local/bin/composer || command -v composer; \
@@ -154,15 +169,21 @@ jobs:
             "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
             "bash /var/www/the-shop/repo/scripts/deploy-backend.sh"
 
-      - name: Deploy frontend
+      # Built in CI (Vite); droplet only receives static files. Requires same VITE_* as .env.production in repo
+      # (or add a CI step that writes .env.production.local from secrets before npm run build).
+      - name: Publish frontend (rsync dist → droplet)
         run: |
           set -euo pipefail
+          test -d frontend-dist
+          RSYNC_RSH="ssh -i ${HOME}/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=30"
+          export RSYNC_RSH
+          rsync -az --delete \
+            frontend-dist/ \
+            "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}:/var/www/the-shop/frontend/"
           ssh -i ~/.ssh/deploy_key \
             -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=30 \
             -o BatchMode=yes \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=40 \
             "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
-            "bash /var/www/the-shop/repo/scripts/deploy-frontend.sh"
+            "chown -R www-data:www-data /var/www/the-shop/frontend"
