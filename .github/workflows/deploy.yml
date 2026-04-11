@@ -103,6 +103,8 @@ jobs:
             "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
             "echo SSH_OK"
 
+      # bash -lc: load a login environment on the server (PATH, etc.). Plain non-interactive SSH
+      # often breaks php/composer/npm vs. an interactive shell.
       - name: Deploy backend
         run: |
           set -euo pipefail
@@ -114,7 +116,7 @@ jobs:
             -o ServerAliveInterval=30 \
             -o ServerAliveCountMax=10 \
             "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
-            'bash /var/www/the-shop/repo/scripts/deploy-backend.sh'
+            "bash -lc 'set -euo pipefail; bash /var/www/the-shop/repo/scripts/deploy-backend.sh'"
 
       - name: Deploy frontend
         run: |
@@ -127,4 +129,4 @@ jobs:
             -o ServerAliveInterval=30 \
             -o ServerAliveCountMax=40 \
             "${SSH_DEPLOY_USER}@${SSH_DEPLOY_HOST}" \
-            'bash /var/www/the-shop/repo/scripts/deploy-frontend.sh'
+            "bash -lc 'set -euo pipefail; bash /var/www/the-shop/repo/scripts/deploy-frontend.sh'"

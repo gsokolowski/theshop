@@ -10,10 +10,23 @@
 # uploads (storage/app/public), logs, framework views cache, etc.
 set -euo pipefail
 
+# Non-interactive SSH (e.g. GitHub Actions) often has a minimal PATH; match deploy-frontend.sh.
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH:-}"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "${SCRIPT_DIR}/.." && pwd)"
 DEST="/var/www/the-shop/backend"
-PHP_BIN="${PHP_BIN:-php8.4}"
+
+if [[ -n "${PHP_BIN:-}" ]]; then
+  :
+elif command -v php8.4 >/dev/null 2>&1; then
+  PHP_BIN="php8.4"
+elif command -v php >/dev/null 2>&1; then
+  PHP_BIN="php"
+else
+  echo "ERROR: No php8.4 or php in PATH (PATH=${PATH})"
+  exit 1
+fi
 
 if [[ ! -d "${REPO}/.git" ]]; then
   echo "ERROR: ${REPO} is not a git repository."
