@@ -60,19 +60,51 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      # Write key to a file + ssh -i (avoids webfactory/ssh-agent Node 20 + ssh-add libcrypto issues with CRLF/malformed secrets).
-      - name: Configure SSH and deploy
+      - name: Install SSH key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          python3 << 'PY'
+          import os, pathlib
+          key = os.environ["SSH_PRIVATE_KEY"].replace("\r\n", "\n").replace("\r", "\n")
+          path = pathlib.Path.home() / ".ssh" / "deploy_key"
+          path.write_text(key if key.endswith("\n") else key + "\n", encoding="utf-8")
+          path.chmod(0o600)
+          PY
+          test -s ~/.ssh/deploy_key
+
+      - name: Resolve SSH target (trim host / user)
+        id: target
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          host=$(echo "$SSH_HOST" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          user=$(echo "$SSH_USER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          echo "host=$host" >> "$GITHUB_OUTPUT"
+          echo "user=$user" >> "$GITHUB_OUTPUT"
+          ssh-keyscan -H "$host" >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
+
+      - name: Verify SSH connection
+        run: |
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            "${SSH_USER}@${SSH_HOST}" \
-            'bash /var/www/the-shop/repo/scripts/deploy-backend.sh && bash /var/www/the-shop/repo/scripts/deploy-frontend.sh'
+            -o ConnectTimeout=30 -o BatchMode=yes \
+            "${{ steps.target.outputs.user }}@${{ steps.target.outputs.host }}" \
+            "echo SSH_OK"
+
+      - name: Deploy backend
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=30 -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+            "${{ steps.target.outputs.user }}@${{ steps.target.outputs.host }}" \
+            'bash /var/www/the-shop/repo/scripts/deploy-backend.sh'
+
+      - name: Deploy frontend
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=30 -o ServerAliveInterval=30 -o ServerAliveCountMax=30 \
+            "${{ steps.target.outputs.user }}@${{ steps.target.outputs.host }}" \
+            'bash /var/www/the-shop/repo/scripts/deploy-frontend.sh'
