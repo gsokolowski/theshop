@@ -1,5 +1,6 @@
 # CI on every PR / push to main. Deploy only on push to main (after CI passes).
 # Secrets: SSH_PRIVATE_KEY, SSH_HOST, SSH_USER
+# Test
 name: CI and deploy
 
 on:
