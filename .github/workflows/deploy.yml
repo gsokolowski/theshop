@@ -2,6 +2,10 @@
 # Secrets: SSH_PRIVATE_KEY, SSH_HOST, SSH_USER
 name: CI and deploy
 
+env:
+  # Use Node 24 for JS-based actions (checkout, etc.); see GitHub Actions changelog 2025-09.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     branches: [main]
@@ -41,7 +45,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
