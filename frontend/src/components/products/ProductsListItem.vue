@@ -2,12 +2,19 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <div class="col-md-6">
     <div class="card mb-2" style="max-width: 320px">
-        <img 
-            :src="product.thumbnail || placeholderImage" 
-            class="card-img-top" 
-            alt="Product Image"
-            style="object-fit: cover; height: 200px; background-color: #e0e0e0;"
+        <!-- ✅ CHANGED: image links to product page (same route as title) -->
+        <router-link
+            :to="{ name: 'product', params: { slug: product.slug } }"
+            class="d-block text-decoration-none"
+            :aria-label="`View product: ${product.name}`"
         >
+            <img 
+                :src="product.thumbnail || placeholderImage" 
+                class="card-img-top" 
+                alt=""
+                style="object-fit: cover; height: 200px; background-color: #e0e0e0;"
+            >
+        </router-link>
         <div class="card-body">
             <router-link :to="{ name: 'product', params: { slug: product.slug } }">
                 <h5 class="card-title">{{ product.name }}</h5>

@@ -57,10 +57,13 @@ describe('ProductsListItem', () => {
     expect(wrapper.text()).toContain('Brand: Test Brand')
   })
 
-  it('links to product detail page', () => {
+  it('links image and title to product detail page', () => {
     const wrapper = mountProductsListItem()
-    const link = wrapper.findComponent({ name: 'RouterLink' })
-    expect(link.props('to')).toEqual({ name: 'product', params: { slug: 'test-product' } })
+    const links = wrapper.findAllComponents({ name: 'RouterLink' })
+    expect(links.length).toBe(2)
+    const expectedTo = { name: 'product', params: { slug: 'test-product' } }
+    expect(links[0].props('to')).toEqual(expectedTo)
+    expect(links[1].props('to')).toEqual(expectedTo)
   })
 
   it('calls toggleWishlist when wishlist button clicked', async () => {
