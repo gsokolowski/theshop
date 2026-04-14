@@ -11,8 +11,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Feature tests for Api\ProductController. Public endpoints for index, show, filterByCategory,
- * filterByBrand, filterByColor, filterBySize, filterBySearchTerm.
+ * Feature tests for Api\ProductController. Public endpoints for index (including combined query filters),
+ * show, filterByCategory, filterByBrand, filterByColor, filterBySize, filterBySearchTerm.
  */
 class ProductControllerTest extends TestCase
 {
@@ -147,5 +147,77 @@ class ProductControllerTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertCount(0, $response->json('data'));
+    }
+
+    /**
+     * Verifies that index accepts multiple query filters (category + brand) and returns only products
+     * matching every constraint (AND semantics). Ensures combined filtering works for the shop catalog.
+     */
+    public function test_index_with_category_and_brand_returns_intersection(): void
+    {
+        $categoryA = Category::factory()->create();
+        $categoryB = Category::factory()->create();
+        $brandX = Brand::factory()->create();
+        $brandY = Brand::factory()->create();
+
+        Product::factory()->create(['category_id' => $categoryA->id, 'brand_id' => $brandX->id]);
+        Product::factory()->create(['category_id' => $categoryA->id, 'brand_id' => $brandY->id]);
+        Product::factory()->create(['category_id' => $categoryB->id, 'brand_id' => $brandX->id]);
+
+        $response = $this->getJson(route('products.index', [
+            'category' => $categoryA->slug,
+            'brand' => $brandX->slug,
+        ]));
+
+        $response->assertStatus(200);
+        $this->assertCount(1, $response->json('data'));
+    }
+
+    /**
+     * Verifies that search can be combined with a category filter: results must match the text search
+     * and belong to the category (grouped search does not break AND with other clauses).
+     */
+    public function test_index_with_search_and_category_returns_matching_products(): void
+    {
+        $category = Category::factory()->create();
+        Product::factory()->create([
+            'category_id' => $category->id,
+            'name' => 'UniqueAlpha Shoe',
+            'description' => 'Plain',
+        ]);
+        Product::factory()->create([
+            'category_id' => $category->id,
+            'name' => 'Other',
+            'description' => 'No match here',
+        ]);
+        Product::factory()->create([
+            'name' => 'UniqueAlpha Elsewhere',
+            'description' => 'Wrong category',
+        ]);
+
+        $response = $this->getJson(route('products.index', [
+            'category' => $category->slug,
+            'search' => 'UniqueAlpha',
+        ]));
+
+        $response->assertStatus(200);
+        $data = $response->json('data');
+        $this->assertCount(1, $data);
+        $this->assertSame('UniqueAlpha Shoe', $data[0]['name']);
+    }
+
+    /**
+     * Verifies that an invalid color_id query parameter fails validation (422) instead of silently
+     * returning unfiltered results, protecting API consumers from typos.
+     */
+    public function test_index_returns_422_when_color_id_does_not_exist(): void
+    {
+        $maxId = Color::query()->max('id') ?? 0;
+
+        $response = $this->getJson(route('products.index', [
+            'color_id' => $maxId + 99999,
+        ]));
+
+        $response->assertStatus(422);
     }
 }

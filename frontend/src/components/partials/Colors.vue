@@ -3,7 +3,10 @@
   <div class="mb-3 mt-3">
     <h6>Colors</h6>
     <div class="d-flex flex-wrap justify-content-start">
-        <div class="border border-light-subtle shadow-sm border-2 rounded mb-1 me-1" 
+        <!-- ✅ CHANGED: primary border when this color is part of the active filter set -->
+        <div
+          class="border shadow-sm border-2 rounded mb-1 me-1"
+          :class="productsStore.filters.colorId === color.id ? 'border-primary' : 'border-light-subtle'"
           v-for="color in productsStore.colors"
           :key="color.id"
           @click="productsStore.filterProductsByColor(color.id)"

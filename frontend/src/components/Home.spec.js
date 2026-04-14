@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import axios from 'axios'
-import { useProductsStore } from '../stores/useProductsStore'
 import Home from './Home.vue'
 
 vi.mock('axios')
@@ -45,24 +44,6 @@ describe('Home', () => {
   it('renders ProductsList component', () => {
     const wrapper = mountHome()
     expect(wrapper.find('[data-test="products-list"]').exists()).toBe(true)
-  })
-
-  it('calls clearFilters on mount', async () => {
-    const pinia = createPinia()
-    setActivePinia(pinia)
-    const productsStore = useProductsStore()
-    const clearSpy = vi.spyOn(productsStore, 'clearFilters')
-    shallowMount(Home, {
-      global: {
-        plugins: [pinia],
-        stubs: {
-          Sidebar: { template: '<div data-test="sidebar"></div>' },
-          ProductsList: { template: '<div data-test="products-list"></div>' },
-        },
-      },
-    })
-    await new Promise(r => setTimeout(r, 50))
-    expect(clearSpy).toHaveBeenCalled()
   })
 
   it('has min-vh-100 class for full height', () => {

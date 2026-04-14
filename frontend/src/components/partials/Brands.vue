@@ -4,7 +4,10 @@
     <ul class="nav d-flex flex-column">
         <li class="nav-item mb-1" v-for="brand in productsStore.brands"
             :key="brand.id">
-            <button class="btn btn-sm btn-link text-dark"
+            <!-- ✅ CHANGED: highlight active brand when combined filters include this slug -->
+            <button
+                class="btn btn-sm btn-link"
+                :class="productsStore.filters.brandSlug === brand.slug ? 'text-primary fw-semibold' : 'text-dark'"
                 @click="productsStore.filterProductsByBrand(brand.slug)"
                 >
                     {{ brand.name }}

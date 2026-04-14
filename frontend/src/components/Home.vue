@@ -8,15 +8,5 @@
 <script setup>
     import Sidebar from './layouts/Sidebar.vue'
     import ProductsList from './products/ProductsList.vue'
-    import { useProductsStore } from '../stores/useProductsStore'
-    import { onMounted } from 'vue'
-
-    // define the products store
-    const productsStore = useProductsStore()
-
-    onMounted(() => {
-        // clear filters when the component mounts when user clicks on the shop navbar link
-        productsStore.clearFilters()
-        // console.log('Filters cleared')
-    })
+    // ✅ CHANGED: initial load + filter reset is handled in ProductsList (fetchAllProducts) to avoid duplicate API calls
 </script>

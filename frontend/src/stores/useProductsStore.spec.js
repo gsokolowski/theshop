@@ -21,6 +21,12 @@ describe('useProductsStore', () => {
       expect(store.sizes).toEqual([])
       expect(store.isLoading).toBe(false)
       expect(store.filter).toBe(null)
+      expect(store.filters).toEqual({
+        categorySlug: null,
+        brandSlug: null,
+        colorId: null,
+        sizeId: null,
+      })
       expect(store.productsPerPage).toBe(4)
       expect(store.productCount).toBe(10)
       expect(store.currentPage).toBe(1)
@@ -116,6 +122,34 @@ describe('useProductsStore', () => {
       expect(store.currentPage).toBe(2)
     })
 
+    it('merges stored filter params when loading more', async () => {
+      const store = useProductsStore()
+      store.products = [{ id: 1 }]
+      store.productCount = 10
+      store.lastFetch = {
+        url: '/products',
+        params: { category: 'shoes', brand: 'nike', color_id: 2, size_id: 3, search: 'x' },
+      }
+      store.currentPage = 1
+      vi.mocked(axios.get).mockResolvedValue({
+        data: { data: [{ id: 2 }], meta: { total: 10 } },
+      })
+
+      await store.loadMoreProducts()
+
+      expect(axios.get).toHaveBeenCalledWith('/products', {
+        params: {
+          category: 'shoes',
+          brand: 'nike',
+          color_id: 2,
+          size_id: 3,
+          search: 'x',
+          page: 2,
+          per_page: 4,
+        },
+      })
+    })
+
     it('does nothing when lastFetch is null', async () => {
       const store = useProductsStore()
       store.products = [{ id: 1 }]
@@ -128,8 +162,10 @@ describe('useProductsStore', () => {
   })
 
   describe('fetchAllProducts', () => {
-    it('fetches products and sets state on success', async () => {
+    it('clears facet state and search then fetches products', async () => {
       const store = useProductsStore()
+      store.filters.categorySlug = 'old'
+      store.searchTerm = 'findme'
       const products = [{ id: 1, name: 'Product', status: 1 }]
       const categories = [{ id: 1, name: 'Category' }]
       const brands = [{ id: 1, name: 'Brand' }]
@@ -148,6 +184,13 @@ describe('useProductsStore', () => {
 
       await store.fetchAllProducts()
 
+      expect(store.filters).toEqual({
+        categorySlug: null,
+        brandSlug: null,
+        colorId: null,
+        sizeId: null,
+      })
+      expect(store.searchTerm).toBe('')
       expect(axios.get).toHaveBeenCalledWith('/products', {
         params: { page: 1, per_page: 4 },
       })
@@ -163,26 +206,42 @@ describe('useProductsStore', () => {
   })
 
   describe('filterProductsByCategory', () => {
-    it('fetches products by category slug', async () => {
+    it('fetches products with category query param', async () => {
       const store = useProductsStore()
       const products = [{ id: 1, name: 'Shirt' }]
       vi.mocked(axios.get).mockResolvedValue({
-        data: { data: products, meta: { total: 1 } },
+        data: { data: products, meta: { total: 1 }, categories: [], brands: [], colors: [], sizes: [] },
       })
 
       await store.filterProductsByCategory('shirts')
 
-      expect(axios.get).toHaveBeenCalledWith('/products/category/shirts', {
-        params: { page: 1, per_page: 4 },
+      expect(axios.get).toHaveBeenCalledWith('/products', {
+        params: { category: 'shirts', page: 1, per_page: 4 },
       })
       expect(store.products).toEqual(products)
       expect(store.productCount).toBe(1)
-      expect(store.lastFetch).toEqual({ url: '/products/category/shirts', params: {} })
+      expect(store.filters.categorySlug).toBe('shirts')
+      expect(store.lastFetch).toEqual({ url: '/products', params: { category: 'shirts' } })
+    })
+
+    it('clears category when the same slug is clicked again', async () => {
+      const store = useProductsStore()
+      store.filters.categorySlug = 'shirts'
+      vi.mocked(axios.get).mockResolvedValue({
+        data: { data: [], meta: { total: 0 }, categories: [], brands: [], colors: [], sizes: [] },
+      })
+
+      await store.filterProductsByCategory('shirts')
+
+      expect(store.filters.categorySlug).toBe(null)
+      expect(axios.get).toHaveBeenCalledWith('/products', {
+        params: { page: 1, per_page: 4 },
+      })
     })
   })
 
   describe('filterProductsByBrand', () => {
-    it('fetches products by brand slug', async () => {
+    it('fetches products with brand query param', async () => {
       const store = useProductsStore()
       const products = [{ id: 1 }]
       vi.mocked(axios.get).mockResolvedValue({
@@ -191,15 +250,16 @@ describe('useProductsStore', () => {
 
       await store.filterProductsByBrand('nike')
 
-      expect(axios.get).toHaveBeenCalledWith('/products/brand/nike', {
-        params: { page: 1, per_page: 4 },
+      expect(axios.get).toHaveBeenCalledWith('/products', {
+        params: { brand: 'nike', page: 1, per_page: 4 },
       })
       expect(store.products).toEqual(products)
+      expect(store.filters.brandSlug).toBe('nike')
     })
   })
 
   describe('filterProductsBySize', () => {
-    it('fetches products by size id', async () => {
+    it('fetches products with size_id query param', async () => {
       const store = useProductsStore()
       const products = [{ id: 1 }]
       vi.mocked(axios.get).mockResolvedValue({
@@ -208,15 +268,16 @@ describe('useProductsStore', () => {
 
       await store.filterProductsBySize(2)
 
-      expect(axios.get).toHaveBeenCalledWith('/products/size/2', {
-        params: { page: 1, per_page: 4 },
+      expect(axios.get).toHaveBeenCalledWith('/products', {
+        params: { size_id: 2, page: 1, per_page: 4 },
       })
       expect(store.products).toEqual(products)
+      expect(store.filters.sizeId).toBe(2)
     })
   })
 
   describe('filterProductsByColor', () => {
-    it('fetches products by color id', async () => {
+    it('fetches products with color_id query param', async () => {
       const store = useProductsStore()
       const products = [{ id: 1 }]
       vi.mocked(axios.get).mockResolvedValue({
@@ -225,15 +286,16 @@ describe('useProductsStore', () => {
 
       await store.filterProductsByColor(3)
 
-      expect(axios.get).toHaveBeenCalledWith('/products/color/3', {
-        params: { page: 1, per_page: 4 },
+      expect(axios.get).toHaveBeenCalledWith('/products', {
+        params: { color_id: 3, page: 1, per_page: 4 },
       })
       expect(store.products).toEqual(products)
+      expect(store.filters.colorId).toBe(3)
     })
   })
 
   describe('filterProductsBySearchTerm', () => {
-    it('fetches products by search term', async () => {
+    it('fetches products with search query param on GET /products', async () => {
       const store = useProductsStore()
       store.searchTerm = 'shoes'
       const products = [{ id: 1 }]
@@ -243,18 +305,56 @@ describe('useProductsStore', () => {
 
       await store.filterProductsBySearchTerm()
 
-      expect(axios.get).toHaveBeenCalledWith('/products/search/shoes', {
-        params: { page: 1, per_page: 4 },
+      expect(axios.get).toHaveBeenCalledWith('/products', {
+        params: { search: 'shoes', page: 1, per_page: 4 },
       })
       expect(store.products).toEqual(products)
+      expect(store.lastFetch).toEqual({ url: '/products', params: { search: 'shoes' } })
+    })
+  })
+
+  describe('fetchProducts with combined filters', () => {
+    it('sends all active facets together', async () => {
+      const store = useProductsStore()
+      store.filters = {
+        categorySlug: 'women',
+        brandSlug: 'nike',
+        colorId: 5,
+        sizeId: 2,
+      }
+      store.searchTerm = '  run  '
+      vi.mocked(axios.get).mockResolvedValue({
+        data: { data: [], meta: { total: 0 } },
+      })
+
+      await store.fetchProducts()
+
+      expect(axios.get).toHaveBeenCalledWith('/products', {
+        params: {
+          category: 'women',
+          brand: 'nike',
+          color_id: 5,
+          size_id: 2,
+          search: 'run',
+          page: 1,
+          per_page: 4,
+        },
+      })
     })
   })
 
   describe('clearFilters', () => {
-    it('resets state and fetches all products', async () => {
+    it('resets filter state and fetches unfiltered products', async () => {
       const store = useProductsStore()
       store.products = [{ id: 1 }]
       store.filter = 'brand'
+      store.filters = {
+        categorySlug: 'x',
+        brandSlug: 'y',
+        colorId: 1,
+        sizeId: 2,
+      }
+      store.searchTerm = 'q'
       store.productsPerPage = 12
       store.currentPage = 3
       const products = [{ id: 1, status: 1 }]
@@ -272,6 +372,13 @@ describe('useProductsStore', () => {
       await store.clearFilters()
 
       expect(store.filter).toBe(null)
+      expect(store.filters).toEqual({
+        categorySlug: null,
+        brandSlug: null,
+        colorId: null,
+        sizeId: null,
+      })
+      expect(store.searchTerm).toBe('')
       expect(store.productsPerPage).toBe(4)
       expect(store.currentPage).toBe(1)
       expect(axios.get).toHaveBeenCalledWith('/products', {

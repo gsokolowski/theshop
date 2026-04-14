@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ListProductsRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Brand;
 use App\Models\Category;
@@ -10,27 +11,65 @@ use App\Models\Product;
 use App\Models\Color;
 use App\Models\Size;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
+    /**
+     * Facet lists for the shop sidebar. Loaded fresh each request so empty caches cannot hide
+     * categories/brands/colors after seeding (sizes were already uncached in index).
+     */
+    private function productFilterSidebarMetadata(): array
+    {
+        return [
+            'categories' => Category::latest()->get(),
+            'brands' => Brand::latest()->get(),
+            'colors' => Color::latest()->get(),
+            'sizes' => Size::orderBy('id', 'asc')->get(),
+        ];
+    }
+
     //create index method to return all products with their categories, brands, colors, sizes but use ProductResource to format the response
     // http://127.0.0.1:8000/api/v1/products?page=1&per_page=4
-    public function index(Request $request)
+    // ✅ CHANGED: optional query filters (AND): category, brand (slugs), color_id, size_id, search — combined with ListProductsRequest
+    public function index(ListProductsRequest $request)
     {
-        $perPage = min((int) $request->get('per_page', 4), 50);
+        $perPage = min((int) $request->input('per_page', 4), 50);
+        $validated = $request->validated();
+
+        $query = Product::with('category', 'brand', 'colors', 'sizes');
+
+        if (! empty($validated['category'] ?? null)) {
+            $query->where('category_id', Category::where('slug', $validated['category'])->value('id'));
+        }
+        if (! empty($validated['brand'] ?? null)) {
+            $query->where('brand_id', Brand::where('slug', $validated['brand'])->value('id'));
+        }
+        if (! empty($validated['color_id'] ?? null)) {
+            $colorId = $validated['color_id'];
+            $query->whereHas('colors', function ($q) use ($colorId) {
+                $q->where('colors.id', $colorId);
+            });
+        }
+        if (! empty($validated['size_id'] ?? null)) {
+            $sizeId = $validated['size_id'];
+            $query->whereHas('sizes', function ($q) use ($sizeId) {
+                $q->where('sizes.id', $sizeId);
+            });
+        }
+        if (! empty($validated['search'] ?? null)) {
+            $term = $validated['search'];
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('description', 'like', '%'.$term.'%');
+            });
+        }
+
         // ✅ CHANGED: tie-break on id so pagination is stable when created_at matches (avoids duplicate rows across pages on MySQL)
         $products = ProductResource::collection(
-            Product::with('category', 'brand', 'colors', 'sizes')
-                ->latest()
+            $query->latest()
                 ->orderByDesc('id')
                 ->paginate($perPage)
-        )->additional([
-            'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
-            'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
-            'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-            'sizes' => Size::orderBy('id', 'asc')->get(),
-        ]);
+        )->additional($this->productFilterSidebarMetadata());
 
         return $products;
     }
@@ -61,13 +100,9 @@ class ProductController extends Controller
                 ->latest()
                 ->orderByDesc('id')
                 ->paginate($perPage)
-        )->additional([
-            'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
-            'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
-            'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-            'sizes' => Size::orderBy('id', 'asc')->get(),
-            'filter' => $category->name
-        ]);
+        )->additional(array_merge($this->productFilterSidebarMetadata(), [
+            'filter' => $category->name,
+        ]));
         return $products;
     }
 
@@ -82,13 +117,9 @@ class ProductController extends Controller
                 ->latest()
                 ->orderByDesc('id')
                 ->paginate($perPage)
-        )->additional([
-            'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
-            'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
-            'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-            'sizes' => Size::orderBy('id', 'asc')->get(),
-            'filter' => $brand->name
-        ]);
+        )->additional(array_merge($this->productFilterSidebarMetadata(), [
+            'filter' => $brand->name,
+        ]));
         return $products;
     }
 
@@ -105,13 +136,9 @@ class ProductController extends Controller
                 ->latest()
                 ->orderByDesc('id')
                 ->paginate($perPage)
-        )->additional([
-            'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
-            'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
-            'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-            'sizes' => Size::orderBy('id', 'asc')->get(),
-            'filter' => $color->name
-        ]);
+        )->additional(array_merge($this->productFilterSidebarMetadata(), [
+            'filter' => $color->name,
+        ]));
         return $products;
     }
 
@@ -128,13 +155,9 @@ class ProductController extends Controller
                 ->latest()
                 ->orderByDesc('id')
                 ->paginate($perPage)
-        )->additional([
-            'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
-            'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
-            'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-            'sizes' => Size::orderBy('id', 'asc')->get(),
-            'filter' => $size->name
-        ]);
+        )->additional(array_merge($this->productFilterSidebarMetadata(), [
+            'filter' => $size->name,
+        ]));
         return $products;
     }
 
@@ -154,12 +177,7 @@ class ProductController extends Controller
                 ->latest()
                 ->orderByDesc('id')
                 ->paginate($perPage)
-        )->additional([
-            'categories' => Cache::remember('categories', 3600, fn() => Category::latest()->get()),
-            'brands' => Cache::remember('brands', 3600, fn() => Brand::latest()->get()),
-            'colors' => Cache::remember('colors', 3600, fn() => Color::latest()->get()),
-            'sizes' => Cache::remember('sizes', 3600, fn() => Size::latest()->get())
-        ]);
+        )->additional($this->productFilterSidebarMetadata());
         return $products;
     }
 }
