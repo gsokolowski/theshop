@@ -72,8 +72,11 @@
                             <span class="h6 mb-0 mt-2">Select Color</span>
                         </div>
                         <div class="d-flex flex-wrap justify-content-start">
+                            <!-- ✅ CHANGED: base swatch classes match partials/Colors.vue (Filters); primary border when selected -->
                             <div 
-                                :class="`${data.chosenColor?.id === color.id ? 'border border-light-subtle shadow-sm border-2 rounded' : ''}  mb-1 me-1`" 
+                                :class="data.chosenColor?.id === color.id
+                                    ? 'border border-primary shadow-sm border-2 rounded mb-1 me-1'
+                                    : 'border border-light-subtle shadow-sm border-2 rounded mb-1 me-1'"
                                 v-for="color in productDetailsStore.product?.colors"
                                 :key="color.id"
                                 :style="{
