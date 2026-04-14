@@ -13,6 +13,7 @@ const defaultRoutes = [
   { path: '/register', component: { template: '<div>Register</div>' } },
   { path: '/profile', component: { template: '<div>Profile</div>' } },
   { path: '/user/orders', component: { template: '<div>Orders</div>' } },
+  { path: '/user/wishlist', component: { template: '<div>Wishlist</div>' } },
   { path: '/about', component: { template: '<div>About</div>' } },
   { path: '/cart', component: { template: '<div>Cart</div>' } },
   { path: '/:pathMatch(.*)*', component: { template: '<div>NotFound</div>' } },
@@ -64,10 +65,11 @@ describe('Navbar', () => {
     expect(wrapper.text()).toContain('Login')
   })
 
-  it('shows user name, Orders and Logout when user is logged in', () => {
+  it('shows user name, Orders, Wishlist and Logout when user is logged in', () => {
     const wrapper = mountNavbar({ auth: { loggedIn: true, user: { name: 'John Doe' } } })
     expect(wrapper.text()).toContain('John Doe')
     expect(wrapper.text()).toContain('Orders')
+    expect(wrapper.text()).toContain('Wishlist')
     expect(wrapper.text()).toContain('Logout')
     expect(wrapper.text()).not.toContain('Register')
     expect(wrapper.text()).not.toContain('Login')
