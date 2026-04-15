@@ -5,7 +5,7 @@
             <div class="card-body" v-if="orders.length">
                 <table class="table">
                     <thead>
-                        <tr>
+                        <tr class="align-middle">
                             <th>#</th>
                             <th>Name</th>
                             <th>Price</th>
@@ -23,73 +23,78 @@
                             v-for="(order,index) in orders.slice(0,data.ordersToShow)"
                             :key="order.id"
                         >
-                            <td>{{ index += 1 }}</td>
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <span class="badge bg-success my-1 rounded-0"
+                            <td class="align-middle">{{ index + 1 }}</td>
+                            <td class="align-middle">
+                                <div class="d-flex flex-column gap-1 justify-content-center">
+                                    <div
                                         v-for="product in order.products"
                                         :key="product.id"
                                     >
-                                        {{ product.name }}
-                                    </span>
+                                        <router-link
+                                            :to="{ name: 'product', params: { slug: product.slug } }"
+                                            class="link-primary text-decoration-none"
+                                        >
+                                            {{ product.name }}
+                                        </router-link>
+                                    </div>
                                 </div>
                             </td>
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <span class="badge bg-danger my-1 rounded-0"
+                            <td class="align-middle">
+                                <div class="d-flex flex-column gap-1 justify-content-center">
+                                    <span
                                         v-for="product in order.products"
                                         :key="product.id"
+                                        class="text-body"
                                     >
                                         ${{ product.price }}
                                     </span>
                                 </div>
                             </td>
-                            <td>{{ order.qty }}</td>
-                            <td>
-                                <div class="d-flex flex-column">
+                            <td class="align-middle">{{ order.qty }}</td>
+                            <td class="align-middle">
+                                <div class="d-flex flex-column gap-1 justify-content-center align-items-start">
                                     <div 
                                         v-for="product in order.products"
                                         :key="product.id"
-                                        class="my-1"
                                     >
-                                        <!-- ✅ ADDED: Display color from pivot data -->
                                         <div 
                                             v-if="product.pivot?.color_id"
-                                            class="border border-light-subtle border-1 rounded d-inline-block"
+                                            class="order-swatch border border-secondary-subtle rounded"
                                             :style="{
                                                 backgroundColor: getColorName(product.pivot.color_id, product.colors),
-                                                width: '25px',
-                                                height: '25px'
                                             }"
                                             :title="getColorName(product.pivot.color_id, product.colors)"
                                         ></div>
-                                        <span v-else class="text-muted">-</span>
+                                        <div 
+                                            v-else 
+                                            class="order-swatch d-inline-flex align-items-center justify-content-center text-muted border border-secondary-subtle rounded"
+                                        >-</div>
                                     </div>
                                 </div>
                             </td>
-                            <td>
-                                <div class="d-flex flex-column">
+                            <td class="align-middle">
+                                <div class="d-flex flex-column gap-1 justify-content-center align-items-start">
                                     <span 
                                         v-for="product in order.products"
                                         :key="product.id"
-                                        class="bg-light text-dark me-2 p-1 fw-bold my-1 d-inline-block"
+                                        class="order-swatch d-inline-flex align-items-center justify-content-center bg-light text-dark fw-bold rounded border border-secondary-subtle"
+                                        style="font-size: 0.875rem;"
                                     >
-                                        <!-- ✅ ADDED: Display size from pivot data -->
                                         {{ getSizeName(product.pivot?.size_id, product.sizes) || '-' }}
                                     </span>
                                 </div>
                             </td>
-                            <td>${{ order.total }}</td>
-                            <td>{{ order.created_at }}</td>
-                            <td>
-                                <span class="badge bg-success my-1 rounded-0"
+                            <td class="align-middle">${{ order.total }}</td>
+                            <td class="align-middle">{{ order.created_at }}</td>
+                            <td class="align-middle">
+                                <span class="badge bg-success rounded-0"
                                     v-if="order.deliverd_at"
                                 >
                                     {{ order.deliverd_at }}
                                 </span>
                                 <i v-else class="text-muted">Pending...</i>
                             </td>
-                            <td>
+                            <td class="align-middle">
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-outline-primary"
@@ -198,4 +203,11 @@
 </script>
 
 <style scoped>
+/* Same footprint as size chip: keeps color swatch and size box aligned */
+.order-swatch {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
 </style>
