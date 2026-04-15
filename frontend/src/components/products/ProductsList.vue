@@ -40,8 +40,8 @@
     // define the store variable and import the useProductsStore
     const productsStore = useProductsStore()
     
-    // call fetchAllProducts when component mounts to fetch the products from the API
+    // ✅ CHANGED: fetchProducts preserves filters/search when user returns from product detail (fetchAllProducts clears them)
     onMounted(() => {
-        productsStore.fetchAllProducts()
+        productsStore.fetchProducts()
     })
 </script>

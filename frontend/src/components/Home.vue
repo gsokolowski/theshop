@@ -8,5 +8,5 @@
 <script setup>
     import Sidebar from './layouts/Sidebar.vue'
     import ProductsList from './products/ProductsList.vue'
-    // ✅ CHANGED: initial load + filter reset is handled in ProductsList (fetchAllProducts) to avoid duplicate API calls
+    // ✅ CHANGED: catalog load is ProductsList onMounted (fetchProducts); navbar brand / Clear all use clearFilters
 </script>

@@ -8,7 +8,7 @@ function mountProductsList() {
   const pinia = createPinia()
   setActivePinia(pinia)
   const store = useProductsStore()
-  vi.spyOn(store, 'fetchAllProducts').mockResolvedValue(undefined)
+  vi.spyOn(store, 'fetchProducts').mockResolvedValue(undefined)
   return mount(ProductsList, {
     global: {
       plugins: [pinia],
@@ -43,7 +43,7 @@ describe('ProductsList', () => {
     const store = useProductsStore()
     store.products = []
     store.productCount = 0
-    vi.spyOn(store, 'fetchAllProducts').mockResolvedValue(undefined)
+    vi.spyOn(store, 'fetchProducts').mockResolvedValue(undefined)
     const wrapper = mount(ProductsList, {
       global: {
         plugins: [pinia],
@@ -53,10 +53,10 @@ describe('ProductsList', () => {
     expect(wrapper.text()).toContain('No products found')
   })
 
-  it('calls fetchAllProducts on mount', () => {
+  it('calls fetchProducts on mount', () => {
     mountProductsList()
     const store = useProductsStore()
-    expect(store.fetchAllProducts).toHaveBeenCalled()
+    expect(store.fetchProducts).toHaveBeenCalled()
   })
 
   it('shows Load More button when more products available', async () => {
