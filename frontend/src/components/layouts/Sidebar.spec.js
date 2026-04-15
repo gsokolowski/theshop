@@ -51,13 +51,35 @@ describe('Sidebar', () => {
   it('calls productsStore.clearFilters when Clear all is clicked', async () => {
     const wrapper = mountSidebar()
     const productsStore = useProductsStore()
-    vi.spyOn(productsStore, 'fetchAllProducts').mockResolvedValue(undefined)
+    vi.spyOn(productsStore, 'fetchProducts').mockResolvedValue(undefined)
     const clearFiltersSpy = vi.spyOn(productsStore, 'clearFilters')
 
     await wrapper.find('button.btn-link').trigger('click')
 
     expect(clearFiltersSpy).toHaveBeenCalled()
     clearFiltersSpy.mockRestore()
+  })
+
+  it('styles Clear all as primary when any filter or search is active', async () => {
+    const wrapper = mountSidebar()
+    const store = useProductsStore()
+    const btn = () => wrapper.find('button.btn-link')
+
+    expect(btn().classes()).toContain('text-dark')
+    expect(btn().classes()).not.toContain('text-primary')
+
+    store.filters.categorySlug = 'test-slug'
+    await wrapper.vm.$nextTick()
+    expect(btn().classes()).toContain('text-primary')
+    expect(btn().classes()).toContain('fw-semibold')
+
+    store.filters = { categorySlug: null, brandSlug: null, colorId: null, sizeId: null }
+    await wrapper.vm.$nextTick()
+    expect(btn().classes()).toContain('text-dark')
+
+    store.searchTerm = 'query'
+    await wrapper.vm.$nextTick()
+    expect(btn().classes()).toContain('text-primary')
   })
 
   it('renders SearchForm, Categories, Brands, Sizes, and Colors components', () => {

@@ -94,17 +94,15 @@ describe('Navbar', () => {
     expect(linkTexts.some(t => t.includes('Cart'))).toBe(true)
   })
 
-  it('calls productsStore.clearFilters when brand link is clicked', async () => {
+  it('does not clear catalog filters when The Shop brand link is clicked', async () => {
     const wrapper = mountNavbar()
     const productsStore = useProductsStore()
-    vi.spyOn(productsStore, 'fetchAllProducts').mockResolvedValue(undefined)
     const clearFiltersSpy = vi.spyOn(productsStore, 'clearFilters')
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
     await wrapper.find('.navbar-brand').trigger('click')
 
-    expect(clearFiltersSpy).toHaveBeenCalled()
-    consoleSpy.mockRestore()
+    expect(clearFiltersSpy).not.toHaveBeenCalled()
+    clearFiltersSpy.mockRestore()
   })
 
   it('calls logout and clearCart when Logout is clicked', async () => {

@@ -3,8 +3,13 @@
     <aside class="col-md-4 bg-light p-4">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4>Filters</h4>
-            <button class="btn btn-link text-dark"
-                @click="productsStore.clearFilters">
+            <!-- ✅ CHANGED: match facet active styling when any filter or search is set -->
+            <button
+                type="button"
+                class="btn btn-link"
+                :class="hasActiveFilters ? 'text-primary fw-semibold' : 'text-dark'"
+                @click="productsStore.clearFilters"
+            >
                 Clear all
             </button>
         </div>
@@ -25,10 +30,18 @@
     import Sizes from "../partials/Sizes.vue"
     import SearchForm from "../partials/SearchForm.vue"
 
+    import { computed } from 'vue'
     import { useProductsStore } from "../../stores/useProductsStore"
 
-    //define the store
     const productsStore = useProductsStore()
+
+    const hasActiveFilters = computed(() => {
+        const f = productsStore.filters
+        if (f.categorySlug || f.brandSlug || f.colorId != null || f.sizeId != null) {
+            return true
+        }
+        return (productsStore.searchTerm || '').trim().length > 0
+    })
 
 </script>
 

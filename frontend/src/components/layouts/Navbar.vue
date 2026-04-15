@@ -3,11 +3,8 @@
   <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
           <div class="container">
-            <router-link 
-                class="navbar-brand" 
-                to="/"
-                @click="handleShopClick"
-            >
+            <!-- ✅ CHANGED: no clearFilters — preserve catalog filters like other navigation to / -->
+            <router-link class="navbar-brand" to="/">
                 The Shop
             </router-link>              
               <div class="collapse navbar-collapse" id="navbarNav">
@@ -78,22 +75,14 @@
 <script setup>
 import { useCartStore } from '../../stores/useCartStore'
 import { useAuthStore } from '../../stores/useAuthStore'
-import { useProductsStore } from '../../stores/useProductsStore'
 
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
-const productsStore = useProductsStore()
 
 const router = useRouter()
-
-const handleShopClick = () => {
-    // clear filters when user clicks on the shop navbar link
-    productsStore.clearFilters()
-    // console.log('Filters cleared - shop clicked')
-}
 
 const cartItemsCount = computed(() => cartStore.cartItems.length)
 
