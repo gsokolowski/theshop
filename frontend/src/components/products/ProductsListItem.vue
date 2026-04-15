@@ -55,9 +55,11 @@
 <script setup>
 import StarRating from 'vue-star-rating' // Import StarRating component
 import { useWishlistStore } from '../../stores/useWishlistStore.js'
+import { useAuthStore } from '../../stores/useAuthStore'
 import { computed, onMounted } from 'vue'
 
 const wishlistStore = useWishlistStore()
+const authStore = useAuthStore()
 
 // Use the getter from store instead of local computed to get the average rating
 // Calculate average rating for this specific product
@@ -94,12 +96,13 @@ const handleToggleWishlist = async () => {
     }
 }
 
-// Fetch wishlist on mount to check if products are in wishlist
+// Fetch wishlist only when logged in (guests browse without /wishlist 401 redirects)
 onMounted(async () => {
+    if (!authStore.getIsUserLoggedIn) return
     try {
         await wishlistStore.fetchWishlist()
     } catch {
-        // Silently fail - user might not be logged in
+        // Non-401 errors only
     }
 })
 

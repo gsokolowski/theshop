@@ -161,6 +161,7 @@
     import { useProductDetailsStore } from '../../stores/useProductDetailsStore'
     import { useCartStore } from '../../stores/useCartStore'
     import { useWishlistStore } from '../../stores/useWishlistStore'
+    import { useAuthStore } from '../../stores/useAuthStore'
     import { onMounted, computed, watch, reactive, ref, nextTick } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
@@ -177,6 +178,7 @@
     const productDetailsStore = useProductDetailsStore()
     const cartStore = useCartStore()
     const wishlistStore = useWishlistStore()
+    const authStore = useAuthStore()
 
     // Use computed to make it reactive
     const product = computed(() => productDetailsStore.getProduct)
@@ -276,11 +278,12 @@
 
     onMounted(async () => {
         fetchProduct() // fetch the product from the API on mount
-        // Fetch wishlist to check if product is in wishlist
-        try {
-            await wishlistStore.fetchWishlist()
-        } catch {
-            // Silently fail - user might not be logged in
+        if (authStore.getIsUserLoggedIn) {
+            try {
+                await wishlistStore.fetchWishlist()
+            } catch {
+                // Non-401 errors only
+            }
         }
     })
 

@@ -3,6 +3,11 @@ import { createPinia, setActivePinia } from 'pinia'
 import axios from 'axios'
 import { useCartStore } from './useCartStore'
 
+const mockRedirectToLogin = vi.fn()
+vi.mock('../utils/authRedirect.js', () => ({
+  redirectToLogin: () => mockRedirectToLogin(),
+}))
+
 vi.mock('vue-toastification', () => ({
   useToast: () => ({
     success: vi.fn(),
@@ -15,10 +20,9 @@ describe('useCartStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
+    mockRedirectToLogin.mockClear()
     vi.spyOn(console, 'log').mockImplementation(() => {})
     vi.spyOn(console, 'error').mockImplementation(() => {})
-    delete window.location
-    window.location = { href: '' }
   })
 
   describe('initial state', () => {
@@ -122,13 +126,14 @@ describe('useCartStore', () => {
       expect(store.cartItems).toEqual([])
     })
 
-    it('handles 401 by redirecting to login', async () => {
+    it('handles 401 on fetch by showing empty cart (guest)', async () => {
       const store = useCartStore()
       vi.mocked(axios.get).mockRejectedValue({ response: { status: 401 } })
 
       await store.fetchCart()
 
-      expect(window.location.href).toBe('/login')
+      expect(store.cartItems).toEqual([])
+      expect(mockRedirectToLogin).not.toHaveBeenCalled()
     })
   })
 
@@ -158,14 +163,14 @@ describe('useCartStore', () => {
       expect(result.status).toBe(201)
     })
 
-    it('handles 401 by redirecting to login', async () => {
+    it('handles 401 on add by prompting login', async () => {
       const store = useCartStore()
       vi.mocked(axios.post).mockRejectedValue({ response: { status: 401 } })
       const item = { product: { id: 1 }, color: { id: 1 }, size: { id: 1 }, qty: 1 }
 
       await store.addToCart(item)
 
-      expect(window.location.href).toBe('/login')
+      expect(mockRedirectToLogin).toHaveBeenCalled()
     })
   })
 

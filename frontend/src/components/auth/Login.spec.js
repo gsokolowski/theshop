@@ -44,11 +44,11 @@ describe('Login', () => {
     expect(wrapper.find('#password').attributes('type')).toBe('password')
   })
 
-  it('renders Register link', () => {
+  it('renders Register link with redirect query passthrough', () => {
     const wrapper = mountLogin()
     const registerLink = wrapper.findComponent({ name: 'RouterLink' })
     expect(registerLink.exists()).toBe(true)
-    expect(registerLink.props('to')).toBe('/register')
+    expect(registerLink.props('to')).toEqual({ path: '/register', query: {} })
     expect(wrapper.text()).toContain('Register here')
   })
 

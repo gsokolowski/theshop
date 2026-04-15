@@ -86,7 +86,7 @@
                   <div class="text-center">
                       <p class="mb-0">
                           Don't have an account? 
-                          <router-link to="/register">Register here</router-link>
+                          <router-link :to="{ path: '/register', query: { ...route.query } }">Register here</router-link>
                       </p>
                   </div>
               </form>
@@ -99,13 +99,14 @@
 import { onMounted, reactive, computed } from 'vue'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useCartStore } from '../../stores/useCartStore'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import ValidationErrors from '../common/ValidationErrors.vue'
 import { apiBaseUrl } from '../../config/api.js'
 
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const router = useRouter()
+const route = useRoute()
 
 const formData = reactive({
     email: '',
@@ -131,8 +132,14 @@ const handleSubmit = async () => {
         // Load user's cart from backend immediately after login
         await cartStore.fetchCart()
 
-        // Redirect to home page after successful login
-        router.push('/')
+        const rawRedirect = route.query.redirect
+        const safeRedirect =
+            typeof rawRedirect === 'string' &&
+            rawRedirect.startsWith('/') &&
+            !rawRedirect.startsWith('//')
+                ? rawRedirect
+                : null
+        router.push(safeRedirect || '/')
     } catch (error) {
         // Backend validation errors are handled in the store authStore.validationErrors and shown in the component Login.vue above
         // So you don't need to show a toast here

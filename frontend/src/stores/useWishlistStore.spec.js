@@ -3,6 +3,11 @@ import { createPinia, setActivePinia } from 'pinia'
 import axios from 'axios'
 import { useWishlistStore } from './useWishlistStore'
 
+const mockRedirectToLogin = vi.fn()
+vi.mock('../utils/authRedirect.js', () => ({
+  redirectToLogin: () => mockRedirectToLogin(),
+}))
+
 vi.mock('vue-toastification', () => ({
   useToast: () => ({
     success: vi.fn(),
@@ -15,10 +20,9 @@ describe('useWishlistStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
+    mockRedirectToLogin.mockClear()
     vi.spyOn(console, 'log').mockImplementation(() => {})
     vi.spyOn(console, 'error').mockImplementation(() => {})
-    delete window.location
-    window.location = { href: '' }
   })
 
   describe('initial state', () => {
@@ -93,13 +97,14 @@ describe('useWishlistStore', () => {
       expect(store.wishlistItems).toEqual([])
     })
 
-    it('handles 401 by redirecting to login', async () => {
+    it('handles 401 on fetch by leaving wishlist empty (guest browsing)', async () => {
       const store = useWishlistStore()
       vi.mocked(axios.get).mockRejectedValue({ response: { status: 401 } })
 
       await store.fetchWishlist()
 
-      expect(window.location.href).toBe('/login')
+      expect(store.wishlistItems).toEqual([])
+      expect(mockRedirectToLogin).not.toHaveBeenCalled()
     })
 
     it('throws and sets errorMessage on other errors', async () => {
@@ -130,13 +135,13 @@ describe('useWishlistStore', () => {
       expect(result.status).toBe(201)
     })
 
-    it('handles 401 by redirecting to login', async () => {
+    it('handles 401 on add by prompting login via redirect helper', async () => {
       const store = useWishlistStore()
       vi.mocked(axios.post).mockRejectedValue({ response: { status: 401 } })
 
       await store.addToWishlist(1)
 
-      expect(window.location.href).toBe('/login')
+      expect(mockRedirectToLogin).toHaveBeenCalled()
     })
 
     it('handles 400 duplicate without throwing', async () => {
@@ -167,13 +172,13 @@ describe('useWishlistStore', () => {
       expect(result.status).toBe(200)
     })
 
-    it('handles 401 by redirecting to login', async () => {
+    it('handles 401 on remove by prompting login via redirect helper', async () => {
       const store = useWishlistStore()
       vi.mocked(axios.delete).mockRejectedValue({ response: { status: 401 } })
 
       await store.removeFromWishlist(1)
 
-      expect(window.location.href).toBe('/login')
+      expect(mockRedirectToLogin).toHaveBeenCalled()
     })
   })
 

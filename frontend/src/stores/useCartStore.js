@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
 import axios from 'axios'
+import { redirectToLogin } from '../utils/authRedirect.js'
 // define toast
 const toast = useToast()
 
@@ -57,10 +58,9 @@ export const useCartStore = defineStore('cart', {
             } catch (error) {
                 this.isLoading = false
                 
-                // Handle 401 Unauthorized - redirect to login
+                // Guest: show empty cart without kicking to login (guests can open /cart)
                 if (error.response?.status === 401) {
-                    window.location.href = '/login'
-                    toast.error('Please login to view your cart')
+                    this.cartItems = []
                     return
                 }
                 
@@ -109,10 +109,9 @@ export const useCartStore = defineStore('cart', {
                 console.error('Error response:', error.response)
                 console.error('Error response data:', error.response?.data)
                 
-                // Handle 401 Unauthorized
                 if (error.response?.status === 401) {
-                    window.location.href = '/login'
-                    toast.error('Please login to add items to cart')
+                    toast.error('Please login or register to add items to your cart')
+                    redirectToLogin()
                     return
                 }
                 
@@ -167,10 +166,9 @@ export const useCartStore = defineStore('cart', {
             } catch (error) {
                 this.isLoading = false
                 
-                // Handle 401 Unauthorized
                 if (error.response?.status === 401) {
-                    window.location.href = '/login'
-                    toast.error('Please login to update cart')
+                    toast.error('Please login or register to update your cart')
+                    redirectToLogin()
                     return
                 }
                 
@@ -215,10 +213,9 @@ export const useCartStore = defineStore('cart', {
             } catch (error) {
                 this.isLoading = false
                 
-                // Handle 401 Unauthorized
                 if (error.response?.status === 401) {
-                    window.location.href = '/login'
-                    toast.error('Please login to update cart')
+                    toast.error('Please login or register to update your cart')
+                    redirectToLogin()
                     return
                 }
                 
@@ -256,10 +253,9 @@ export const useCartStore = defineStore('cart', {
             } catch (error) {
                 this.isLoading = false
                 
-                // Handle 401 Unauthorized
                 if (error.response?.status === 401) {
-                    window.location.href = '/login'
-                    toast.error('Please login to remove items from cart')
+                    toast.error('Please login or register to update your cart')
+                    redirectToLogin()
                     return
                 }
                 

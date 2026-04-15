@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
 import axios from 'axios'
+import { redirectToLogin } from '../utils/authRedirect.js'
 
 const toast = useToast()
 
@@ -39,10 +40,9 @@ export const useWishlistStore = defineStore('wishlist', {
             } catch (error) {
                 this.isLoading = false
                 
-                // Handle 401 Unauthorized - redirect to login
+                // Guest / no session: empty list (no redirect — used when browsing catalog)
                 if (error.response?.status === 401) {
-                    window.location.href = '/login'
-                    toast.error('Please login to view your wishlist')
+                    this.wishlistItems = []
                     return
                 }
                 
@@ -77,10 +77,9 @@ export const useWishlistStore = defineStore('wishlist', {
             } catch (error) {
                 this.isLoading = false
                 
-                // Handle 401 Unauthorized
                 if (error.response?.status === 401) {
-                    window.location.href = '/login'
-                    toast.error('Please login to add items to wishlist')
+                    toast.error('Please login or register to add items to your wishlist')
+                    redirectToLogin()
                     return
                 }
                 
@@ -131,10 +130,9 @@ export const useWishlistStore = defineStore('wishlist', {
             } catch (error) {
                 this.isLoading = false
                 
-                // Handle 401 Unauthorized
                 if (error.response?.status === 401) {
-                    window.location.href = '/login'
-                    toast.error('Please login to remove items from wishlist')
+                    toast.error('Please login or register to manage your wishlist')
+                    redirectToLogin()
                     return
                 }
                 
