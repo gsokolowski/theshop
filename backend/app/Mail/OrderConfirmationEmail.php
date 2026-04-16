@@ -82,6 +82,7 @@ class OrderConfirmationEmail extends Mailable
                 'products' => $order->products->map(function ($product) {
                     return [
                         'name' => $product->name,
+                        'url' => $this->frontendProductUrl($product->slug),
                         'thumbnail' => $product->thumbnail ? asset('storage/' . $product->thumbnail) : null,
                         'price' => $product->price,
                         'color_name' => $this->resolveColorName($product),
@@ -90,6 +91,16 @@ class OrderConfirmationEmail extends Mailable
                 })->toArray(),
             ];
         })->values()->toArray();
+    }
+
+    /**
+     * Absolute URL to the product page on the Vue SPA (uses FRONTEND_URL / config app.frontend_url).
+     */
+    private function frontendProductUrl(string $slug): string
+    {
+        $base = rtrim((string) config('app.frontend_url'), '/');
+
+        return $base.'/product/'.ltrim($slug, '/');
     }
 
     /**

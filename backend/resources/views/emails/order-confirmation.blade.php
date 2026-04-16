@@ -105,7 +105,9 @@
                     <img src="{{ $product['thumbnail'] }}" alt="{{ $product['name'] }}" class="product-thumb">
                     @endif
                     <div class="product-details">
-                        <div class="product-name">{{ $product['name'] }}</div>
+                        <div class="product-name">
+                            <a href="{{ $product['url'] }}" style="color: #0d6efd; text-decoration: none;">{{ $product['name'] }}</a>
+                        </div>
                         <div class="product-meta">${{ number_format($product['price'], 2) }} × {{ $order['qty'] }}</div>
                         @if ($product['size_name'])
                         <div class="product-meta">Size: {{ $product['size_name'] }}</div>
