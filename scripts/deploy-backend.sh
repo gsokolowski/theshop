@@ -92,6 +92,17 @@ mkdir -p "${DEST}/storage/app/public"
 "${PHP_BIN}" artisan route:cache
 "${PHP_BIN}" artisan view:cache
 
+echo "==> restart queue worker (Supervisor)"
+if command -v supervisorctl >/dev/null 2>&1; then
+  if sudo supervisorctl restart 'the-shop-queue:*'; then
+    echo "==> queue worker restarted"
+  else
+    echo "WARN: supervisorctl restart failed; install supervisor and register backend/deploy/supervisor-queue.conf"
+  fi
+else
+  echo "WARN: supervisorctl not in PATH; queue worker not restarted"
+fi
+
 echo "==> permissions (775 + www-data: uploads, logs, framework cache)"
 mkdir -p \
   "${DEST}/storage/app/public" \
