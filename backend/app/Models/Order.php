@@ -20,7 +20,9 @@ class Order extends Model
         'coupon_id',
     ];
 
-    // Order belongs to many products
+    /**
+     * @return BelongsToMany<Product, $this>
+     */
     public function products(): BelongsToMany
     {
         // ✅ CHANGED: Include color_id and size_id in pivot table

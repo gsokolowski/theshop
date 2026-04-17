@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -79,7 +80,7 @@ class OrderConfirmationEmail extends Mailable
                 'total' => $order->total,
                 'created_at' => Carbon::parse($order->getRawOriginal('created_at'))->format('F j, Y'),
                 'coupon' => $order->coupon,
-                'products' => $order->products->map(function ($product) {
+                'products' => $order->products->map(function (Product $product) {
                     return [
                         'name' => $product->name,
                         'url' => $this->frontendProductUrl($product->slug),
@@ -106,7 +107,7 @@ class OrderConfirmationEmail extends Mailable
     /**
      * Resolve color name from product pivot.
      */
-    private function resolveColorName($product): ?string
+    private function resolveColorName(Product $product): ?string
     {
         $colorId = $product->pivot->color_id ?? null;
         if (!$colorId || !$product->relationLoaded('colors')) {
@@ -120,7 +121,7 @@ class OrderConfirmationEmail extends Mailable
     /**
      * Resolve size name from product pivot.
      */
-    private function resolveSizeName($product): ?string
+    private function resolveSizeName(Product $product): ?string
     {
         $sizeId = $product->pivot->size_id ?? null;
         if (!$sizeId || !$product->relationLoaded('sizes')) {

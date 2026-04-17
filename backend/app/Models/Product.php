@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $name
+ * @property string $slug
+ * @property float $price
+ * @property string|null $thumbnail
+ */
 class Product extends Model
 {
     use HasFactory;
@@ -46,13 +52,17 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    // Product belongs to many colors via pivot table color_product
+    /**
+     * @return BelongsToMany<Color, $this>
+     */
     public function colors(): BelongsToMany
     {
         return $this->belongsToMany(Color::class, 'color_product');
     }
 
-    // Product belongs to many sizes via pivot table product_size
+    /**
+     * @return BelongsToMany<Size, $this>
+     */
     public function sizes(): BelongsToMany
     {
         return $this->belongsToMany(Size::class, 'product_size');
