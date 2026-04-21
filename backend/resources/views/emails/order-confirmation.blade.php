@@ -45,8 +45,7 @@
         .product-row {
             display: flex;
             align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
         .product-row:last-child {
             margin-bottom: 0;
@@ -57,18 +56,21 @@
             object-fit: cover;
             border-radius: 6px;
             flex-shrink: 0;
+            margin-right: 20px;
+            display: block;
         }
         .product-details {
             flex: 1;
+            min-width: 0;
         }
         .product-name {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         .product-meta {
             color: #666;
             font-size: 14px;
-            margin-bottom: 3px;
+            margin-bottom: 6px;
         }
         .order-total {
             font-weight: bold;
