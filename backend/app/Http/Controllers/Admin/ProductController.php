@@ -223,13 +223,21 @@ class ProductController extends Controller
         $request->validate([
             $fieldName => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        // Generate a unique name for the image
-        $image_name = time().'_'.$fieldName.'_'.$request->file($fieldName)->getClientOriginalName();
-        // Get the extension of the image
-        $image_extension = $request->file($fieldName)->getClientOriginalExtension();
-        // Upload and save the image to the storage/app/public/images/products
-        $path = $request->file($fieldName)->storeAs('images/products', $image_name.'.'.$image_extension, 'public'); // path like: storage/app/public/images/products/image_name.extension
-        // Returns: "images/products/1234567890_thumbnail_product_name.jpg" which is the path to the image
+
+        $file = $request->file($fieldName);
+        $extension = strtolower($file->getClientOriginalExtension());
+        $baseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $slug = Str::slug($baseName);
+
+        if ($slug === '') {
+            $slug = 'image';
+        }
+
+        // Single extension: original name already includes .ext — do not append extension twice
+        $filename = time().'_'.$fieldName.'_'.$slug.'.'.$extension;
+
+        $path = $file->storeAs('images/products', $filename, 'public');
+
         return $path;
     }   
 }
