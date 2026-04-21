@@ -453,4 +453,42 @@ class ProductControllerTest extends TestCase
         $response->assertRedirect(route('admin.login'));
         $this->assertDatabaseHas('products', ['id' => $product->id]);
     }
+
+    /**
+     * Removing a single product image deletes the file and nulls the column.
+     */
+    public function test_destroy_product_image_removes_file_and_nulls_thumbnail(): void
+    {
+        Storage::fake('public');
+        $this->asAdmin();
+
+        Storage::disk('public')->put('images/products/thumb.jpg', 'fake');
+        $product = Product::factory()->create([
+            'slug' => 'image-remove-test',
+            'thumbnail' => 'images/products/thumb.jpg',
+        ]);
+
+        $response = $this->from(route('admin.products.edit', $product->slug))
+            ->delete(route('admin.products.image.destroy', $product->slug), [
+                'field' => 'thumbnail',
+            ]);
+
+        $response->assertRedirect(route('admin.products.edit', $product->slug));
+        $product->refresh();
+        $this->assertNull($product->thumbnail);
+        Storage::disk('public')->assertMissing('images/products/thumb.jpg');
+    }
+
+    public function test_destroy_product_image_validation_rejects_invalid_field(): void
+    {
+        $this->asAdmin();
+        $product = Product::factory()->create(['slug' => 'validation-test']);
+
+        $response = $this->from(route('admin.products.edit', $product->slug))
+            ->delete(route('admin.products.image.destroy', $product->slug), [
+                'field' => 'not_a_column',
+            ]);
+
+        $response->assertSessionHasErrors('field');
+    }
 }

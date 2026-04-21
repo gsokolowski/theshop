@@ -188,6 +188,25 @@ class ProductController extends Controller
     }
 
     /**
+     * Remove a single product image (thumbnail or gallery) from disk and clear the DB column.
+     */
+    public function destroyProductImage(Request $request, Product $product)
+    {
+        $field = $request->validate([
+            'field' => 'required|in:thumbnail,first_image,second_image,third_image',
+        ])['field'];
+
+        $path = $product->{$field};
+        if ($path) {
+            Storage::disk('public')->delete($path);
+            $product->update([$field => null]);
+        }
+
+        return redirect()->route('admin.products.edit', $product)
+            ->with('success', 'Image removed.');
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Product $product)

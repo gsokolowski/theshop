@@ -16,6 +16,11 @@
                 </div>
                 <hr>
                 <!-- Display validation errors at top of form -->
+                @if (session('success'))
+                    <div class="alert alert-success mb-3">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -104,9 +109,11 @@
                     </div>
                     <!-- Preview for thumbnail image -->
                     <div class="form-group">
-                        <label for="thumbnail_preview">Thumbnail Preview</label>
                         @if($product->thumbnail)
-                            <img id="thumbnail_preview" src="{{asset('storage/'.$product->thumbnail)}}" alt="Current Thumbnail" width="100" class="img-fluid rounded-3xl">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <img id="thumbnail_preview" src="{{asset('storage/'.$product->thumbnail)}}" alt="Current Thumbnail" width="100" class="img-fluid rounded-3xl d-block flex-shrink-0">
+                                <button type="submit" form="delete-product-image-thumbnail" class="btn btn-outline-danger btn-sm shadow-sm" title="Delete thumbnail" onclick="return confirm('Remove this image?');">Delete</button>
+                            </div>
                         @else
                             <img id="thumbnail_preview" src="" alt="Thumbnail Preview" width="100" class="img-fluid rounded-3xl" style="display: none;">
                         @endif
@@ -125,9 +132,11 @@
                     </div>
                     <!-- Preview for first image -->
                     <div class="form-group">
-                        <label for="first_image_preview">First Image Preview</label>
                         @if($product->first_image)
-                            <img id="first_image_preview" src="{{asset('storage/'.$product->first_image)}}" alt="Current First Image" width="100" class="img-fluid rounded-3xl">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <img id="first_image_preview" src="{{asset('storage/'.$product->first_image)}}" alt="Current First Image" width="100" class="img-fluid rounded-3xl d-block flex-shrink-0">
+                                <button type="submit" form="delete-product-image-first" class="btn btn-outline-danger btn-sm shadow-sm" title="Delete first image" onclick="return confirm('Remove this image?');">Delete</button>
+                            </div>
                         @else
                             <img id="first_image_preview" src="" alt="First Image Preview" width="100" class="img-fluid rounded-3xl" style="display: none;">
                         @endif
@@ -146,9 +155,11 @@
                     </div>
                     <!-- Preview for second image -->
                     <div class="form-group">
-                        <label for="second_image_preview">Second Image Preview</label>
                         @if($product->second_image)
-                            <img id="second_image_preview" src="{{asset('storage/'.$product->second_image)}}" alt="Current Second Image" width="100" class="img-fluid rounded-3xl">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <img id="second_image_preview" src="{{asset('storage/'.$product->second_image)}}" alt="Current Second Image" width="100" class="img-fluid rounded-3xl d-block flex-shrink-0">
+                                <button type="submit" form="delete-product-image-second" class="btn btn-outline-danger btn-sm shadow-sm" title="Delete second image" onclick="return confirm('Remove this image?');">Delete</button>
+                            </div>
                         @else
                             <img id="second_image_preview" src="" alt="Second Image Preview" width="100" class="img-fluid rounded-3xl" style="display: none;">
                         @endif
@@ -167,9 +178,11 @@
                     </div>
                     <!-- Preview for third image -->
                     <div class="form-group">
-                        <label for="third_image_preview">Third Image Preview</label>
                         @if($product->third_image)
-                            <img id="third_image_preview" src="{{asset('storage/'.$product->third_image)}}" alt="Current Third Image" width="100" class="img-fluid rounded-3xl">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <img id="third_image_preview" src="{{asset('storage/'.$product->third_image)}}" alt="Current Third Image" width="100" class="img-fluid rounded-3xl d-block flex-shrink-0">
+                                <button type="submit" form="delete-product-image-third" class="btn btn-outline-danger btn-sm shadow-sm" title="Delete third image" onclick="return confirm('Remove this image?');">Delete</button>
+                            </div>
                         @else
                             <img id="third_image_preview" src="" alt="Third Image Preview" width="100" class="img-fluid rounded-3xl" style="display: none;">
                         @endif
@@ -248,6 +261,36 @@
                         </button>
                     </div>                    
                 </form>
+
+                {{-- Separate forms: nested <form> inside the update form is invalid HTML and can submit the wrong route (e.g. delete product). --}}
+                @if($product->thumbnail)
+                <form id="delete-product-image-thumbnail" action="{{ route('admin.products.image.destroy', $product) }}" method="post" class="d-none">
+                    @csrf
+                    @method('DELETE')
+                    <input type="hidden" name="field" value="thumbnail">
+                </form>
+                @endif
+                @if($product->first_image)
+                <form id="delete-product-image-first" action="{{ route('admin.products.image.destroy', $product) }}" method="post" class="d-none">
+                    @csrf
+                    @method('DELETE')
+                    <input type="hidden" name="field" value="first_image">
+                </form>
+                @endif
+                @if($product->second_image)
+                <form id="delete-product-image-second" action="{{ route('admin.products.image.destroy', $product) }}" method="post" class="d-none">
+                    @csrf
+                    @method('DELETE')
+                    <input type="hidden" name="field" value="second_image">
+                </form>
+                @endif
+                @if($product->third_image)
+                <form id="delete-product-image-third" action="{{ route('admin.products.image.destroy', $product) }}" method="post" class="d-none">
+                    @csrf
+                    @method('DELETE')
+                    <input type="hidden" name="field" value="third_image">
+                </form>
+                @endif
             </div>
         </div>
     </div>

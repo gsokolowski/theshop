@@ -64,6 +64,7 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::post('/products', [ProductController::class, 'store'])->name('admin.products.store');
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('admin.products.show');
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
+    Route::delete('/products/{product}/image', [ProductController::class, 'destroyProductImage'])->name('admin.products.image.destroy');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
 
