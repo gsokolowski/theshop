@@ -9,6 +9,7 @@ use App\Http\Requests\UserUpdatePasswordRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Jobs\SendVerificationEmail;
+use App\Jobs\SendWelcomeEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -270,6 +271,8 @@ class UserController extends Controller
 
         // Mark email as verified
         $user->markEmailAsVerified();
+
+        SendWelcomeEmail::dispatch($user->fresh(), 'email_verified');
 
         return response()->json([
             'message' => 'Email verified successfully',

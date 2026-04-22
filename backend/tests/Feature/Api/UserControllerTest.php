@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Api;
 
+use App\Mail\WelcomeEmail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Laravel\Sanctum\Sanctum;
@@ -259,6 +261,8 @@ class UserControllerTest extends TestCase
      */
     public function test_verify_email_succeeds_with_valid_signed_url(): void
     {
+        Mail::fake();
+
         $user = User::factory()->create(['email_verified_at' => null]);
         $signedUrl = URL::temporarySignedRoute('email.verify', now()->addHour(), ['id' => $user->id]);
         $parsed = parse_url($signedUrl);
@@ -270,6 +274,29 @@ class UserControllerTest extends TestCase
         $response->assertJsonPath('message', 'Email verified successfully');
         $user->refresh();
         $this->assertNotNull($user->email_verified_at);
+
+        Mail::assertSent(WelcomeEmail::class, function (WelcomeEmail $mail) use ($user) {
+            return $mail->user->id === $user->id && $mail->source === 'email_verified';
+        });
+    }
+
+    /**
+     * Already-verified users hitting the link must not send another welcome email.
+     */
+    public function test_verify_email_when_already_verified_does_not_send_welcome_email(): void
+    {
+        Mail::fake();
+
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        $signedUrl = URL::temporarySignedRoute('email.verify', now()->addHour(), ['id' => $user->id]);
+        $parsed = parse_url($signedUrl);
+        $pathAndQuery = ($parsed['path'] ?? '').'?'.($parsed['query'] ?? '');
+
+        $response = $this->getJson($pathAndQuery);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('message', 'Email is already verified');
+        Mail::assertNotSent(WelcomeEmail::class);
     }
 
     /**

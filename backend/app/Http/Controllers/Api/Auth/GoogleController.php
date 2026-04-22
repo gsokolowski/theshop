@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Jobs\SendWelcomeEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -50,6 +51,8 @@ class GoogleController extends Controller
                     'email_verified_at' => now(), // Google emails are verified
                     'profile_completed' => false, // User must complete profile
                 ]);
+
+                SendWelcomeEmail::dispatch($user, 'google');
             }
             
             // Create Sanctum token
