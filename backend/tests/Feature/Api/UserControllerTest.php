@@ -255,6 +255,24 @@ class UserControllerTest extends TestCase
     }
 
     /**
+     * Signed verification URL must validate (path must match /api/v1/email/verify, not /api/email/verify).
+     */
+    public function test_verify_email_succeeds_with_valid_signed_url(): void
+    {
+        $user = User::factory()->create(['email_verified_at' => null]);
+        $signedUrl = URL::temporarySignedRoute('email.verify', now()->addHour(), ['id' => $user->id]);
+        $parsed = parse_url($signedUrl);
+        $pathAndQuery = ($parsed['path'] ?? '').'?'.($parsed['query'] ?? '');
+
+        $response = $this->getJson($pathAndQuery);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('message', 'Email verified successfully');
+        $user->refresh();
+        $this->assertNotNull($user->email_verified_at);
+    }
+
+    /**
      * UpdateProfile updates user with profile image.
      */
     public function test_update_profile_with_image(): void

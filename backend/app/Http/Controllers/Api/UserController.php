@@ -13,7 +13,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 
 class UserController extends Controller
 {
@@ -211,7 +210,7 @@ class UserController extends Controller
 
     /**
      * Verify user's email address
-     * url: http://127.0.0.1:8000/api/email/verify
+     * url: http://127.0.0.1:8000/api/v1/email/verify
      */
     public function verifyEmail(Request $request)
     {
@@ -240,23 +239,7 @@ class UserController extends Controller
             ], 400);
         }
 
-        // Reconstruct the exact URL that Laravel signed
-        // Laravel's temporarySignedRoute uses APP_URL from config, not the request URL
-        // This ensures we validate against the same URL structure that was signed
-        $baseUrl = config('app.url', 'http://localhost');
-        $routePath = '/api/email/verify';
-        $routeUrl = rtrim($baseUrl, '/') . $routePath;
-        
-        // Build query string in the exact order Laravel uses (expires first, then id)
-        $queryString = 'expires=' . urlencode($expires) . '&id=' . urlencode($userId);
-        
-        // Build the complete signed URL (with signature)
-        $signedUrl = $routeUrl . '?' . $queryString . '&signature=' . $signature;
-        
-        // Create a new request with the signed URL and use Laravel's built-in validation
-        $validationRequest = Request::create($signedUrl, 'GET');
-        
-        if (!URL::hasValidSignature($validationRequest)) {
+        if (! $request->hasValidSignature()) {
             return response()->json([
                 'message' => null,
                 'error' => 'Invalid or expired verification link',

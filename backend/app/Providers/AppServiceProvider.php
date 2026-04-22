@@ -41,9 +41,9 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(100)->by($key);
         });
 
-        // Force URL scheme for signed URLs to match the request
-        // This ensures signature validation works correctly
-        if (config('app.env') !== 'local') {
+        // Force HTTPS for signed URLs in deployed environments. Skip testing so APP_URL (e.g. http://localhost)
+        // matches the URL Laravel signs and the HTTP test client uses.
+        if (! in_array(config('app.env'), ['local', 'testing'], true)) {
             URL::forceScheme('https');
         }
     }
