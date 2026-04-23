@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# Deploy Laravel backend from repo (main) into /var/www/the-shop/backend.
+# Deploy Laravel backend from repo into /var/www/the-shop/backend.
 # Repo layout: this file lives at <repo>/scripts/deploy-backend.sh
 # On server: bash /var/www/the-shop/repo/scripts/deploy-backend.sh
+#
+# Optional: DEPLOY_REF — git tag (e.g. v1.2.3) or branch name. CI sets this for tag releases.
+# If unset, defaults to origin/main (manual / legacy deploy).
 #
 # Creates public/storage -> storage/app/public so uploaded files (e.g. profile images) are
 # reachable at /storage/... . Without this, PUT /user/profile/update may succeed but images 404.
@@ -50,11 +53,22 @@ if [[ ! -d "${DEST}" ]]; then
   exit 1
 fi
 
-echo "==> git sync to origin/main (no local drift)"
 cd "${REPO}"
+git fetch origin --prune --tags
 git fetch origin
-git checkout main
-git reset --hard origin/main
+
+if [[ -z "${DEPLOY_REF:-}" ]]; then
+  echo "==> git sync to origin/main (no DEPLOY_REF)"
+  git checkout main
+  git reset --hard origin/main
+elif [[ "${DEPLOY_REF}" == "main" ]]; then
+  echo "==> git sync to origin/main (explicit)"
+  git checkout main
+  git reset --hard origin/main
+else
+  echo "==> git checkout ${DEPLOY_REF} (release tag or ref)"
+  git checkout -f "${DEPLOY_REF}"
+fi
 
 # rsync --delete removes files on dest that are not in source; .env is not in git, so restore it after.
 ENV_BACKUP=""
