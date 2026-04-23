@@ -1,9 +1,9 @@
 <template>
     <div class="row">
         <aside class="col-md-3 bg-light p-4">
-                <h4>Sidebar</h4>
+                <h4></h4>
                 <ul class="list-unstyled">
-                    <li><a href="#">The Shop</a></li>
+                    <li><a href="#"></a></li>
                 </ul>
         </aside>
 
