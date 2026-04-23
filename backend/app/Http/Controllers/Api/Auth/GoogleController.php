@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
 use App\Jobs\SendWelcomeEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -58,9 +57,10 @@ class GoogleController extends Controller
             // Create Sanctum token
             $token = $user->createToken('access_token')->plainTextToken;
             
-            // Redirect to frontend with token
+            // Redirect with token only — embedding UserResource in the query caused 414 Request-URI Too
+            // Large on production (nginx limit) when profiles include long paths/URLs.
             $frontendUrl = rtrim(config('app.frontend_url'), '/');
-            return redirect($frontendUrl . '/auth/google/callback?token=' . $token . '&user=' . base64_encode(json_encode(new UserResource($user))));
+            return redirect($frontendUrl . '/auth/google/callback?token=' . rawurlencode($token));
             
         } catch (\Exception $e) {
             $frontendUrl = rtrim(config('app.frontend_url'), '/');

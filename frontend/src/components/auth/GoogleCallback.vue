@@ -27,9 +27,8 @@ const toast = useToast()
 onMounted(async () => {
     authStore.setIsLoading(true)
     
-    const token = route.query.token
-    const userData = route.query.user
-    const error = route.query.error
+    const token = Array.isArray(route.query.token) ? route.query.token[0] : route.query.token
+    const error = Array.isArray(route.query.error) ? route.query.error[0] : route.query.error
     
     if (error) {
         authStore.setIsLoading(false)
@@ -38,36 +37,26 @@ onMounted(async () => {
         return
     }
     
-    if (token && userData) {
+    if (token) {
         try {
-            // Decode user data
-            const user = JSON.parse(atob(userData))
-            
-            // Set token and user in store
             authStore.setToken(token)
-            authStore.setUser(user)
-            authStore.setUserLoggedIn(true)
-            
-            // Clear cart and fetch user's cart
-            cartStore.clearCart(false) // Don't show toast
+            await authStore.getLoggedInUser()
+
+            cartStore.clearCart(false)
             await cartStore.fetchCart()
-            
+
             authStore.setIsLoading(false)
-            
-            // Show success message
             toast.success('Successfully signed in with Google!')
-            
-            // Redirect to home
             router.push('/')
-        } catch (error) {
-            console.error('Error processing Google callback:', error)
+        } catch (err) {
+            console.error('Error processing Google callback:', err)
             authStore.setIsLoading(false)
             toast.error('Failed to process authentication')
             router.push('/login')
         }
     } else {
         authStore.setIsLoading(false)
-        toast.error('Authentication failed. Missing token or user data.')
+        toast.error('Authentication failed. Missing token.')
         router.push('/login')
     }
 })
