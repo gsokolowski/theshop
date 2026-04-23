@@ -13,7 +13,7 @@
     </div>
     <div v-else-if="product && imagesReady">       
         <div class="row">
-            <div class="col-6 mb-3 product-gallery-column">
+            <div class="col-12 col-sm-6 mb-3 product-gallery-column">
                 <!-- Thumbnail image -->
                 <div class="mb-3 rounded product-image-slot">
                     <VueImageZoomer 
@@ -35,7 +35,7 @@
                     <div 
                         v-for="(slot, index) in gallerySlots"
                         :key="slot.id"
-                        class="col-6 product-gallery-column"
+                        class="col-12 col-sm-6 product-gallery-column"
                     >
                     <button
                         type="button"
