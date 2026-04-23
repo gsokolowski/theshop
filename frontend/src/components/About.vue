@@ -10,7 +10,7 @@
         <div class="col-md-9 p-4">
           <div class="row">
             <h2>About</h2>
-            <p>release tag v1.3.3</p>
+            <p>release tag v1.3.4</p>
             <p>
             </p>
           </div>
