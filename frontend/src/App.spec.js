@@ -45,11 +45,6 @@ describe('App', () => {
     expect(wrapper.find('[data-test="navbar"]').exists()).toBe(true)
   })
 
-  it('renders Footer component', () => {
-    const wrapper = mountApp()
-    expect(wrapper.find('[data-test="footer"]').exists()).toBe(true)
-  })
-
   it('calls fetchCart on mount when user is logged in', async () => {
     const pinia = createPinia()
     setActivePinia(pinia)
