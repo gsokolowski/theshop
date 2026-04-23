@@ -6,8 +6,22 @@
             <!-- ✅ CHANGED: no clearFilters — preserve catalog filters like other navigation to / -->
             <router-link class="navbar-brand" to="/">
                 The Shop
-            </router-link>              
-              <div class="collapse navbar-collapse" id="navbarNav">
+            </router-link>
+            <button
+              class="navbar-toggler"
+              type="button"
+              aria-controls="navbarNav"
+              :aria-expanded="navbarExpanded ? 'true' : 'false'"
+              aria-label="Toggle navigation"
+              @click.stop="onNavbarTogglerClick"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+              <div
+                id="navbarNav"
+                class="collapse navbar-collapse"
+                @click="onCollapseContentClick"
+              >
                   <ul class="navbar-nav ms-auto">
                       <li class="nav-item">
                           <router-link class="nav-link" aria-current="page" to="/">
@@ -77,7 +91,8 @@ import { useCartStore } from '../../stores/useCartStore'
 import { useAuthStore } from '../../stores/useAuthStore'
 
 import { useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { Collapse } from 'bootstrap'
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
@@ -85,6 +100,65 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const cartItemsCount = computed(() => cartStore.cartItems.length)
+
+const navbarExpanded = ref(false)
+
+function isMobileNavBreakpoint() {
+  return Boolean(window.matchMedia?.('(max-width: 991.98px)')?.matches)
+}
+
+function syncNavbarExpandedFromDom() {
+  const el = document.getElementById('navbarNav')
+  navbarExpanded.value = Boolean(el?.classList.contains('show'))
+}
+
+/** Explicit toggle: first tap opens, second tap closes (same as Bootstrap collapse toggle). */
+function onNavbarTogglerClick() {
+  if (!isMobileNavBreakpoint()) {
+    return
+  }
+  const el = document.getElementById('navbarNav')
+  if (!el) {
+    return
+  }
+  Collapse.getOrCreateInstance(el, { toggle: false }).toggle()
+}
+
+/** Close mobile menu after choosing a link (Bootstrap collapse stays open otherwise). */
+function onCollapseContentClick(event) {
+  const link = event.target.closest('a')
+  if (!link || !link.classList.contains('nav-link')) {
+    return
+  }
+  if (!isMobileNavBreakpoint()) {
+    return
+  }
+  const el = document.getElementById('navbarNav')
+  if (!el?.classList.contains('show')) {
+    return
+  }
+  Collapse.getOrCreateInstance(el, { toggle: false }).hide()
+}
+
+let navbarCollapseEl = null
+
+onMounted(() => {
+  navbarCollapseEl = document.getElementById('navbarNav')
+  if (!navbarCollapseEl) {
+    return
+  }
+  navbarCollapseEl.addEventListener('shown.bs.collapse', syncNavbarExpandedFromDom)
+  navbarCollapseEl.addEventListener('hidden.bs.collapse', syncNavbarExpandedFromDom)
+})
+
+onBeforeUnmount(() => {
+  if (!navbarCollapseEl) {
+    return
+  }
+  navbarCollapseEl.removeEventListener('shown.bs.collapse', syncNavbarExpandedFromDom)
+  navbarCollapseEl.removeEventListener('hidden.bs.collapse', syncNavbarExpandedFromDom)
+  navbarCollapseEl = null
+})
 
 const handleLogout = async () => {
   try {

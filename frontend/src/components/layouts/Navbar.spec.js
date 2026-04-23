@@ -59,6 +59,14 @@ describe('Navbar', () => {
     expect(wrapper.find('.navbar-brand').attributes('href')).toBe('/')
   })
 
+  it('renders mobile navbar toggler for small screens', () => {
+    const wrapper = mountNavbar()
+    const toggler = wrapper.find('.navbar-toggler')
+    expect(toggler.exists()).toBe(true)
+    expect(toggler.attributes('aria-controls')).toBe('navbarNav')
+    expect(toggler.attributes('aria-label')).toBe('Toggle navigation')
+  })
+
   it('shows Register and Login links when user is not logged in', () => {
     const wrapper = mountNavbar({ auth: { loggedIn: false } })
     expect(wrapper.text()).toContain('Register')
