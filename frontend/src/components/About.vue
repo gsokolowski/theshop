@@ -12,6 +12,7 @@
         <div class="col-md-9 p-4">
           <div class="row">
             <h2>About</h2>
+            <p>v1.3.2</p>
             <p>
                 This area takes up two-thirds of the page width on medium screens and above. th on medium screens and above. th on medium screens and above.
             </p>
