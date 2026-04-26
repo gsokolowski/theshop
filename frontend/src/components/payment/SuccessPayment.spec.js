@@ -59,6 +59,14 @@ describe('SuccessPayment', () => {
     expect(wrapper.text()).toContain('Payment is done successfully')
   })
 
+  it('renders Go to Home and navigates to / when clicked', async () => {
+    const wrapper = await mountSuccessPayment()
+    const pushSpy = vi.spyOn(wrapper.vm.$router, 'push')
+    expect(wrapper.text()).toContain('Go to Home')
+    await wrapper.find('button.btn-primary').trigger('click')
+    expect(pushSpy).toHaveBeenCalledWith('/')
+  })
+
   it('calls axios post to store orders when hash matches', async () => {
     const postSpy = vi.spyOn(axios, 'post').mockResolvedValue({
       data: { data: {} },

@@ -224,6 +224,21 @@
     /** Local copy of extra images; URLs swap with main when user clicks a thumb */
     const gallerySlots = reactive([])
 
+    const data = reactive({
+        qty: 1,
+        chosenColor: null,
+        chosenSize: null,
+        rating: 0,
+    })
+
+    const setChosenColor = (color) => {
+        data.chosenColor = color
+    }
+
+    const setChosenSize = (size) => {
+        data.chosenSize = size
+    }
+
     function initGallerySlots() {
         gallerySlots.splice(0, gallerySlots.length)
         for (const img of productImages.value) {
@@ -256,11 +271,26 @@
         gallerySlots[index].src = previousMain
     }
 
+    /** First color & size selected by default so Add to Cart is usable immediately. */
+    function applyDefaultVariantSelections() {
+        const p = productDetailsStore.product
+        if (!p || typeof p !== 'object' || Array.isArray(p) || !p.id) {
+            data.chosenColor = null
+            data.chosenSize = null
+            return
+        }
+        const colors = p.colors
+        const sizes = p.sizes
+        data.chosenColor = Array.isArray(colors) && colors.length > 0 ? colors[0] : null
+        data.chosenSize = Array.isArray(sizes) && sizes.length > 0 ? sizes[0] : null
+    }
+
     watch(
         () => product.value?.id,
         () => {
             syncMainImageFromProduct()
             initGallerySlots()
+            applyDefaultVariantSelections()
         },
         { immediate: true }
     )
@@ -293,25 +323,6 @@
             await fetchProduct()
         }
     })
-
-    //define the data object
-    const data = reactive({
-        qty: 1,
-        chosenColor: null,
-        chosenSize: null
-    })
-
-    //set the chosen color by user
-    const setChosenColor = (color) => {
-        data.chosenColor = color
-        // console.log('Data', data)
-    }
-
-    //set the chosen size by user
-    const setChosenSize = (size) => {
-        data.chosenSize = size
-        // console.log('Data', data)
-    }
 
     // Button calls Add to cart handler when clicked
     const handleAddToCart = () => {

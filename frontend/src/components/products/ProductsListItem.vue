@@ -15,14 +15,16 @@
                 style="object-fit: cover; height: 200px; background-color: #e0e0e0;"
             >
         </router-link>
-        <div class="card-body">
-            <router-link :to="{ name: 'product', params: { slug: product.slug } }">
-                <h5 class="card-title">{{ product.name }}</h5>
-            </router-link>
+        <router-link
+            :to="{ name: 'product', params: { slug: product.slug } }"
+            class="card-body d-block text-decoration-none text-body"
+            :aria-label="`View product: ${product.name}`"
+        >
+            <h5 class="card-title text-body">{{ product.name }}</h5>
             <p class="card-text">{{ product.description.substring(0,50) }}</p>
             <p class="card-text">Brand: {{ product.brand.name }}</p>
             <div class="d-flex justify-content-between align-items-center">
-                <span class="h5 mb-0">${{ product.price }}</span>
+                <span class="h5 mb-0 text-body">${{ product.price }}</span>
                 <div v-if="product.reviews.length > 0" class="d-flex align-items-center"> 
                     <StarRating 
                     :rating="Number(averageRating)"
@@ -35,7 +37,7 @@
                     <small class="text-muted ms-2 mt-2">({{ product.reviews.length }})</small>
                 </div>
             </div>
-        </div>
+        </router-link>
         <div class="card-footer d-flex justify-content-between bg-light">
             <button 
                 class="btn btn-outline-secondary btn-sm"

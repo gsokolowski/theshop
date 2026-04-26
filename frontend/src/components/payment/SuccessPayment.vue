@@ -2,10 +2,18 @@
     <div class="row my-5">
         <div class="col-md-6 mx-auto">
             <div class="card">
-                <div class="card-body p-5">
-                    <h4 class="text-center">
+                <div class="card-body p-5 text-center">
+                    <h4 class="mb-0">
                         Payment is done successfully
                     </h4>
+                    <button
+                        type="button"
+                        class="btn btn-primary mt-4"
+                        @click="router.push('/')"
+                    >
+                        <i class="bi bi-house-door-fill me-1" aria-hidden="true"></i>
+                        Go to Home
+                    </button>
                 </div>
             </div>
         </div>
