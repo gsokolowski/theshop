@@ -383,12 +383,13 @@ Root workflow and scripts: [`.github/workflows/deploy.yml`](../.github/workflows
 
 ## License
 
-The Laravel framework is open-sourced under the MIT License. This application may add its own terms at the repository root; see the root `LICENSE` if present.
+The Laravel framework is open-sourced under the MIT License. Application-level license terms, if any, are at the maintainer’s discretion.
 
 ---
 
 ## Related documentation
 
+- **Monorepo overview (start here):** [`../README.md`](../README.md)  
 - **[`docs/` index](#project-documentation-index-docs)** — `API.md`, `CICD.md`  
 - **HTTP API (detail):** [`../docs/API.md`](../docs/API.md)  
 - **Frontend (Vue 3):** [`../frontend/README.md`](../frontend/README.md)  

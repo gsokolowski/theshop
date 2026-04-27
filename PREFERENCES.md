@@ -17,6 +17,10 @@
 
 - **CI/CD and tag-based production deploys:** [docs/CICD.md](docs/CICD.md) (see document for current `main` + `v*` model).
 
+## Repository documentation
+
+- **Monorepo entry point:** [README.md](README.md) at the repository root (clone the repo and open that folder first).
+
 ## Quick summary
 
 - **Frontend:** `reactive` for objects/arrays; `ref` for primitives and DOM refs; `computed` for store-derived state; async API calls with try/catch/finally; Spinner, toasts, Bootstrap; backend owns validation—UI shows API errors only.

@@ -339,6 +339,7 @@ The **`backend/`** folder has a Composer script **`dev`** that runs `php artisan
 
 ## Related documentation
 
+- **Monorepo overview (start here):** [`../README.md`](../README.md)  
 - **[`docs/` index](#project-documentation-index-docs)** — `API.md`, `CICD.md`  
 - **HTTP API (detail):** [`../docs/API.md`](../docs/API.md)  
 - **Backend (Laravel API, admin, jobs, Stripe, Google, tests):** [`../backend/README.md`](../backend/README.md)  
