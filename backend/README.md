@@ -32,7 +32,9 @@ The goal of this document is to let another developer **clone the repository, in
 16. [Static analysis (PHPStan)](#static-analysis-phpstan)  
 17. [Code style (Laravel Pint)](#code-style-laravel-pint)  
 18. [Health check](#health-check)  
-19. [Troubleshooting](#troubleshooting)
+19. [Troubleshooting](#troubleshooting)  
+20. [Quick commands & route discovery](#quick-commands--route-discovery)  
+21. [Project documentation index (`docs/`)](#project-documentation-index-docs)
 
 ---
 
@@ -337,7 +339,32 @@ This matches the GitHub Actions backend step.
 
 ## Health check
 
-- **`GET /up`** — Laravel default health route.
+- **`GET /up`** — Laravel default health route (full URL: `{APP_URL}/up`). Use for uptime checks and load balancers. See also [`../docs/API.md`](../docs/API.md#health-check-get-up).
+
+---
+
+## Quick commands & route discovery
+
+| Task | Command |
+|------|--------|
+| **List only API routes** | `php artisan route:list --path=api` |
+| **Clear cached config** (after changing `.env` in dev) | `php artisan config:clear` |
+| **Clear several caches at once** | `php artisan optimize:clear` |
+| **Run pending migrations** | `php artisan migrate` |
+| **Fresh DB + seed (destructive)** | `php artisan migrate:fresh --seed` |
+
+**Note on `composer run dev` in `backend/`:** the Composer **`dev`** script (see `composer.json`) runs `php artisan serve`, a **queue** listener, **Pail**, and **`npm run dev`** in **this** directory. That targets the small **Laravel Vite** setup in `backend/`, **not** the main **Vue 3** app in `../frontend/`. For the customer SPA, use `npm run dev` from **`../frontend`**.
+
+---
+
+## Project documentation index (`docs/`)
+
+| Document | What it is |
+|----------|------------|
+| [`../docs/API.md`](../docs/API.md) | Full **HTTP** reference: `/api/v1` JSON, **`GET /up`**, optional **`/sanctum/csrf-cookie`**, and **admin** web routes. |
+| [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md) | **CI/CD**, tags, deploy to the droplet. |
+
+Root workflow and scripts: [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), `../scripts/`.
 
 ---
 
@@ -362,9 +389,10 @@ The Laravel framework is open-sourced under the MIT License. This application ma
 
 ## Related documentation
 
-- **HTTP API reference (endpoints, auth, examples):** [`../docs/API.md`](../docs/API.md)  
-- **Frontend (Vue 3):** `../frontend/README.md`  
-- **CI/CD and deploy:** repository `.github/workflows/deploy.yml` and root `scripts/`  
+- **[`docs/` index](#project-documentation-index-docs)** — `API.md`, `RELEASE_WORKFLOW.md`  
+- **HTTP API (detail):** [`../docs/API.md`](../docs/API.md)  
+- **Frontend (Vue 3):** [`../frontend/README.md`](../frontend/README.md)  
+- **CI/CD and deploy:** [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) and [`../scripts/`](../scripts/)  
 - **Releases & tags:** [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md)
 
 The backend is a **single** service: shared models, policies, and rules power the public API, the admin UI, and background jobs, which keeps the system coherent and testable.

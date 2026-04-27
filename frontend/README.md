@@ -29,7 +29,10 @@ This document explains how to **clone the monorepo, install Node dependencies, c
 13. [Testing](#testing)  
 14. [CI alignment](#ci-alignment)  
 15. [Troubleshooting](#troubleshooting)  
-16. [Related documentation](#related-documentation)
+16. [Related documentation](#related-documentation)  
+17. [Clearing auth / cached client state](#clearing-auth--cached-client-state)  
+18. [Monorepo: backend `composer dev` vs this app](#monorepo-backend-composer-dev-vs-this-app)  
+19. [Project documentation index (`docs/`)](#project-documentation-index-docs)
 
 ---
 
@@ -300,15 +303,47 @@ Reproduce locally from **`frontend/`** after `npm ci` to match the pipeline. Rel
 | **Blank API responses** | Backend down or wrong port; open Network tab and confirm request URL. |
 | **Tests fail after axios changes** | Update mocks in `src/test/setup.js` or the spec’s `vi.mocked` overrides. |
 | **Build uses wrong API URL** | Ensure `.env.production` (or your host’s env) sets `VITE_API_BASE_URL` **at build time** — Vite inlines `VITE_*` at build, not at runtime. |
+| **Still “logged in” after logout or odd auth** | The auth store is **persisted** (localStorage). Clear site data for the dev origin or remove the storage key; hard refresh (see below). |
+
+---
+
+## Clearing auth / cached client state
+
+**Pinia** (`useAuthStore`) uses **`pinia-plugin-persistedstate`**, so the token and user can survive a normal refresh. If you are debugging login/logout or hitting stale 401s:
+
+- **Chrome / Edge:** DevTools → **Application** → **Storage** → “Clear site data” for `http://localhost:5173` (or your dev origin), or delete **Local Storage** keys for the site.  
+- **Firefox:** **Storage** inspector → clear local storage for the origin.  
+- **Quick test in console:** `localStorage.clear()` (only for that tab’s origin) then reload.
+
+After changing `VITE_API_BASE_URL`, **stop and restart** `npm run dev` so Vite reloads env.
+
+---
+
+## Monorepo: backend `composer dev` vs this app
+
+The **`backend/`** folder has a Composer script **`dev`** that runs `php artisan serve`, queue, Pail, and **`npm run dev`** in **`backend/`** (Laravel’s own Vite/tailwind tooling). That is **not** the same process as the **Vue 3** storefront in this **`frontend/`** package.
+
+- **Run the customer SPA:** from **`frontend/`** → `npm run dev` (with the Laravel API from `../backend` running separately, unless you use a process manager to start both).  
+- **Two terminals (typical):** Terminal 1: `../backend` → `php artisan serve` (and `queue:work` if needed). Terminal 2: **`frontend/`** → `npm run dev`.
+
+---
+
+## Project documentation index (`docs/`)
+
+| Document | What it is |
+|----------|------------|
+| [`../docs/API.md`](../docs/API.md) | Every **`/api/v1`** route plus **`GET /up`**, **Sanctum CSRF (optional)**, and **admin** HTML routes — matches how Axios calls the backend. |
+| [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md) | **CI**, tags, and production deploy. |
 
 ---
 
 ## Related documentation
 
-- **HTTP API reference (endpoints, auth, examples):** [`../docs/API.md`](../docs/API.md)  
+- **[`docs/` index](#project-documentation-index-docs)** — `API.md`, `RELEASE_WORKFLOW.md`  
+- **HTTP API (detail):** [`../docs/API.md`](../docs/API.md)  
 - **Backend (Laravel API, admin, jobs, Stripe, Google, tests):** [`../backend/README.md`](../backend/README.md)  
 - **Deployment / GitHub Actions:** [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)  
 - **Releases & tags:** [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md)  
-- **Frontend conventions (optional):** `.cursor/rules/frontend.mdc` in the repository root
+- **Frontend conventions (optional):** [`.cursor/rules/frontend.mdc`](../.cursor/rules/frontend.mdc)
 
 Together, the **Vue SPA** and **Laravel API** form one product: the frontend focuses on the **customer** experience and **API consumption**; the backend owns **data, auth, payments, and operations**.
