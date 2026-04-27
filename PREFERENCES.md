@@ -15,7 +15,7 @@
 
 ## Release & deployment
 
-- **Branching and tag-based releases:** [docs/RELEASE_WORKFLOW.md](docs/RELEASE_WORKFLOW.md) (`develop` → `stage` → `main` → tag → production).
+- **CI/CD and tag-based production deploys:** [docs/CICD.md](docs/CICD.md) (see document for current `main` + `v*` model).
 
 ## Quick summary
 

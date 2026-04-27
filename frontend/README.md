@@ -333,17 +333,17 @@ The **`backend/`** folder has a Composer script **`dev`** that runs `php artisan
 | Document | What it is |
 |----------|------------|
 | [`../docs/API.md`](../docs/API.md) | Every **`/api/v1`** route plus **`GET /up`**, **Sanctum CSRF (optional)**, and **admin** HTML routes — matches how Axios calls the backend. |
-| [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md) | **CI**, tags, and production deploy. |
+| [`../docs/CICD.md`](../docs/CICD.md) | **CI**, tags, and production deploy. |
 
 ---
 
 ## Related documentation
 
-- **[`docs/` index](#project-documentation-index-docs)** — `API.md`, `RELEASE_WORKFLOW.md`  
+- **[`docs/` index](#project-documentation-index-docs)** — `API.md`, `CICD.md`  
 - **HTTP API (detail):** [`../docs/API.md`](../docs/API.md)  
 - **Backend (Laravel API, admin, jobs, Stripe, Google, tests):** [`../backend/README.md`](../backend/README.md)  
 - **Deployment / GitHub Actions:** [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)  
-- **Releases & tags:** [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md)  
+- **Releases & CI/CD:** [`../docs/CICD.md`](../docs/CICD.md)  
 - **Frontend conventions (optional):** [`.cursor/rules/frontend.mdc`](../.cursor/rules/frontend.mdc)
 
 Together, the **Vue SPA** and **Laravel API** form one product: the frontend focuses on the **customer** experience and **API consumption**; the backend owns **data, auth, payments, and operations**.

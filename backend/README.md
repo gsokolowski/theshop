@@ -362,7 +362,7 @@ This matches the GitHub Actions backend step.
 | Document | What it is |
 |----------|------------|
 | [`../docs/API.md`](../docs/API.md) | Full **HTTP** reference: `/api/v1` JSON, **`GET /up`**, optional **`/sanctum/csrf-cookie`**, and **admin** web routes. |
-| [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md) | **CI/CD**, tags, deploy to the droplet. |
+| [`../docs/CICD.md`](../docs/CICD.md) | **CI/CD**, tags, deploy to the droplet. |
 
 Root workflow and scripts: [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), `../scripts/`.
 
@@ -389,10 +389,10 @@ The Laravel framework is open-sourced under the MIT License. This application ma
 
 ## Related documentation
 
-- **[`docs/` index](#project-documentation-index-docs)** — `API.md`, `RELEASE_WORKFLOW.md`  
+- **[`docs/` index](#project-documentation-index-docs)** — `API.md`, `CICD.md`  
 - **HTTP API (detail):** [`../docs/API.md`](../docs/API.md)  
 - **Frontend (Vue 3):** [`../frontend/README.md`](../frontend/README.md)  
 - **CI/CD and deploy:** [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) and [`../scripts/`](../scripts/)  
-- **Releases & tags:** [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md)
+- **Releases & CI/CD:** [`../docs/CICD.md`](../docs/CICD.md)
 
 The backend is a **single** service: shared models, policies, and rules power the public API, the admin UI, and background jobs, which keeps the system coherent and testable.

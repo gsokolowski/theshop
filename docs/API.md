@@ -706,6 +706,7 @@ curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:8000/admin"
 
 - [Backend setup & admin](../backend/README.md)  
 - [Frontend SPA & env](../frontend/README.md)  
-- [Release & CI](RELEASE_WORKFLOW.md)
+- [CI/CD & releases](CICD.md)  
+- [API](API.md) — HTTP routes for backend and SPA
 
 If this document drifts from behavior, **update it** when you change `routes/api.php`, `routes/web.php`, or enable `Sanctum::routes()`. Run `php artisan route:list` to verify paths (including `up`, `sanctum/csrf-cookie` if registered, and `admin/*`).
