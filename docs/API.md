@@ -1,8 +1,13 @@
-# The Shop — HTTP API reference (`/api/v1`)
+# The Shop — HTTP API reference
 
-This document describes every **public JSON API** route exposed by the Laravel backend, including authentication, request bodies, validation rules, and **copy-pasteable examples** (cURL and minimal JSON). The **Blade admin** at `/admin` is not covered here; it is session-based HTML, not this REST API.
+This document covers:
 
-**Source of truth:** `backend/routes/api.php`, `backend/app/Http/Controllers/Api/`, and Form Requests under `backend/app/Http/Requests/`.
+1. **Versioned JSON API** under `{APP_URL}/api/v1` — request bodies, validation, and **cURL** examples.  
+2. **Other HTTP surfaces** on the same Laravel app: **[health `GET /up`](#health-check-get-up)**, **optional [Sanctum `GET /sanctum/csrf-cookie`](#sanctum-spa-csrf-cookie-optional)**, and the **session-based [admin panel](#admin-panel-web--blade)** (`routes/web.php`).
+
+**Source of truth:** `backend/routes/api.php` (exactly **34** `Route::` entries under `Route::prefix('v1')`) for the JSON API; `backend/routes/web.php` for admin; `bootstrap/app.php` (`health: '/up'`) for the health check.
+
+A **checklist of every `/api/v1` call** is in [Complete route index](#complete-route-index-backendroutesapiph) below.
 
 ---
 
@@ -516,13 +521,184 @@ Otherwise queues `SendVerificationEmail`.
 
 Some paths overlap **static** segments with **dynamic** ones. This app registers **specific** routes (e.g. `products/category/{category}`) so they are not captured by `products/{product}` (slug). See `routes/api.php` for the full order.
 
-`Product` **route key** is **slug**; **Category** and **Brand** use **slug** in URL; **Color** and **Size** use **numeric id** in the filter routes.
+`Product` **route key** is **slug**; **Category** and **Brand** use **slug** in URL; **Color** and **Size** use **numeric id** in the filter routes (route model binding on `Color` and `Size`—the in-file comment mentioning “slug” for size is incorrect).
 
 ---
 
-## Health (outside `/api/v1`)
+## Complete route index (`backend/routes/api.php`)
 
-`GET {APP_URL}/up` — Laravel default health check (not under `v1`).
+All paths are relative to `{BASE} = {APP_URL}/api/v1` (e.g. `http://127.0.0.1:8000/api/v1`). This table matches **`routes/api.php`**: **34** rows = **34** `Route::` entries in the `v1` group.
+
+| # | Method | Path | Auth |
+|---|--------|------|------|
+| 1 | `GET` | `/user` | Sanctum |
+| 2 | `POST` | `/user/logout` | Sanctum |
+| 3 | `PUT` | `/user/profile/update` | Sanctum |
+| 4 | `PUT` | `/user/password/update` | Sanctum |
+| 5 | `DELETE` | `/user` | Sanctum |
+| 6 | `GET` | `/coupon/{name}` | Sanctum |
+| 7 | `GET` | `/orders` | Sanctum |
+| 8 | `POST` | `/orders` | Sanctum |
+| 9 | `POST` | `/orders/pay` | Sanctum |
+| 10 | `GET` | `/orders/{order}` | Sanctum |
+| 11 | `POST` | `/reviews` | Sanctum |
+| 12 | `PUT` | `/reviews/{review}` | Sanctum |
+| 13 | `DELETE` | `/reviews/{review}` | Sanctum |
+| 14 | `GET` | `/reviews/check/{product_id}` | Sanctum |
+| 15 | `GET` | `/cart` | Sanctum |
+| 16 | `POST` | `/cart` | Sanctum |
+| 17 | `PUT` | `/cart/{cart}` | Sanctum |
+| 18 | `DELETE` | `/cart/{cart}` | Sanctum |
+| 19 | `GET` | `/wishlist` | Sanctum |
+| 20 | `POST` | `/wishlist` | Sanctum |
+| 21 | `DELETE` | `/wishlist/{wishlist}` | Sanctum |
+| 22 | `POST` | `/email/verification/resend` | Sanctum |
+| 23 | `POST` | `/user/register` | Public |
+| 24 | `POST` | `/user/login` | Public |
+| 25 | `GET` | `/email/verify` | Public (signed URL) |
+| 26 | `GET` | `/auth/google` | Public (browser + session) |
+| 27 | `GET` | `/auth/google/callback` | Public (browser + session) |
+| 28 | `GET` | `/products` | Public |
+| 29 | `GET` | `/products/search/{searchTerm}` | Public |
+| 30 | `GET` | `/products/{product}` | Public (slug) |
+| 31 | `GET` | `/products/category/{category}` | Public (category slug) |
+| 32 | `GET` | `/products/brand/{brand}` | Public (brand slug) |
+| 33 | `GET` | `/products/color/{color}` | Public (color id) |
+| 34 | `GET` | `/products/size/{size}` | Public (size id) |
+
+**Routes not in the table above** are listed in the next sections: [Health](#health-check-get-up), [Sanctum CSRF (optional)](#sanctum-spa-csrf-cookie-optional), and [Admin panel](#admin-panel-web--blade).
+
+---
+
+## Health check: `GET /up`
+
+Laravel registers a [health](https://laravel.com/docs/routing#health) route for uptime checks (load balancers, Kubernetes probes, monitoring).
+
+| | |
+|---|
+| **Full URL** | `{APP_URL}/up` (e.g. `http://127.0.0.1:8000/up`) — **not** under `/api/v1` |
+| **Source** | `bootstrap/app.php` → `->withRouting(..., health: '/up')` |
+| **Method** | `GET` |
+| **Auth** | None |
+| **Success** | **200** if the application can boot. Body is a minimal 200 response; use for reachability, not for JSON business data. |
+
+**Example:**
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:8000/up"
+# Expect: 200
+```
+
+---
+
+## Sanctum SPA CSRF cookie (optional)
+
+For **same-origin** single-page applications that use **session / cookie** authentication with the API (Sanctum “stateful” mode), Laravel’s first step is to **prime CSRF** by requesting:
+
+| | |
+|---|
+| **Typical full URL** | `{APP_URL}/sanctum/csrf-cookie` (e.g. `http://127.0.0.1:8000/sanctum/csrf-cookie`) |
+| **Typical method** | `GET` (issues `XSRF-TOKEN` / session cookie; see [Laravel Sanctum — SPA authentication](https://laravel.com/docs/sanctum#spa-authentication)) |
+| **Auth** | None (establishes session + CSRF for subsequent `POST` from the same site) |
+
+### Status in *this* repository
+
+- This project **does not** call `Sanctum::routes()` in `AppServiceProvider` (or `bootstrap/app.php` `withRouting` `then:`), so **`/sanctum/csrf-cookie` is not registered** unless you add it.  
+- The **Vue** client uses **Bearer tokens** from `POST /api/v1/user/login` (or the Google token redirect), not the cookie-based SPA flow—so you normally **do not** need this route for the stock frontend.
+
+### Enabling the route (if you add cookie-based SPA auth)
+
+Follow the current Laravel + Sanctum docs for your framework version, e.g. in `AppServiceProvider::boot()`:
+
+```php
+use Laravel\Sanctum\Sanctum;
+
+public function boot(): void
+{
+    // ...
+    Sanctum::routes();
+}
+```
+
+Or register the equivalent `GET` route manually. Re-run `php artisan route:list` and look for `sanctum/csrf-cookie` to confirm. Configure `SANCTUM_STATEFUL_DOMAINS` in `.env` and CORS if the SPA is on a different port.
+
+---
+
+## Admin panel (web + Blade)
+
+The **back office** is **not** JSON under `/api/v1`. It uses **session cookies**, **CSRF** on `POST`/`PUT`/`DELETE`, the **`admin` guard** (`App\Models\Admin`), and `App\Http\Middleware\AdminMiddleware` on the grouped routes. Controllers live under `App\Http\Controllers\Admin\`.
+
+| Full path | Method | Purpose |
+|-----------|--------|---------|
+| `/admin` | `GET` | Login form (or redirect to dashboard if already logged in) |
+| `/admin/auth` | `POST` | Submit admin credentials (validated by `AuthAdminRequest`) |
+| `/admin/dashboard` | `GET` | Dashboard (order stats) — **requires** `admin` |
+| `/admin/logout` | `POST` | Logout (invalidate session) — **requires** `admin` |
+| `/admin/categories` | `GET` | List categories |
+| `/admin/categories/create` | `GET` | Create form |
+| `/admin/categories` | `POST` | Store |
+| `/admin/categories/{category}` | `GET` | Show (slug) |
+| `/admin/categories/{category}/edit` | `GET` | Edit form |
+| `/admin/categories/{category}` | `PUT` | Update |
+| `/admin/categories/{category}` | `DELETE` | Delete |
+| `/admin/brands` | `GET` | List brands |
+| `/admin/brands/create` | `GET` | Create form |
+| `/admin/brands` | `POST` | Store |
+| `/admin/brands/{brand}` | `GET` | Show (slug) |
+| `/admin/brands/{brand}/edit` | `GET` | Edit form |
+| `/admin/brands/{brand}` | `PUT` | Update |
+| `/admin/brands/{brand}` | `DELETE` | Delete |
+| `/admin/colors` | `GET` | List colors |
+| `/admin/colors/create` | `GET` | Create form |
+| `/admin/colors` | `POST` | Store |
+| `/admin/colors/{color}` | `GET` | Show |
+| `/admin/colors/{color}/edit` | `GET` | Edit form |
+| `/admin/colors/{color}` | `PUT` | Update |
+| `/admin/colors/{color}` | `DELETE` | Delete |
+| `/admin/sizes` | `GET` | List sizes |
+| `/admin/sizes/create` | `GET` | Create form |
+| `/admin/sizes` | `POST` | Store |
+| `/admin/sizes/{size}` | `GET` | Show |
+| `/admin/sizes/{size}/edit` | `GET` | Edit form |
+| `/admin/sizes/{size}` | `PUT` | Update |
+| `/admin/sizes/{size}` | `DELETE` | Delete |
+| `/admin/products` | `GET` | List products |
+| `/admin/products/create` | `GET` | Create form |
+| `/admin/products` | `POST` | Store (multipart, images) |
+| `/admin/products/{product}` | `GET` | Show (slug) |
+| `/admin/products/{product}/edit` | `GET` | Edit form |
+| `/admin/products/{product}/image` | `DELETE` | Remove product image |
+| `/admin/products/{product}` | `PUT` | Update |
+| `/admin/products/{product}` | `DELETE` | Delete |
+| `/admin/coupons` | `GET` | List coupons |
+| `/admin/coupons/create` | `GET` | Create form |
+| `/admin/coupons` | `POST` | Store |
+| `/admin/coupons/{coupon}` | `GET` | Show |
+| `/admin/coupons/{coupon}/edit` | `GET` | Edit form |
+| `/admin/coupons/{coupon}` | `PUT` | Update |
+| `/admin/coupons/{coupon}` | `DELETE` | Delete |
+| `/admin/orders` | `GET` | List orders |
+| `/admin/orders/{order}` | `PUT` | Update delivery time (`deliverd_at`) |
+| `/admin/orders/{order}` | `DELETE` | Delete order (detach products first in controller) |
+| `/admin/reviews` | `GET` | List reviews |
+| `/admin/reviews/{review}` | `PUT` | Toggle approval (controller update) |
+| `/admin/reviews/{review}` | `DELETE` | Delete review |
+| `/admin/users` | `GET` | List users (active / trashed with query `filter=deleted`) |
+| `/admin/users/{user}` | `DELETE` | Soft delete user |
+| `/admin/users/{id}/restore` | `POST` | Restore soft-deleted user |
+
+**Prefix:** the group is `Route::prefix('admin')` with routes like `GET /categories` — full URL path is always **`/admin/...`**, not a double `admin` prefix.
+
+**cURL (login page):**
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:8000/admin"
+# 200 and HTML
+```
+
+**Programmatic / API clients** should not script admin CRUD with bare JSON against these URLs without handling **sessions and CSRF**; use a browser or dedicated tests (`tests/Feature/Admin/`). Credentials after seed: see [Backend README — Admin panel](../backend/README.md#admin-panel-features-and-access).
+
+**Source of truth:** `backend/routes/web.php`.
 
 ---
 
@@ -532,4 +708,4 @@ Some paths overlap **static** segments with **dynamic** ones. This app registers
 - [Frontend SPA & env](../frontend/README.md)  
 - [Release & CI](RELEASE_WORKFLOW.md)
 
-If this document drifts from behavior, **update it when you change** `routes/api.php` or public controller contracts.
+If this document drifts from behavior, **update it** when you change `routes/api.php`, `routes/web.php`, or enable `Sanctum::routes()`. Run `php artisan route:list` to verify paths (including `up`, `sanctum/csrf-cookie` if registered, and `admin/*`).
