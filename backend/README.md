@@ -8,6 +8,8 @@ Engineering practices reflected in the code include: **form request validation**
 
 The goal of this document is to let another developer **clone the repository, install dependencies, configure environment variables, run migrations and workers, and use the API, admin panel, email, jobs, Google OAuth, and Stripe** in a local environment on macOS (or any OS that supports PHP and Composer), and to know how to **run tests, coverage, and static analysis** the same way CI does.
 
+**Full HTTP API (every route, request bodies, cURL examples):** [`../docs/API.md`](../docs/API.md).
+
 ---
 
 ## Table of contents
@@ -360,7 +362,9 @@ The Laravel framework is open-sourced under the MIT License. This application ma
 
 ## Related documentation
 
-- **Frontend (Vue 3):** `../frontend`  
-- **CI/CD and deploy:** repository `.github/workflows/deploy.yml` and root `scripts/`
+- **HTTP API reference (endpoints, auth, examples):** [`../docs/API.md`](../docs/API.md)  
+- **Frontend (Vue 3):** `../frontend/README.md`  
+- **CI/CD and deploy:** repository `.github/workflows/deploy.yml` and root `scripts/`  
+- **Releases & tags:** [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md)
 
 The backend is a **single** service: shared models, policies, and rules power the public API, the admin UI, and background jobs, which keeps the system coherent and testable.

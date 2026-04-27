@@ -8,6 +8,8 @@ The app implements a full **e-commerce customer flow**: browse and filter produc
 
 This document explains how to **clone the monorepo, install Node dependencies, configure `VITE_API_BASE_URL`, run the dev server alongside the Laravel API, run tests and coverage, lint, and build for production**—so another developer can run the same stack you do.
 
+**Full HTTP API (paths relative to your `VITE_API_BASE_URL`, cURL, payloads):** [`../docs/API.md`](../docs/API.md).
+
 ---
 
 ## Table of contents
@@ -303,8 +305,10 @@ Reproduce locally from **`frontend/`** after `npm ci` to match the pipeline. Rel
 
 ## Related documentation
 
+- **HTTP API reference (endpoints, auth, examples):** [`../docs/API.md`](../docs/API.md)  
 - **Backend (Laravel API, admin, jobs, Stripe, Google, tests):** [`../backend/README.md`](../backend/README.md)  
 - **Deployment / GitHub Actions:** [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)  
+- **Releases & tags:** [`../docs/RELEASE_WORKFLOW.md`](../docs/RELEASE_WORKFLOW.md)  
 - **Frontend conventions (optional):** `.cursor/rules/frontend.mdc` in the repository root
 
 Together, the **Vue SPA** and **Laravel API** form one product: the frontend focuses on the **customer** experience and **API consumption**; the backend owns **data, auth, payments, and operations**.
