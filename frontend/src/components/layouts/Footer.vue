@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <p class="text-center">© 2026 The Shop, Code Creators. All rights reserved.</p>
+                    <p class="text-center">© 2026 The Shop by Code Creators. </p>
                 </div>
             </div>
         </div>

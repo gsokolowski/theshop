@@ -3,6 +3,7 @@
         <ProfileSidebar />
         <div class="col-md-8">
             <div class="card-body" v-if="orders.length">
+                <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr class="align-middle">
@@ -107,6 +108,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
             <Alert v-else-if="!data.isLoading" content="No orders yet!" bgColor="primary" />
             <div class="d-flex justify-content-center" v-if="data.isLoading">

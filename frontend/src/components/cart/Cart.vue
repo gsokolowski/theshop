@@ -4,7 +4,8 @@
             <div class="card">
                 <div class="card-body" v-if="cartTotalItems > 0"> <!-- display card body if cart has items -->
                     <h5 class="card-title">Cart</h5>
-                    <table class="table table-bordered"> 
+                    <div class="table-responsive">
+                    <table class="table table-bordered">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -53,11 +54,14 @@
                                 </td>
                                 <td>${{ (item.product.price * item.qty).toFixed(2) }}</td>
                                 <td>
-                                    <button class="btn btn-light btn-sm" 
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-danger"
                                         @click="cartStore.removeItem(item)"
-                                        title="Remove Item">
-                                        <i class="fbi bi-cart-x"></i>
-                                    </button>                                    
+                                        title="Remove item"
+                                    >
+                                        <i class="bi bi-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -80,6 +84,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
                 <div class="card-body" v-else>
                     <div class="alert alert-info d-flex justify-content-between align-items-center" role="alert">

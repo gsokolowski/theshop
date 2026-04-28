@@ -4,6 +4,7 @@
         <div class="col-md-8">
             <Spinner :store="wishlistStore" />
             <div class="card-body" v-if="wishlistItems.length > 0">
+                <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
@@ -93,6 +94,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
             <Alert v-else content="No wishlist items yet!" bgColor="primary" />
         </div>
