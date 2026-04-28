@@ -150,7 +150,7 @@ describe('Cart', () => {
     vi.spyOn(cartStore, 'fetchCart').mockResolvedValue({})
     vi.spyOn(cartStore, 'removeItem').mockResolvedValue({})
     await wrapper.vm.$nextTick()
-    const removeBtn = wrapper.find('button[title="Remove Item"]')
+    const removeBtn = wrapper.find('button[title="Remove item"]')
     await removeBtn.trigger('click')
     expect(cartStore.removeItem).toHaveBeenCalledWith(mockCartItem)
   })
