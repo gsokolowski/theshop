@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @property string $name
@@ -17,6 +18,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Product extends Model
 {
     use HasFactory;
+
+    /** Cache key for product list version; increment to invalidate Redis list entries. */
+    public const LIST_CACHE_VERSION_KEY = 'products.list.version';
 
     // fillable fields
     protected $fillable = [
@@ -38,6 +42,24 @@ class Product extends Model
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    // ✅ ADDED: bust cached product list keys when catalog data changes
+    protected static function booted(): void
+    {
+        static::saved(fn () => self::bumpListCacheVersion());
+        static::deleted(fn () => self::bumpListCacheVersion());
+    }
+
+    /**
+     * Invalidate cached product index pages by bumping the list cache version.
+     */
+    public static function bumpListCacheVersion(): void
+    {
+        Cache::put(
+            self::LIST_CACHE_VERSION_KEY,
+            (int) Cache::get(self::LIST_CACHE_VERSION_KEY, 0) + 1
+        );
     }
 
     // Product belongs to category

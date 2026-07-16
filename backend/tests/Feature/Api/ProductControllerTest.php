@@ -8,6 +8,7 @@ use App\Models\Color;
 use App\Models\Product;
 use App\Models\Size;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 /**
@@ -219,5 +220,33 @@ class ProductControllerTest extends TestCase
         ]));
 
         $response->assertStatus(422);
+    }
+
+    /**
+     * Verifies the products index is served from cache on a repeat request with the same filters,
+     * so Redis (or the configured cache store) avoids a second identical DB query for the list.
+     */
+    public function test_index_serves_cached_product_list_on_second_request(): void
+    {
+        Product::factory()->count(2)->create();
+
+        $this->getJson(route('products.index'))->assertStatus(200);
+
+        $version = (int) Cache::get(Product::LIST_CACHE_VERSION_KEY, 1);
+        $cacheKey = sprintf(
+            'products.list.v%d.%s',
+            $version,
+            md5(json_encode([
+                'filters' => [],
+                'per_page' => 4,
+                'page' => 1,
+            ]))
+        );
+
+        $this->assertTrue(Cache::has($cacheKey));
+
+        $response = $this->getJson(route('products.index'));
+        $response->assertStatus(200);
+        $this->assertCount(2, $response->json('data'));
     }
 }

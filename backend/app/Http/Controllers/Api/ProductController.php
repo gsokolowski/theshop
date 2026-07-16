@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Color;
 use App\Models\Size;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -31,9 +32,11 @@ class ProductController extends Controller
     //create index method to return all products with their categories, brands, colors, sizes but use ProductResource to format the response
     // http://127.0.0.1:8000/api/v1/products?page=1&per_page=4
     // ✅ CHANGED: optional query filters (AND): category, brand (slugs), color_id, size_id, search — combined with ListProductsRequest
+    // ✅ CHANGED: cache paginated product list in Redis (CACHE_STORE); key includes filters/page; busted via Product model version
     public function index(ListProductsRequest $request)
     {
         $perPage = min((int) $request->input('per_page', 4), 50);
+        $page = max(1, (int) $request->input('page', 1));
         $validated = $request->validated();
 
         $query = Product::with('category', 'brand', 'colors', 'sizes');
@@ -64,12 +67,27 @@ class ProductController extends Controller
             });
         }
 
+        // ✅ ADDED: Redis-backed list cache (version bumps when products change)
+        $version = (int) Cache::get(Product::LIST_CACHE_VERSION_KEY, 1);
+        $cacheKey = sprintf(
+            'products.list.v%d.%s',
+            $version,
+            md5(json_encode([
+                'filters' => $validated,
+                'per_page' => $perPage,
+                'page' => $page,
+            ]))
+        );
+
         // ✅ CHANGED: tie-break on id so pagination is stable when created_at matches (avoids duplicate rows across pages on MySQL)
-        $products = ProductResource::collection(
-            $query->latest()
+        $paginator = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($query, $perPage, $page) {
+            return $query->latest()
                 ->orderByDesc('id')
-                ->paginate($perPage)
-        )->additional($this->productFilterSidebarMetadata());
+                ->paginate($perPage, ['*'], 'page', $page);
+        });
+
+        $products = ProductResource::collection($paginator)
+            ->additional($this->productFilterSidebarMetadata());
 
         return $products;
     }
