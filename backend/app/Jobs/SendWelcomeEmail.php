@@ -4,21 +4,22 @@ namespace App\Jobs;
 
 use App\Mail\WelcomeEmail;
 use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Runs synchronously when dispatched (no ShouldQueue) so the welcome message is sent in the same
- * request as verification / first Google signup. Queued jobs would otherwise require a running
- * worker when QUEUE_CONNECTION=database.
+ * Queued welcome email after verification or first Google signup.
+ * Requires a running queue worker when QUEUE_CONNECTION is redis/database.
  *
  * Retries with backoff: providers like Mailtrap (free tier) return 550 "Too many emails per second"
  * when verification and welcome send back-to-back.
  */
-class SendWelcomeEmail
+class SendWelcomeEmail implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable, InteractsWithQueue, SerializesModels;
 
     private const MAIL_RETRY_TIMES = 5;
 
