@@ -69,7 +69,7 @@
             <p>Browse our products, complete your profile anytime, and reach out if you need anything.</p>
 
             <div style="text-align: center;">
-                <a href="{{ $shopUrl }}" class="button">Visit The Shop</a>
+                <a href="{{ $shopUrl }}" class="button" style="color: #ffffff;">Visit The Shop</a>
             </div>
         </div>
 
