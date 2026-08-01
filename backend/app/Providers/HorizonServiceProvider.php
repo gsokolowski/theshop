@@ -15,22 +15,23 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     {
         parent::boot();
 
-        // Horizon::routeSmsNotificationsTo('15556667777');
-        // Horizon::routeMailNotificationsTo('example@example.com');
-        // Horizon::routeSlackNotificationsTo('slack-webhook-url', '#channel');
+        // Require an admin session even in local (parent allows all local by default).
+        Horizon::auth(function ($request) {
+            return Gate::check('viewHorizon', [$request->user()]);
+        });
     }
 
     /**
      * Register the Horizon gate.
      *
-     * This gate determines who can access Horizon in non-local environments.
+     * Dashboard is limited to the Blade admin guard (not Sanctum customers).
      */
     protected function gate(): void
     {
         Gate::define('viewHorizon', function ($user = null) {
-            return in_array(optional($user)->email, [
-                //
-            ]);
+            $admin = auth('admin')->user();
+
+            return $admin !== null && $admin->email === 'admin@email.com';
         });
     }
 }

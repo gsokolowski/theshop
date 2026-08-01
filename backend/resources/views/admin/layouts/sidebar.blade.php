@@ -66,7 +66,12 @@
                         Users
                     </a>
                 </li>
-                
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2 @if(request()->is(config('horizon.path', 'horizon').'*')) text-dark @endif" href="{{ url('/'.config('horizon.path', 'horizon')) }}">
+                        <i class="fa-solid fa-server"></i>
+                        Horizon
+                    </a>
+                </li>
             </ul>
             <hr class="my-3">
             <ul class="nav flex-column mb-auto">
