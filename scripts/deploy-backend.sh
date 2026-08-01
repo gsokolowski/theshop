@@ -106,15 +106,17 @@ mkdir -p "${DEST}/storage/app/public"
 "${PHP_BIN}" artisan route:cache
 "${PHP_BIN}" artisan view:cache
 
-echo "==> restart queue worker (Supervisor)"
+echo "==> restart Horizon (Supervisor)"
 if command -v supervisorctl >/dev/null 2>&1; then
-  if sudo supervisorctl restart 'the-shop-queue:*'; then
-    echo "==> queue worker restarted"
+  # Graceful restart: terminate masters; Supervisor autorestarts the-shop-horizon
+  "${PHP_BIN}" artisan horizon:terminate || true
+  if sudo supervisorctl restart the-shop-horizon; then
+    echo "==> Horizon restarted"
   else
-    echo "WARN: supervisorctl restart failed; install supervisor and register backend/deploy/supervisor-queue.conf"
+    echo "WARN: supervisorctl restart failed; install supervisor and register backend/deploy/supervisor-queue.conf as the-shop-horizon.conf"
   fi
 else
-  echo "WARN: supervisorctl not in PATH; queue worker not restarted"
+  echo "WARN: supervisorctl not in PATH; Horizon not restarted"
 fi
 
 echo "==> permissions (775 + www-data: uploads, logs, framework cache)"
