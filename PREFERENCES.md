@@ -16,6 +16,7 @@
 ## Release & deployment
 
 - **CI/CD and tag-based production deploys:** [docs/CICD.md](docs/CICD.md) (see document for current `main` + `v*` model).
+- **Local Docker (Sail + nginx `shop-local.codecreators.co.uk`):** [docs/SAIL.md](docs/SAIL.md).
 
 ## Repository documentation
 

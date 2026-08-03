@@ -4,11 +4,14 @@
 
 **The Shop** is a full-stack e-commerce system. The **backend** is a Laravel 12 application that powers a versioned **REST JSON API** (`/api/v1/...`) consumed by a Vue 3 single-page application, and a **separate server-rendered admin area** (Blade templates, Bootstrap) for catalog and order management. The same codebase handles **user authentication** (Laravel Sanctum personal access tokens, email/password registration and login, and **“Sign in with Google”** via Laravel Socialite), **shopping cart, wishlist, orders, product reviews, and coupons**, and integrates **Stripe Checkout** for payments.
 
+**Local Docker:** prefer [Laravel Sail + custom nginx](../docs/SAIL.md) (`https://shop-local.codecreators.co.uk` with `/`, `/api`, `/admin`). Host `php artisan serve` remains supported.
+
 Engineering practices reflected in the code include: **form request validation** for API and admin input, **authorization policies** (e.g. order ownership, admin actions), a **standardized JSON envelope** for API responses, **Eloquent** relationships and migrations, **database seeders and model factories** for realistic demo data, **background jobs** for transactional email (with the database queue in development/production), **caching configuration**, **API rate limiting**, **PHPStan (Larastan)** static analysis, and a **feature + unit** test suite aligned with the GitHub Actions CI pipeline.
 
 The goal of this document is to let another developer **clone the repository, install dependencies, configure environment variables, run migrations and workers, and use the API, admin panel, email, jobs, Google OAuth, and Stripe** in a local environment on macOS (or any OS that supports PHP and Composer), and to know how to **run tests, coverage, and static analysis** the same way CI does.
 
-**Full HTTP API (every route, request bodies, cURL examples):** [`../docs/API.md`](../docs/API.md).
+**Full HTTP API (every route, request bodies, cURL examples):** [`../docs/API.md`](../docs/API.md).  
+**Sail / local Docker gateway:** [`../docs/SAIL.md`](../docs/SAIL.md).
 
 ---
 

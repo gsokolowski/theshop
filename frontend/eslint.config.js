@@ -21,6 +21,14 @@ export default [
     },
   },
   {
+    files: ['vite.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
     files: ['**/*.spec.js', '**/*.test.js'],
     ...vitest.configs.recommended,
     languageOptions: {

@@ -14,7 +14,31 @@ A full-stack e-commerce monorepository: a **Laravel 12** backend (REST API `/api
 
 ## Quick start (local development)
 
-**Requirements:** PHP 8.2+ with Composer, Node.js 20+ (CI uses 22), Git.
+**Recommended:** [Laravel Sail + nginx gateway](docs/SAIL.md) — one hostname like production:
+
+| URL | Serves |
+|-----|--------|
+| `https://shop-local.codecreators.co.uk/` | Vue SPA |
+| `https://shop-local.codecreators.co.uk/api/...` | Laravel API |
+| `https://shop-local.codecreators.co.uk/admin/...` | Blade admin |
+
+```bash
+# /etc/hosts: 127.0.0.1 shop-local.codecreators.co.uk
+./scripts/generate-local-certs.sh
+cd backend
+cp .env.example .env   # if needed
+./vendor/bin/sail up -d --remove-orphans
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+./vendor/bin/sail artisan storage:link
+cd ../frontend && npm install && npm run dev
+```
+
+Then open `https://shop-local.codecreators.co.uk`. Full Sail details: [`docs/SAIL.md`](docs/SAIL.md).
+
+### Alternative: host PHP / Node (no Docker)
+
+**Requirements:** PHP 8.2+ with Composer, Node.js 20+ (CI uses 22), Git. Adjust `.env` for SQLite/`127.0.0.1` Redis and set `VITE_API_BASE_URL=http://127.0.0.1:8000/api/v1`.
 
 1. **Clone**
 
@@ -28,14 +52,14 @@ A full-stack e-commerce monorepository: a **Laravel 12** backend (REST API `/api
    ```bash
    cp .env.example .env
    php artisan key:generate
-   touch database/database.sqlite   # if using default SQLite
+   # Point DB_* at SQLite or local MySQL; REDIS_HOST=127.0.0.1 if using host Redis
    php artisan migrate
    php artisan db:seed
    php artisan storage:link
    php artisan serve
    ```
 
-   Optional second terminal: `php artisan queue:work` (for queued email jobs when `QUEUE_CONNECTION=database`).
+   Optional: `php artisan horizon` (or `queue:work`) for queued mail.
 
 3. **Frontend** — from `frontend/`:
 
@@ -44,9 +68,7 @@ A full-stack e-commerce monorepository: a **Laravel 12** backend (REST API `/api
    npm run dev
    ```
 
-   Ensure [`frontend/.env.development`](frontend/.env.development) points the API to your running Laravel app (default: `VITE_API_BASE_URL=http://127.0.0.1:8000/api/v1`).
-
-4. **Open** the Vite dev URL (usually `http://localhost:5173`) and the API at `http://127.0.0.1:8000`. Admin UI: `http://127.0.0.1:8000/admin` (see backend README for seeded admin credentials after `db:seed`).
+4. **Open** Vite (usually `http://localhost:5173`) and the API at `http://127.0.0.1:8000`. Admin: `http://127.0.0.1:8000/admin`.
 
 **Stripe, Google sign-in, and real mail** need keys in `backend/.env` — see [`backend/README.md`](backend/README.md).
 
@@ -58,6 +80,7 @@ A full-stack e-commerce monorepository: a **Laravel 12** backend (REST API `/api
 | [Frontend setup & build](frontend/README.md) | Vite, `VITE_API_BASE_URL`, routes, tests, lint, CI. |
 | [HTTP API reference](docs/API.md) | All routes (`/api/v1`, health, optional Sanctum, admin table). |
 | [CI/CD & releases](docs/CICD.md) | GitHub Actions, tag deploy, droplet, secrets. |
+| [Sail / local Docker](docs/SAIL.md) | Sail + nginx gateway (`shop-local.codecreators.co.uk`). |
 | [PREFERENCES.md](PREFERENCES.md) | Index of Cursor rules and conventions. |
 
 ## Architecture (short)
