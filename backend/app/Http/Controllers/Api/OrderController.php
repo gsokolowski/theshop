@@ -123,8 +123,8 @@ class OrderController extends Controller
                 // the url to redirect to after the payment is cancelled
                 'cancel_url' => $validated['cancel_url'],
                 'metadata' => [
-                    'user_id' => $request->user()->id,
-                    'cart_items' => json_encode($validated['cartItems']),
+                    'user_id' => (string) $request->user()->id,
+                    'cart_items' => json_encode($validated['cartItems'], JSON_THROW_ON_ERROR),
                 ],
             ]);
 

@@ -31,12 +31,6 @@ parameters:
 			path: app/Http/Controllers/Api/CartController.php
 
 		-
-			message: '#^Parameter \#1 \$params of static method Stripe\\Checkout\\Session\:\:create\(\) expects array\{adaptive_pricing\?\: array\{enabled\?\: bool\}, after_expiration\?\: array\{recovery\?\: array\{allow_promotion_codes\?\: bool, enabled\: bool\}\}, allow_promotion_codes\?\: bool, automatic_tax\?\: array\{enabled\: bool, liability\?\: array\{account\?\: string, type\: string\}\}, billing_address_collection\?\: string, branding_settings\?\: array\{background_color\?\: string\|null, border_style\?\: string\|null, button_color\?\: string\|null, display_name\?\: string, font_family\?\: string\|null, icon\?\: array\{file\?\: string, type\: string, url\?\: string\}, logo\?\: array\{file\?\: string, type\: string, url\?\: string\}\}, cancel_url\?\: string, client_reference_id\?\: string, \.\.\.\}\|null, array\{line_items\: array\{array\{price_data\: array\{currency\: ''usd'', product_data\: array\{name\: ''The Store''\}, unit_amount\: mixed\}, quantity\: 1\}\}, mode\: ''payment'', success_url\: non\-falsy\-string, cancel_url\: mixed, metadata\: array\{user_id\: int, cart_items\: non\-empty\-string\|false\}\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/OrderController.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
