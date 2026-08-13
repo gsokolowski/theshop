@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Observers\ProductObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\Cache;
  * @property float $price
  * @property string|null $thumbnail
  */
+// register ProductObserver instead of inline booted() hooks
+#[ObservedBy([ProductObserver::class])]
 class Product extends Model
 {
     use HasFactory;
@@ -42,13 +46,6 @@ class Product extends Model
     public function getRouteKeyName()
     {
         return 'slug';
-    }
-
-    // ✅ ADDED: bust cached product list keys when catalog data changes
-    protected static function booted(): void
-    {
-        static::saved(fn () => self::bumpListCacheVersion());
-        static::deleted(fn () => self::bumpListCacheVersion());
     }
 
     /**
