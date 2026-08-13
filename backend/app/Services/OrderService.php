@@ -5,19 +5,23 @@ namespace App\Services;
 use App\Events\OrderPlaced;
 use App\Models\Cart;
 use App\Models\Coupon;
-use App\Models\Order;
 use App\Models\User;
+use App\Repositories\OrderRepository;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
+    public function __construct(
+        private OrderRepository $orderRepository,
+    ) {}
+
     public function createFromCartItems(User $user, array $cartItems): array
     {
         $createdOrders = DB::transaction(function () use ($user, $cartItems) {
             $createdOrders = [];
 
             foreach ($cartItems as $item) {
-                $order = Order::create([
+                $order = $this->orderRepository->create([
                     'qty' => $item['qty'],
                     'user_id' => $user->id, // never from the client
                     'coupon_id' => $item['coupon_id'] ?? null,

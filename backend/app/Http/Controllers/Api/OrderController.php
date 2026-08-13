@@ -8,6 +8,7 @@ use App\Http\Requests\StripePaymentRequest;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\UserResource;
 use App\Models\Order;
+use App\Repositories\OrderRepository;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Stripe\Checkout\Session as StripeSession;
@@ -17,7 +18,8 @@ use Stripe\Stripe;
 class OrderController extends Controller
 {
     public function __construct(
-        private OrderService $orderService
+        private OrderService $orderService,
+        private OrderRepository $orderRepository,
     ) {}
 
     /**
@@ -26,11 +28,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $orders = $request->user()
-            ->orders()
-            ->with(['products.colors', 'products.sizes', 'coupon'])
-            ->orderBy('id', 'desc')
-            ->get();
+        $orders = $this->orderRepository->listForUser($request->user());
 
         return response()->json([
             'message' => 'Orders retrieved successfully',
