@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Jobs\SendOrderConfirmationEmail;
+use App\Events\OrderPlaced;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
@@ -41,8 +41,9 @@ class OrderService
             return $createdOrders;
         });
 
-        // Dispatch after commit so a Redis/worker race cannot load missing orders
-        SendOrderConfirmationEmail::dispatch(
+        // ✅ CHANGED: announce order placement; confirmation email is handled by a listener
+        // Fire after commit so a Redis/worker race cannot load missing orders
+        OrderPlaced::dispatch(
             $user,
             collect($createdOrders)->pluck('id')->toArray()
         );
