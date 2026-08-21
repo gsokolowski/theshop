@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminUpdatePasswordRequest;
 use App\Http\Requests\AuthAdminRequest;
 use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -81,6 +83,33 @@ class AdminController extends Controller
             'yesterdayOrders' => $yesterdayOrders,
             'monthOrders' => $monthOrders,
             'yearOrders' => $yearOrders,
+        ]);
+    }
+
+    // ✅ ADDED: GET form for the logged-in admin to change their password
+    public function editPassword()
+    {
+        return view('admin.password.edit');
+    }
+
+    // ✅ ADDED: PUT update password for the authenticated admin (never accept admin id from the client)
+    public function updatePassword(AdminUpdatePasswordRequest $request)
+    {
+        $validated = $request->validated();
+        $admin = auth()->guard('admin')->user();
+
+        if (! Hash::check($validated['old_password'], $admin->password)) {
+            return redirect()->back()->with([
+                'error' => 'Current password is incorrect.',
+            ]);
+        }
+
+        $admin->update([
+            'password' => $validated['new_password'], // Admin model casts password to hashed
+        ]);
+
+        return redirect()->route('admin.password.edit')->with([
+            'success' => 'Password updated successfully',
         ]);
     }
 }

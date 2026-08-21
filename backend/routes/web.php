@@ -21,6 +21,9 @@ Route::post('/admin/auth',[AdminController::class,"auth"])->name("admin.auth");
 Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+    // ✅ ADDED: logged-in admin can update their own password
+    Route::get('/password', [AdminController::class, 'editPassword'])->name('admin.password.edit');
+    Route::put('/password', [AdminController::class, 'updatePassword'])->name('admin.password.update');
 
     // Category indidivual routes
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');

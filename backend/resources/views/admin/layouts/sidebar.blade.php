@@ -76,7 +76,8 @@
             <hr class="my-3">
             <ul class="nav flex-column mb-auto">
                 <li class="nav-item">
-                    <a href="#" class="nav-link d-flex align-items-center gap-2">
+                    <!-- ✅ CHANGED: admin name links to password update form -->
+                    <a href="{{ route('admin.password.edit') }}" class="nav-link d-flex align-items-center gap-2 @if(request()->routeIs('admin.password.edit')) text-dark @endif">
                         <i class="fas fa-user"></i>
                         <!-- Display the name of the logged in admin -->
                         {{ auth()->guard('admin')->user()->name }}
