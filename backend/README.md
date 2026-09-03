@@ -248,7 +248,7 @@ Feature tests live under `tests/Feature/Admin/`.
 
 1. **Stripe Dashboard → API keys** (test mode for development).  
 2. Set `STRIPE_SECRET_KEY=sk_test_...` and `STRIPE_PUBLIC_KEY=pk_test_...` in `.env` (`config/services.php` reads `env()` into `stripe`).  
-3. **Authenticated** `POST /api/v1/orders/pay` creates a **Stripe Checkout Session** (`App\Http\Controllers\Api\OrderController::payOrdersByStripe`) with `success_url` and `cancel_url` from the validated request; `metadata` includes `user_id` and cart line items.  
+3. **Authenticated** `POST /api/v1/orders/pay` creates a hosted checkout session via `PaymentGateway` (`App\Http\Controllers\Api\OrderController::pay`; Phase 1 = Stripe) with `success_url` and `cancel_url` from the validated request; `metadata` includes `user_id` and cart line items.  
 4. The SPA opens the returned `data.url` in the browser. Use Stripe’s **test card** numbers in test mode.  
 5. Empty or wrong keys will break checkout.  
 6. After `.env` changes: `php artisan config:clear` (in production, follow your deployment’s `config:cache` practice).

@@ -31,8 +31,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     // url: http://127.0.0.1:8000/api/v1/orders
     Route::post('/orders', [OrderController::class, 'storeUserCartItemsOrders'])->name('orders.store');
-    // url: http://127.0.0.1:8000/api/v1/orders/pay
-    Route::post('/orders/pay', [OrderController::class, 'payOrdersByStripe'])->name('orders.pay');
+    // url: http://127.0.0.1:8000/api/v1/orders/pay — hosted checkout (PaymentGateway)
+    Route::post('/orders/pay', [OrderController::class, 'pay'])->name('orders.pay');
     // url: http://127.0.0.1:8000/api/v1/orders/{order}
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     // url: http://127.0.0.1:8000/api/v1/reviews

@@ -52,7 +52,7 @@
                 coupon_id: item.coupon_id || null
             }))
             // console.log('Cart Items Data', cartItemsData)
-            // call the api/orders/pay endpoint to get the payment link payOrdersByStripe()
+            // call POST /orders/pay (OrderController::pay) to get the checkout URL
             const response = await axios.post('/orders/pay', {
                 cartItems: cartItemsData,
                 success_url: successUrl.value,

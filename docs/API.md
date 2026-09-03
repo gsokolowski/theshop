@@ -445,7 +445,7 @@ Clears the user’s cart after success; **dispatches** `SendOrderConfirmationEma
 
 ### `POST` `/orders/pay` — Stripe Checkout session
 
-**Body — `StripePaymentRequest`:** `cartItems` (same line fields as pay flow **except** `StripePaymentRequest` does **not** require `color_id` / `size_id` in validation — only `product_id`, `qty`, `price`, optional `coupon_id`), plus:
+**Body — `PaymentCheckoutRequest`:** `cartItems` (same line fields as pay flow **except** `PaymentCheckoutRequest` does **not** require `color_id` / `size_id` in validation — only `product_id`, `qty`, `price`, optional `coupon_id`), plus:
 
 | Field | Rule |
 |--------|------|
@@ -456,7 +456,7 @@ Clears the user’s cart after success; **dispatches** `SendOrderConfirmationEma
 
 **500** on Stripe API errors: `message`, `data: null`, `error` = Stripe message.
 
-**Note:** Confirm line-item rules in `StripePaymentRequest` vs checkout UI — the Stripe path is for **payment**; order creation with full variant info may use `POST /orders` after return.
+**Note:** Confirm line-item rules in `PaymentCheckoutRequest` vs checkout UI — the pay path is for **payment**; order creation with full variant info may use `POST /orders` after return.
 
 ```bash
 curl -s -X POST "http://127.0.0.1:8000/api/v1/orders/pay" \

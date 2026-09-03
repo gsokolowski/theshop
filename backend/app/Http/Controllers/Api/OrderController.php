@@ -4,22 +4,22 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderStoreRequest;
-use App\Http\Requests\StripePaymentRequest;
+use App\Http\Requests\PaymentCheckoutRequest;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\UserResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Services\OrderService;
+use App\Services\PaymentService;
 use Illuminate\Http\Request;
-use Stripe\Checkout\Session as StripeSession;
-use Stripe\Exception\ApiErrorException;
-use Stripe\Stripe;
 
 class OrderController extends Controller
 {
     public function __construct(
         private OrderService $orderService,
         private OrderRepository $orderRepository,
+        // ask PaymentService for a gateway; do not type-hint Stripe
+        private PaymentService $paymentService,
     ) {}
 
     /**
@@ -89,57 +89,28 @@ class OrderController extends Controller
         }
     }
 
-    // pay for the orders with stripe payment gateway
-    // api: http://127.0.0.1:8000/api/orders/pay
-    public function payOrdersByStripe(StripePaymentRequest $request)
+    // Create a hosted checkout session (PaymentGateway; Phase 1 = Stripe)
+    // api: http://127.0.0.1:8000/api/v1/orders/pay
+    // ✅ CHANGED: payOrdersByStripe → pay; StripePaymentRequest → PaymentCheckoutRequest
+    public function pay(PaymentCheckoutRequest $request)
     {
-        Stripe::setApiKey(config('services.stripe.secret'));
-
         try {
             $validated = $request->validated();
-            // check if URL already has route params
-            $successUrl = $validated['success_url'];
-            $separator = str_contains($successUrl, '?') ? '&' : '?';
-            $successUrlWithSession = $successUrl . $separator . 'session_id={CHECKOUT_SESSION_ID}';
 
-            $checkout_session = StripeSession::create([
-                'line_items' => [[
-                    'price_data' => [
-                        'currency' => 'usd',
-                        'product_data' => [
-                            'name' => 'The Store',
-                        ],
-                        'unit_amount' => $this->orderService->calculateTotalToPayInCents(
-                            $validated['cartItems']
-                        ),
-                    ],
-                    'quantity' => 1,
-                ]],
-                'mode' => 'payment',
-                // the url to redirect to after the payment is successful
-                'success_url' => $successUrlWithSession,
-                // the url to redirect to after the payment is cancelled
-                'cancel_url' => $validated['cancel_url'],
-                'metadata' => [
-                    'user_id' => (string) $request->user()->id,
-                    'cart_items' => json_encode($validated['cartItems'], JSON_THROW_ON_ERROR),
-                ],
-            ]);
+            $result = $this->paymentService->gateway()->createCheckout(
+                $request->user(),
+                $validated['cartItems'],
+                $validated['success_url'],
+                $validated['cancel_url'],
+            );
 
-            // return the link to the stripe checkout form
             return response()->json([
                 'message' => 'Checkout session created successfully',
                 'data' => [
-                    'url' => $checkout_session->url,
-                    'session_id' => $checkout_session->id,
+                    'url' => $result->url,
+                    'session_id' => $result->sessionId,
                 ],
             ], 200);
-        } catch (ApiErrorException $e) {
-            return response()->json([
-                'message' => 'Failed to create checkout session',
-                'data' => null,
-                'error' => $e->getMessage(),
-            ], 500);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create checkout session',

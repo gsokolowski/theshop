@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\PaymentGateway;
+use App\Payments\StripeGateway;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -15,7 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // ✅ ADDED: Phase 1 always uses Stripe; PaymentService resolves PaymentGateway from this binding
+        $this->app->bind(PaymentGateway::class, StripeGateway::class);
     }
 
     /**

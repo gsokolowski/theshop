@@ -2,20 +2,22 @@
 
 namespace Tests\Feature\Api;
 
+use App\Contracts\PaymentGateway;
 use App\Models\Color;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Size;
 use App\Models\User;
+use App\Payments\CheckoutResult;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 /**
- * Feature tests for Api\OrderController. Covers index, show, store (create orders from cart).
- * payOrdersByStripe requires Stripe mocking - skipped for now.
+ * Feature tests for Api\OrderController. Covers index, show, store, and pay (checkout)
+ * with PaymentGateway mocked so CI does not need live Stripe keys.
  */
 class OrderControllerTest extends TestCase
 {
@@ -186,5 +188,87 @@ class OrderControllerTest extends TestCase
         $response->assertJsonPath('data.order.products.0.name', 'Test Product');
         $response->assertJsonPath('data.order.coupon.name', 'SAVE20');
         $response->assertJsonPath('data.order.coupon.discount', 20);
+    }
+
+    /**
+     * Authenticated pay returns checkout url and session_id from the PaymentGateway.
+     * Mocks the gateway so CI never calls Stripe with live keys.
+     */
+    public function test_pay_returns_checkout_url_from_payment_gateway(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create(['price' => 29.99]);
+        Sanctum::actingAs($user);
+
+        $this->mock(PaymentGateway::class, function ($mock) use ($user) {
+            $mock->shouldReceive('createCheckout')
+                ->once()
+                ->withArgs(function ($passedUser, $cartItems, $successUrl, $cancelUrl) use ($user) {
+                    return $passedUser->is($user)
+                        && $successUrl === 'https://example.test/success'
+                        && $cancelUrl === 'https://example.test/cancel'
+                        && is_array($cartItems)
+                        && count($cartItems) === 1;
+                })
+                ->andReturn(new CheckoutResult(
+                    url: 'https://checkout.stripe.test/cs_test_mock',
+                    sessionId: 'cs_test_mock',
+                    provider: 'stripe',
+                ));
+        });
+
+        $response = $this->postJson(route('orders.pay'), [
+            'cartItems' => [
+                [
+                    'product_id' => $product->id,
+                    'qty' => 1,
+                    'price' => 29.99,
+                    'coupon_id' => null,
+                ],
+            ],
+            'success_url' => 'https://example.test/success',
+            'cancel_url' => 'https://example.test/cancel',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('message', 'Checkout session created successfully');
+        $response->assertJsonPath('data.url', 'https://checkout.stripe.test/cs_test_mock');
+        $response->assertJsonPath('data.session_id', 'cs_test_mock');
+    }
+
+    /**
+     * Pay requires authentication so anonymous clients cannot create checkout sessions.
+     */
+    public function test_pay_requires_authentication(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = $this->postJson(route('orders.pay'), [
+            'cartItems' => [
+                [
+                    'product_id' => $product->id,
+                    'qty' => 1,
+                    'price' => 10,
+                ],
+            ],
+            'success_url' => 'https://example.test/success',
+            'cancel_url' => 'https://example.test/cancel',
+        ]);
+
+        $response->assertStatus(401);
+    }
+
+    /**
+     * Pay validates required body fields (cartItems, success_url, cancel_url).
+     */
+    public function test_pay_returns_422_when_validation_fails(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->postJson(route('orders.pay'), []);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['cartItems', 'success_url', 'cancel_url']);
     }
 }
